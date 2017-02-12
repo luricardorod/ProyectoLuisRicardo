@@ -3,17 +3,24 @@
 
 #include <vector>
 #include "PrimitiveBase.h"
+#include "CMatrix4D.h"
 
 class PrimitiveManager {
 public:
+	void SetVP(CMatrix4D *vp) {
+		pVP = vp;
+	}
 	int  CreateTriangle();
+	int	 CreateCube();
+	int  CreateCerdo();
 
-	void TransformPrimitive(unsigned int,float *);
 	void DrawPrimitives();
 	void DestroyPrimitives();
-
+	PrimitiveBase*	GetPrimitive(unsigned int);
 
 	std::vector<PrimitiveBase*> primitives;
+
+	CMatrix4D *pVP;
 };
 
 #endif

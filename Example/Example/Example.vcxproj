@@ -20,22 +20,34 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BaseDriver.h" />
+    <ClInclude Include="CerdoGL.h" />
     <ClInclude Include="Core.h" />
+    <ClInclude Include="CubeGL.h" />
+    <ClInclude Include="CVector4D.h" />
     <ClInclude Include="GLDriver.h" />
     <ClInclude Include="InputManager.h" />
+    <ClInclude Include="CMatrix4D.h" />
     <ClInclude Include="PrimitiveBase.h" />
+    <ClInclude Include="PrimitiveInstance.h" />
     <ClInclude Include="PrimitiveManager.h" />
     <ClInclude Include="Timer.h" />
     <ClInclude Include="TriangleGL.h" />
+    <ClInclude Include="UtilsGL.h" />
     <ClInclude Include="Win32Framework.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="CerdoGL.cpp" />
     <ClCompile Include="Core.cpp" />
+    <ClCompile Include="CubeGL.cpp" />
+    <ClCompile Include="CVector4D.cpp" />
     <ClCompile Include="GLDriver.cpp" />
     <ClCompile Include="InputManager.cpp" />
+    <ClCompile Include="CMatrix4D.cpp" />
+    <ClCompile Include="PrimitiveInstance.cpp" />
     <ClCompile Include="PrimitiveManager.cpp" />
     <ClCompile Include="Timer.cpp" />
     <ClCompile Include="TriangleGL.cpp" />
+    <ClCompile Include="UtilsGL.cpp" />
     <ClCompile Include="Win32Framework.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

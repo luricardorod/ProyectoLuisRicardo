@@ -1,12 +1,12 @@
 #include <Core.h>
 #include <PrimitiveManager.h>
-
-#include <d3dx9math.h>
+#include <PrimitiveInstance.h>
+#include "CMatrix4D.h"
+#include "CVector4D.h"
 #include <Timer.h>
 
 class TestApp : public AppBase {
 public:
-	float teta = 0;
 	TestApp() : AppBase() {}
 	void InitVars();
 	void CreateAssets();
@@ -22,11 +22,15 @@ public:
 	void OnReset();
 
 	PrimitiveManager PrimitiveMgr;
+	PrimitiveInst	primitiveFigs[10];
 
-	D3DXVECTOR3		Position;
-	D3DXVECTOR3		Orientation;
-	D3DXVECTOR3		Scaling;
-	D3DXMATRIX		WorldTransform;
+	CVector4D		Position;
+	CVector4D		Orientation;
+	CVector4D		Scaling;
+
+	CMatrix4D		View;
+	CMatrix4D		Projection;
+	CMatrix4D		VP;
 
 	Timer			DtTimer;
 };

@@ -1,64 +1,12 @@
 
 #include "TriangleGL.h"
 
-#include <stdio.h>
-
-void checkcompilederrors(GLuint shader, GLenum type) {
-	GLint bShaderCompiled;
-	glGetShaderiv(shader, GL_COMPILE_STATUS, &bShaderCompiled);
-	if (!bShaderCompiled) {
-		int i32InfoLogLength, i32CharsWritten;
-		glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &i32InfoLogLength);
-
-		char* pszInfoLog = new char[i32InfoLogLength];
-		glGetShaderInfoLog(shader, i32InfoLogLength, &i32CharsWritten, pszInfoLog);
-		char* pszMsg = new char[i32InfoLogLength + 256];
-		if (type == GL_FRAGMENT_SHADER){
-			sprintf(pszMsg, "Failed to compile pixel shader: %s", pszInfoLog);
-		}
-		else if (type == GL_VERTEX_SHADER){ 
-			sprintf(pszMsg, "Failed to compile vertex shader: %s", pszInfoLog);
-		}
-		else{
-			sprintf(pszMsg, "Failed to compile wtf shader: %s", pszInfoLog);
-		}
-		printf("%s", pszMsg);
-		delete[] pszMsg;
-		delete[] pszInfoLog;
-	}
-}
-
-GLuint createShader(GLenum type, char* pSource) {
-	GLuint shader = glCreateShader(type);
-	glShaderSource(shader, 1, (const char**)&pSource, NULL);
-	glCompileShader(shader);
-	checkcompilederrors(shader, type);
-	return shader;
-}
-
-char *file2string(const char *path){
-	FILE *fd;
-	long len, r;
-	char *str;
-	if (!(fd = fopen(path, "r"))){
-		fprintf(stderr, "Can't open file '%s'\n", path);
-		return NULL;
-	}
-	fseek(fd, 0, SEEK_END);
-	len = ftell(fd);
-	fseek(fd, 0, SEEK_SET);
-	str = (char*)malloc(len * sizeof(char));
-	r = fread(str, sizeof(char), len, fd);
-	str[r] = '\0';
-	fclose(fd);
-	return str;
-}
 
 void TrangleGL::Create() {
 	shaderID = glCreateProgram();
 
-	char *vsSourceP = file2string("VS.glsl");
-	char *fsSourceP = file2string("FS.glsl");
+	char *vsSourceP = file2string("VS_tri.glsl");
+	char *fsSourceP = file2string("FS_tri.glsl");
 
 	GLuint vshader_id = createShader(GL_VERTEX_SHADER, vsSourceP);
 	GLuint fshader_id = createShader(GL_FRAGMENT_SHADER, fsSourceP);
@@ -74,22 +22,22 @@ void TrangleGL::Create() {
 	
 	matUniformLoc = glGetUniformLocation(shaderID, "MyMatrix");
 #ifdef USE_VBO
-	vertices[0] = { -0.1f,  0.1f, 0.0f , 0.0f, 0.0f, 1.0f };
-	vertices[1] = { -0.1f, -0.1f, 0.0f , 0.0f, 1.0f, 0.0f };
-	vertices[2] = {  0.1f, -0.1f, 0.0f , 1.0f, 0.0f, 1.0f };
-	vertices[3] = {  0.1f,  0.1f, 0.0f , 1.0f, 0.0f, 0.0f };
+	vertices[0] = { -0.5f,  0.5f, 0.0f , 0.0f, 0.0f, 1.0f };
+	vertices[1] = { -0.5f, -0.5f, 0.0f , 0.0f, 1.0f, 0.0f };
+	vertices[2] = {  0.5f, -0.5f, 0.0f , 1.0f, 0.0f, 1.0f };
+	vertices[3] = {  0.5f,  0.5f, 0.0f , 1.0f, 0.0f, 0.0f };
 
 	glGenBuffers(1, &VB);
 	glBindBuffer(GL_ARRAY_BUFFER, VB);
 	glBufferData(GL_ARRAY_BUFFER, 4 * sizeof(triVertex), &vertices[0], GL_STATIC_DRAW);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-	indices[0] = 0;
+	indices[0] = 2;
 	indices[1] = 1;
-	indices[2] = 2;
-	indices[3] = 0;
+	indices[2] = 0;
+	indices[3] = 3;
 	indices[4] = 2;
-	indices[5] = 3;
+	indices[5] = 0;
 
 	glGenBuffers(1, &IB);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IB);
@@ -122,44 +70,35 @@ void TrangleGL::Create() {
 		colors[5] = { 1.0f, 0.0f, 0.0f };
 	#endif
 #endif
-	D3DXMatrixIdentity(&transform);
+	transform = Identity();
 }
 
 void TrangleGL::Transform(float *t) {
 	transform = t;
 }
 
-void TrangleGL::Draw() {
+void TrangleGL::Draw(float *t,float *vp) {
+	glUseProgram(shaderID);
+	
+	if (t)
+		transform = t;
+
+	glUniformMatrix4fv(matUniformLoc, 1, GL_FALSE, &transform.m[0][0]);
 
 #ifdef USE_VBO
 	glBindBuffer(GL_ARRAY_BUFFER, VB);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IB);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,IB);
 
 	glEnableVertexAttribArray(vertexAttribLoc);
 	glEnableVertexAttribArray(colorAttribLoc);
 
 	glVertexAttribPointer(vertexAttribLoc, 3, GL_FLOAT, GL_FALSE, sizeof(triVertex), (void*)0);
 	glVertexAttribPointer(colorAttribLoc, 3, GL_FLOAT, GL_FALSE, sizeof(triVertex), (void*)12);
-	float delta = transform.m[4][4];
-	transform.m[4][4] = 1;
-	static float a = .09f;
-	static float b = 1.05f;
-	static float teta = 50;
-	teta -= delta/30;
-	if (teta < 0)
-	{
-		teta = 1;
-	}
-	for (float i = 0; i < 50; i += .5f)
-	{
-		D3DXMATRIX WorldTranslate, WorldScale;
-		D3DXMatrixTranslation(&WorldTranslate, a*pow(b, teta+i) * cosf(teta+i), a*pow(b, teta+i) * sinf(teta+i),0);
-		D3DXMatrixScaling(&WorldScale, (teta+i)/100, (teta+i)/100, 1);
-		glUniformMatrix4fv(matUniformLoc, 1, GL_FALSE, &(WorldScale*WorldTranslate*transform).m[0][0]);
 
-		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);
-	}
-	
+	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);
+
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 #else
 #ifdef USE_ARRAY_OF_STRUCTS
 	glEnableVertexAttribArray(vertexAttribLoc);
@@ -179,6 +118,10 @@ void TrangleGL::Draw() {
 
 	glDrawArrays(GL_TRIANGLES,0,6);
 #endif
+	glDisableVertexAttribArray(vertexAttribLoc);
+	glDisableVertexAttribArray(colorAttribLoc);
+
+	glUseProgram(0);
 }
 
 void TrangleGL::Destroy() {

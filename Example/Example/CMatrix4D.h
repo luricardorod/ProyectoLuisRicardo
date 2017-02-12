@@ -25,6 +25,7 @@ public:
 		float a20, float a21, float a22, float a23,
 		float a30, float a31, float a32, float a33);
 	CMatrix4D(const CMatrix4D& M);
+	CMatrix4D(float *vp);
 	CMatrix4D(CVector4D &row0,
 		CVector4D &row1,
 		CVector4D &row2,
@@ -44,6 +45,7 @@ CMatrix4D RotationX(float theta);
 CMatrix4D RotationY(float theta);
 CMatrix4D RotationZ(float theta);
 CMatrix4D Scaling(float sx, float sy, float sz);
-
+CMatrix4D LookAtRH(CVector4D &EyePos, CVector4D &Target, CVector4D &Up);
+CMatrix4D PerspectiveFovRH(float fovy, float Aspect, float zn, float zf);
 #endif
 

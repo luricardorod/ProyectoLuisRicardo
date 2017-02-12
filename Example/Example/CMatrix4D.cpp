@@ -10,6 +10,28 @@ CMatrix4D::CMatrix4D(const CMatrix4D& A)
 {
 	*this = A;
 }
+CMatrix4D::CMatrix4D(float * vp)
+{
+	m00 = (*vp);
+	m01 = (*(vp+1));
+	m02 = (*(vp + 2));
+	m03 = (*(vp + 3));
+
+	m10 = (*(vp + 4));
+	m11 = (*(vp + 5));
+	m12 = (*(vp + 6));
+	m13 = (*(vp + 7));
+
+	m20 = (*(vp + 8));
+	m21 = (*(vp + 9));
+	m22 = (*(vp + 10));
+	m23 = (*(vp + 11));
+
+	m30 = (*(vp + 12));
+	m31 = (*(vp + 13));
+	m32 = (*(vp + 14));
+	m33 = (*(vp + 15));
+}
 CMatrix4D::CMatrix4D(
 	float a00, float a01, float a02, float a03,
 	float a10, float a11, float a12, float a13,
@@ -90,13 +112,41 @@ CMatrix4D Scaling(float sx, float sy, float sz)
 	S.m22 = sz;
 	return S;
 }
+CMatrix4D LookAtRH(CVector4D &EyePos, CVector4D &Target, CVector4D &Up)
+{
+	CVector4D zaxis = Normalize(EyePos - Target);
+	CVector4D xaxis = Normalize(Cross3(Up, zaxis));
+	CVector4D yaxis = Cross3(zaxis, xaxis);
+
+	CMatrix4D Result;
+	Result.m[0][0] = xaxis.x;	Result.m[0][1] = yaxis.x;	Result.m[0][2] = zaxis.x;	Result.m[0][3] = 0;
+	Result.m[1][0] = xaxis.y;	Result.m[1][1] = yaxis.y;	Result.m[1][2] = zaxis.y;	Result.m[1][3] = 0;
+	Result.m[2][0] = xaxis.z;	Result.m[2][1] = yaxis.z;	Result.m[2][2] = zaxis.z;	Result.m[2][3] = 0;
+	Result.m[3][0] = -Dot(xaxis, EyePos); Result.m[3][1] = -Dot(yaxis, EyePos); Result.m[3][2] = -Dot(zaxis, EyePos); Result.m[3][3] = 1;
+
+	return Result;
+}
+CMatrix4D PerspectiveFovRH(float fovY, float Aspect, float zn, float zf)
+{
+	float yScale = 1 / tanf(fovY / 2);
+	float xScale = yScale / Aspect;
+	CMatrix4D result = Identity();
+	result.m00 = xScale;
+	result.m11 = yScale;
+	result.m22 = zf / (zn - zf);
+	result.m23 = -1;
+	result.m32 = zn*zf / (zn - zf);
+	result.m33 = 0;
+
+	return result;
+}
 #ifdef MANODER
 CMatrix4D Translation(float dx, float dy, float dz)
 {
 	CMatrix4D T = Identity();
-	T.m03 = dx;
-	T.m13 = dy;
-	T.m23 = dz;
+	T.m30 = dx;
+	T.m31 = dy;
+	T.m32 = dz;
 	return T;
 }
 CMatrix4D RotationX(float theta)

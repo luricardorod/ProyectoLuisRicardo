@@ -2,13 +2,27 @@
 
 void TestApp::InitVars() {
 	DtTimer.Init();
-	Position	= D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-	Orientation = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-	Scaling		= D3DXVECTOR3(1.0f, 1.0f, 1.0f);
+	Position	= CVector4D(0.0f, 0.0f, 0.0f, 0);
+	Orientation = CVector4D(0.0f, 0.0f, 0.0f, 0);
+	Scaling		= CVector4D(1.0f, 1.0f, 1.0f, 0);
 }
 
 void TestApp::CreateAssets() {	
-	PrimitiveMgr.CreateTriangle();
+	PrimitiveMgr.SetVP(&VP);
+
+	int indexCerdo = PrimitiveMgr.CreateCerdo();
+	primitiveFigs[0].CreateInstance(PrimitiveMgr.GetPrimitive(indexCerdo), &VP);
+
+
+	CMatrix4D View;
+	CVector4D Pos = CVector4D(0.0f, 1.0f, 5.0f, 0);
+	CVector4D Up = CVector4D(0.0f, 1.0f, 0.0f, 0);
+	CVector4D LookAt = CVector4D(0.0001f, 0.0001f, 0.0001f, 0) - Pos;
+
+	View = LookAtRH(Pos, LookAt, Up);
+	CMatrix4D proj = PerspectiveFovRH(45*3.1416/180, 1280.0f / 720.0f, 0.1f, 1000.0f);
+	VP = View * proj;
+
 }
 
 void TestApp::DestroyAssets() {
@@ -20,20 +34,21 @@ void TestApp::OnUpdate() {
 
 	OnInput();
 
-	D3DXMATRIX WorldTranslate,WorldScale,WorldRotate;
-	D3DXMatrixTranslation(&WorldTranslate, Position.x, Position.y, Position.z);
-	D3DXMatrixScaling(&WorldScale, Scaling.x, Scaling.y, Scaling.z);
-	D3DXMatrixRotationZ(&WorldRotate, Orientation.z);
-	WorldTransform = WorldScale*WorldRotate*WorldTranslate;
-	WorldTransform.m[4][4]  = DtTimer.GetDTSecs();
-	PrimitiveMgr.TransformPrimitive(0, &WorldTransform.m[0][0]);
+
+	primitiveFigs[0].TranslateAbsolute(Position.x, Position.y, Position.z);
+	primitiveFigs[0].RotateXAbsolute(Orientation.x);
+	primitiveFigs[0].RotateYAbsolute(Orientation.y);
+	primitiveFigs[0].RotateZAbsolute(Orientation.z);
+	primitiveFigs[0].ScaleAbsolute(Scaling.x);
+	primitiveFigs[0].Update();
 
 	OnDraw();
 }
 
 void TestApp::OnDraw() {
 	pFramework->pVideoDriver->Clear();
-	PrimitiveMgr.DrawPrimitives();
+	
+	primitiveFigs[0].Draw();
 	pFramework->pVideoDriver->SwapBuffers();
 }
 
@@ -55,6 +70,14 @@ void TestApp::OnInput() {
 		Position.x += 1.0f*DtTimer.GetDTSecs();
 	}
 
+	if (IManager.PressedKey(SDLK_z)) {
+		Position.z -= 1.0f*DtTimer.GetDTSecs();
+	}
+
+	if (IManager.PressedKey(SDLK_x)) {
+		Position.z += 1.0f*DtTimer.GetDTSecs();
+	}
+
 	if (IManager.PressedKey(SDLK_KP_PLUS)) {
 		Scaling.x += 1.0f*DtTimer.GetDTSecs();
 		Scaling.y += 1.0f*DtTimer.GetDTSecs();
@@ -67,12 +90,28 @@ void TestApp::OnInput() {
 		Scaling.z -= 1.0f*DtTimer.GetDTSecs();
 	}
 
+	if (IManager.PressedKey(SDLK_KP5)) {
+		Orientation.x -= 60.0f*DtTimer.GetDTSecs();
+	}
+
+	if (IManager.PressedKey(SDLK_KP6)) {
+		Orientation.x += 60.0f*DtTimer.GetDTSecs();
+	}
+
+	if (IManager.PressedKey(SDLK_KP2)) {
+		Orientation.y -= 60.0f*DtTimer.GetDTSecs();
+	}
+
+	if (IManager.PressedKey(SDLK_KP3)) {
+		Orientation.y += 60.0f*DtTimer.GetDTSecs();
+	}
+
 	if (IManager.PressedKey(SDLK_KP0)) {
-		Orientation.z -= 1.0f*DtTimer.GetDTSecs();
+		Orientation.z -= 60.0f*DtTimer.GetDTSecs();
 	}
 
 	if (IManager.PressedKey(SDLK_KP_PERIOD)) {
-		Orientation.z += 1.0f*DtTimer.GetDTSecs();
+		Orientation.z += 60.0f*DtTimer.GetDTSecs();
 	}
 
 	
