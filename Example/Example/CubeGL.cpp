@@ -1,7 +1,7 @@
 #include "CubeGL.h"
 #define BUFFER_OFFSET(i) ((char *)NULL + (i))
 
-void CubeGL::Create() {
+void CubeGL::Create(char* path) {
 	shaderID = glCreateProgram();
 
 	char *vsSourceP = file2string("VS.glsl");

@@ -22,6 +22,7 @@
     <ClInclude Include="BaseDriver.h" />
     <ClInclude Include="CBMPCharge.h" />
     <ClInclude Include="CerdoGL.h" />
+    <ClInclude Include="CObject3D.h" />
     <ClInclude Include="Core.h" />
     <ClInclude Include="CubeGL.h" />
     <ClInclude Include="CVector4D.h" />
@@ -39,6 +40,7 @@
   <ItemGroup>
     <ClCompile Include="CBMPCharge.cpp" />
     <ClCompile Include="CerdoGL.cpp" />
+    <ClCompile Include="CObject3D.cpp" />
     <ClCompile Include="Core.cpp" />
     <ClCompile Include="CubeGL.cpp" />
     <ClCompile Include="CVector4D.cpp" />

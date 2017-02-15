@@ -32,7 +32,7 @@ struct triVertex {
 class TrangleGL : public PrimitiveBase {
 public:
 	TrangleGL() : shaderID(0) {}
-	void Create();
+	void Create(char *path);
 	void Transform(float *t);
 	void Draw(float *t,float *vp);
 	void Destroy();

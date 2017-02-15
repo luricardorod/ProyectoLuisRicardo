@@ -2,7 +2,7 @@
 #include "TriangleGL.h"
 
 
-void TrangleGL::Create() {
+void TrangleGL::Create(char *path) {
 	shaderID = glCreateProgram();
 
 	char *vsSourceP = file2string("VS_tri.glsl");

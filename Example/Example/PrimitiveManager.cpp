@@ -2,7 +2,7 @@
 #include "PrimitiveManager.h"
 #include "TriangleGL.h"
 #include "CubeGL.h"
-#include "CerdoGL.h"
+#include "CObject3D.h"
 
 PrimitiveBase*	PrimitiveManager::GetPrimitive(unsigned int index) {
 	if (index >= primitives.size())
@@ -13,22 +13,23 @@ PrimitiveBase*	PrimitiveManager::GetPrimitive(unsigned int index) {
 
 int  PrimitiveManager::CreateTriangle() {
 	PrimitiveBase *primitive = new TrangleGL();
-	primitive->Create();
+	primitive->Create("NULL");
 	primitives.push_back(primitive);
 	return (int)(primitives.size()-1);
 }
 
 int	 PrimitiveManager::CreateCube(){
 	PrimitiveBase *primitive = new CubeGL();
-	primitive->Create();
+	primitive->Create("NULL");
 	primitives.push_back(primitive);
 	return (int)(primitives.size() - 1);
 }
 
-int PrimitiveManager::CreateCerdo()
+
+int PrimitiveManager::CreateObject3D(char * path)
 {
-	PrimitiveBase *primitive = new CerdoGL();
-	primitive->Create();
+	PrimitiveBase *primitive = new CObject3D();
+	primitive->Create(path);
 	primitives.push_back(primitive);
 	return (int)(primitives.size() - 1);
 }

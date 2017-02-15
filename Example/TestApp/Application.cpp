@@ -10,7 +10,7 @@ void TestApp::InitVars() {
 void TestApp::CreateAssets() {	
 	PrimitiveMgr.SetVP(&VP);
 
-	int indexCerdo = PrimitiveMgr.CreateCerdo();
+	int indexCerdo = PrimitiveMgr.CreateObject3D("Cerdo.X");
 	primitiveFigs[0].CreateInstance(PrimitiveMgr.GetPrimitive(indexCerdo), &VP);
 
 
