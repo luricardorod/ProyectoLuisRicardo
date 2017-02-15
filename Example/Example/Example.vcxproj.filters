@@ -56,6 +56,9 @@
     <ClInclude Include="CerdoGL.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="CBMPCharge.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Core.cpp">
@@ -95,6 +98,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="CerdoGL.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CBMPCharge.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

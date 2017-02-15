@@ -1,6 +1,7 @@
 #include "UtilsGL.h"
 #include <stdio.h>    
 #include <stdlib.h>
+#include <string>
 
 void checkcompilederrors(GLuint shader, GLenum type) {
 	GLint bShaderCompiled;
@@ -52,3 +53,47 @@ char *file2string(const char *path) {
 	fclose(fd);
 	return str;
 }
+
+unsigned char * loadBMPFile(char * path)
+{
+	FILE *fd;
+	long len, r;
+	unsigned char file[54];
+	if (!(fd = fopen(path, "rb"))) {
+		fprintf(stderr, "Can't open file '%s'\n", path);
+		return NULL;
+	}
+	
+	fread(file, sizeof(unsigned char), 54, fd);
+	int width = *(int*)&file[18];
+	int height = *(int*)&file[22];
+	int size = 3 * width*height;
+
+	if (
+		(file[0]) == 'B' &&
+		(file[1]) == 'M'
+		)
+	{
+		unsigned char *buffer = new unsigned char[size];
+		fread(buffer, sizeof(unsigned char), size, fd);
+		fclose(fd);
+		for (int i = 0; i < size; i += 3)
+		{
+			unsigned char temp = buffer[i];
+			buffer[i] = buffer[i + 2];
+			buffer[i + 2] = temp;
+			printf("r=%x \t", (unsigned int)buffer[i]);
+			printf("g=%x \t", (unsigned int)buffer[i+1]);
+			printf("b=%x \t", (unsigned int)buffer[i+2]);
+
+
+		}
+		return buffer;
+	}
+	
+	printf("ARchivo no valido");
+
+	fclose(fd);
+	return NULL;
+}
+

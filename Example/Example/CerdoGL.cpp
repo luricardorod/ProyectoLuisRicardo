@@ -25,7 +25,7 @@ void CerdoGL::Create() {
 	matWorldUniformLoc = glGetUniformLocation(shaderID, "World");
 
 	char *archivo = file2string("Cerdo.X");
-	
+	loadBMPFile("prueba.bmp");
 	int counter = 0;
 	int sizeVertex;
 	int dif;
@@ -273,7 +273,7 @@ void CerdoGL::Create() {
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeIndex * sizeof(unsigned short), indices, GL_STATIC_DRAW);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
-	D3DXMatrixIdentity(&transform);
+	transform = Identity();
 }
 
 void CerdoGL::Transform(float *t) {
@@ -286,8 +286,8 @@ void CerdoGL::Draw(float *t, float *vp) {
 	if (t)
 		transform = t;
 
-	D3DXMATRIX VP = D3DXMATRIX(vp);
-	D3DXMATRIX WVP = transform*VP;
+	CMatrix4D VP = CMatrix4D(vp);
+	CMatrix4D WVP = transform*VP;
 
 	glUniformMatrix4fv(matWorldUniformLoc, 1, GL_FALSE, &transform.m[0][0]);
 	glUniformMatrix4fv(matWorldViewProjUniformLoc, 1, GL_FALSE, &WVP.m[0][0]);

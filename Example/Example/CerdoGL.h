@@ -3,7 +3,7 @@
 
 #include <GLES2/gl2.h>
 #include <GLES2/gl2ext.h>
-#include <d3dx9math.h>
+#include "CMatrix4D.h"
 
 #include "PrimitiveBase.h"
 #include "UtilsGL.h"
@@ -30,7 +30,7 @@ public:
 	GLuint			IB;
 	int sizeIndex;
 
-	D3DXMATRIX	transform;
+	CMatrix4D	transform;
 };
 
 

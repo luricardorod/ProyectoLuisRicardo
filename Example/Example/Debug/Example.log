@@ -1,2 +1,4 @@
-﻿  Win32Framework.cpp
-  Example.vcxproj -> E:\UAD\5to\graficas\ClassProject\Example\Debug\Framework.lib
+﻿  UtilsGL.cpp
+e:\uad\5to\graficas\proyectoluisricardo\example\example\utilsgl.cpp(60): warning C4101: 'len': unreferenced local variable
+e:\uad\5to\graficas\proyectoluisricardo\example\example\utilsgl.cpp(60): warning C4101: 'r': unreferenced local variable
+  Example.vcxproj -> E:\UAD\5to\graficas\ProyectoLuisRicardo\Example\Debug\Framework.lib

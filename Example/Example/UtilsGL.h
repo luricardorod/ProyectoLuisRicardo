@@ -9,6 +9,7 @@
 void checkcompilederrors(GLuint shader, GLenum type);
 GLuint createShader(GLenum type, char* pSource);
 char *file2string(const char *path);
+unsigned char* loadBMPFile(char *path);
 
 
 #endif
