@@ -26,7 +26,253 @@ void CObject3D::Create(char * path) {
 	matWorldUniformLoc = glGetUniformLocation(shaderID, "World");
 
 	int sizeVertex;
-	loadVertexIndexForFile(path, vertices, indices, &sizeIndex, &sizeVertex);
+	//loadVertexIndexForFile(path, vertices, indices, &sizeIndex, &sizeVertex);
+	long sizeFile;
+	char *archivo = file2string(path, &sizeFile);
+	int counter = 0;
+	int dif;
+
+	float numberConvert;
+	int positionBuffer;
+	bool flag = true;
+	char* buffer1 = new char[20];
+	while (flag)
+	{
+		if (counter > sizeFile)
+		{
+			flag = false;
+			printf("Error al leer el archivo no mesh");
+			vertices = NULL;
+			indices = NULL;
+			sizeIndex = NULL;
+			sizeVertex = NULL;
+		}
+		if (
+			archivo[counter] == 'M' &&
+			archivo[counter + 1] == 'e' &&
+			archivo[counter + 2] == 's' &&
+			archivo[counter + 3] == 'h' &&
+			archivo[counter + 4] == ' ' &&
+			archivo[counter + 5] == 'm'
+			)
+		{
+			counter += 9;
+			while (flag)
+			{
+				if (archivo[counter] == '{')
+				{
+					counter += 1;
+					positionBuffer = 0;
+
+					while (archivo[counter] != ';')
+					{
+						buffer1[positionBuffer] = archivo[counter];
+						positionBuffer++;
+						counter++;
+					}
+					buffer1[positionBuffer] = '\0';
+					(sizeVertex) = std::atof(buffer1);
+					vertices = new CVertex[(sizeVertex)];
+					for (int i = 0; i < (sizeVertex); i++)
+					{
+						counter++;
+						positionBuffer = 0;
+						while (archivo[counter] != ';')
+						{
+							buffer1[positionBuffer] = archivo[counter];
+							counter++;
+							positionBuffer++;
+						}
+						buffer1[positionBuffer] = '\0';
+						numberConvert = std::atof(buffer1);
+						vertices[i].x = numberConvert;
+						counter++;
+
+						positionBuffer = 0;
+						while (archivo[counter] != ';')
+						{
+							buffer1[positionBuffer] = archivo[counter];
+							positionBuffer++;
+							counter++;
+						}
+						buffer1[positionBuffer] = '\0';
+						numberConvert = std::atof(buffer1);
+						vertices[i].y = numberConvert;
+						counter++;
+
+						positionBuffer = 0;
+						while (archivo[counter] != ';')
+						{
+							buffer1[positionBuffer] = archivo[counter];
+							positionBuffer++;
+							counter++;
+						}
+						buffer1[positionBuffer] = '\0';
+						numberConvert = std::atof(buffer1);
+						vertices[i].z = numberConvert;
+						vertices[i].w = 1;
+						counter++;
+					}
+					//end vertex
+
+					//startIndex
+					counter += 2;
+					dif = counter;
+					positionBuffer = 0;
+
+					while (archivo[counter] != ';')
+					{
+						buffer1[positionBuffer] = archivo[counter];
+						positionBuffer++;
+						counter++;
+					}
+					buffer1[positionBuffer] = '\0';
+					dif -= std::atof(buffer1);
+					(sizeIndex) = (std::atof(buffer1) * 3);
+					indices = new unsigned short[(sizeIndex)];
+					for (int i = 0; i < (sizeIndex); i++)
+					{
+
+						counter++;
+						while (archivo[counter] != ';')
+						{
+							counter++;
+						}
+						counter++;
+						positionBuffer = 0;
+						while (archivo[counter] != ',')
+						{
+							buffer1[positionBuffer] = archivo[counter];
+							counter++;
+							positionBuffer++;
+						}
+						buffer1[positionBuffer] = '\0';
+						numberConvert = std::atof(buffer1);
+						indices[i + 2] = numberConvert;
+						counter++;
+						i++;
+
+						positionBuffer = 0;
+						while (archivo[counter] != ',')
+						{
+							buffer1[positionBuffer] = archivo[counter];
+							counter++;
+							positionBuffer++;
+						}
+						buffer1[positionBuffer] = '\0';
+						numberConvert = std::atof(buffer1);
+						indices[i] = numberConvert;
+						counter++;
+						i++;
+
+						positionBuffer = 0;
+						while (archivo[counter] != ';')
+						{
+							buffer1[positionBuffer] = archivo[counter];
+							counter++;
+							positionBuffer++;
+						}
+						buffer1[positionBuffer] = '\0';
+						numberConvert = std::atof(buffer1);
+						indices[i - 2] = numberConvert;
+						counter++;
+
+					}
+					//endIndex
+
+					//normals
+					counter += 2;
+					dif = counter - dif;
+					while (archivo[counter] != ';')
+					{
+						counter++;
+					}
+					for (int i = 0; i < (sizeVertex); i++)
+					{
+						counter++;
+						positionBuffer = 0;
+						while (archivo[counter] != ';')
+						{
+							buffer1[positionBuffer] = archivo[counter];
+							counter++;
+							positionBuffer++;
+						}
+						buffer1[positionBuffer] = '\0';
+						numberConvert = std::atof(buffer1);
+						vertices[i].nx = numberConvert;
+						counter++;
+
+						positionBuffer = 0;
+						while (archivo[counter] != ';')
+						{
+							buffer1[positionBuffer] = archivo[counter];
+							positionBuffer++;
+							counter++;
+						}
+						buffer1[positionBuffer] = '\0';
+						numberConvert = std::atof(buffer1);
+						vertices[i].ny = numberConvert;
+						counter++;
+
+						positionBuffer = 0;
+						while (archivo[counter] != ';')
+						{
+							buffer1[positionBuffer] = archivo[counter];
+							positionBuffer++;
+							counter++;
+						}
+						buffer1[positionBuffer] = '\0';
+						numberConvert = std::atof(buffer1);
+						vertices[i].nz = numberConvert;
+						vertices[i].nw = 1;
+						counter++;
+					}
+					//endnormals
+
+					//uvs
+					counter += dif + 30;
+					while (archivo[counter] != ';')
+					{
+						counter++;
+					}
+					counter++;
+					for (int i = 0; i < (sizeVertex); i++)
+					{
+						counter++;
+						positionBuffer = 0;
+						while (archivo[counter] != ';')
+						{
+							buffer1[positionBuffer] = archivo[counter];
+							counter++;
+							positionBuffer++;
+						}
+						buffer1[positionBuffer] = '\0';
+						numberConvert = std::atof(buffer1);
+						vertices[i].s = numberConvert;
+						counter++;
+
+						positionBuffer = 0;
+						while (archivo[counter] != ';')
+						{
+							buffer1[positionBuffer] = archivo[counter];
+							positionBuffer++;
+							counter++;
+						}
+						buffer1[positionBuffer] = '\0';
+						numberConvert = std::atof(buffer1);
+						vertices[i].t = numberConvert;
+						counter++;
+					}
+					//enduvs
+					flag = false;
+				}
+				counter++;
+			}
+		}
+		counter++;
+
+	}
+	//
 
 
 	glGenBuffers(1, &VB);
@@ -43,6 +289,8 @@ void CObject3D::Create(char * path) {
 	transform = Identity();
 	delete vsSourceP;
 	delete fsSourceP;
+	delete buffer1;
+	delete archivo;
 }
 
 void CObject3D::Transform(float *t) {

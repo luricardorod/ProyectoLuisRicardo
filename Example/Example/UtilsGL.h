@@ -12,6 +12,5 @@ char *file2string(const char *path, long* size);
 char *file2string(const char *path);
 
 unsigned char* loadBMPFile(char *path);
-void loadVertexIndexForFile(char * path, CVertex* vertices, unsigned short*	indices, int *sizeIndex, int *sizeVertx);
 
 #endif
