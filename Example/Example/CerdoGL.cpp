@@ -25,7 +25,6 @@ void CerdoGL::Create() {
 	matWorldUniformLoc = glGetUniformLocation(shaderID, "World");
 
 	int sizeVertex;
-	loadVertexIndexForFile("Cerdo.X", vertices, indices, &sizeIndex, &sizeVertex);
 
 	glGenBuffers(1, &VB);
 	glBindBuffer(GL_ARRAY_BUFFER, VB);

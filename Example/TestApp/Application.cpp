@@ -10,8 +10,10 @@ void TestApp::InitVars() {
 void TestApp::CreateAssets() {	
 	PrimitiveMgr.SetVP(&VP);
 
-	int indexCerdo = PrimitiveMgr.CreateObject3D("Cerdo.X");
+	int indexCerdo = PrimitiveMgr.CreateObject3D("NuBatman.X");
+	//int cubo = PrimitiveMgr.CreateCube();
 	primitiveFigs[0].CreateInstance(PrimitiveMgr.GetPrimitive(indexCerdo), &VP);
+
 
 
 	CMatrix4D View;
@@ -41,7 +43,6 @@ void TestApp::OnUpdate() {
 	primitiveFigs[0].RotateZAbsolute(Orientation.z);
 	primitiveFigs[0].ScaleAbsolute(Scaling.x);
 	primitiveFigs[0].Update();
-
 	OnDraw();
 }
 
@@ -49,6 +50,7 @@ void TestApp::OnDraw() {
 	pFramework->pVideoDriver->Clear();
 	
 	primitiveFigs[0].Draw();
+
 	pFramework->pVideoDriver->SwapBuffers();
 }
 

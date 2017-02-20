@@ -1,0 +1,46 @@
+﻿  CBMPCharge.cpp
+  CerdoGL.cpp
+  CObject3D.cpp
+CObject3D.cpp(91): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
+CObject3D.cpp(104): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+CObject3D.cpp(116): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+CObject3D.cpp(128): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+CObject3D.cpp(147): warning C4244: '-=': conversion from 'double' to 'int', possible loss of data
+CObject3D.cpp(148): warning C4244: '=': conversion from 'double' to 'unsigned short', possible loss of data
+CObject3D.cpp(167): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+CObject3D.cpp(168): warning C4244: '=': conversion from 'float' to 'unsigned short', possible loss of data
+CObject3D.cpp(180): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+CObject3D.cpp(181): warning C4244: '=': conversion from 'float' to 'unsigned short', possible loss of data
+CObject3D.cpp(193): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+CObject3D.cpp(194): warning C4244: '=': conversion from 'float' to 'unsigned short', possible loss of data
+CObject3D.cpp(218): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+CObject3D.cpp(230): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+CObject3D.cpp(242): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+CObject3D.cpp(267): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+CObject3D.cpp(279): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+CObject3D.cpp(338): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+CObject3D.cpp(339): warning C4244: '=': conversion from 'float' to 'unsigned short', possible loss of data
+CObject3D.cpp(55): warning C4101: 'pathsTextures': unreferenced local variable
+  Core.cpp
+  CubeGL.cpp
+  CVector4D.cpp
+  GLDriver.cpp
+  InputManager.cpp
+  CMatrix4D.cpp
+  PrimitiveInstance.cpp
+PrimitiveInstance.cpp(8): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+PrimitiveInstance.cpp(12): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+PrimitiveInstance.cpp(16): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+PrimitiveInstance.cpp(31): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+PrimitiveInstance.cpp(37): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+PrimitiveInstance.cpp(43): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+  PrimitiveManager.cpp
+  Texture.cpp
+Texture.cpp(3): fatal error C1083: Cannot open include file: 'stb_image.h': No such file or directory
+  TextureGL.cpp
+  Timer.cpp
+  TriangleGL.cpp
+  UtilsGL.cpp
+UtilsGL.cpp(78): warning C4101: 'len': unreferenced local variable
+UtilsGL.cpp(78): warning C4101: 'r': unreferenced local variable
+  Win32Framework.cpp

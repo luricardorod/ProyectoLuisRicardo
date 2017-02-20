@@ -1,6 +1,10 @@
 #ifndef UAD_PRIMITIVEBASE_H
 #define UAD_PRIMITIVEBASE_H
 
+#ifndef BUFFER_OFFSET
+#define BUFFER_OFFSET(i) ((char *)NULL + (i))
+#endif
+
 class PrimitiveBase {
 public:
 	virtual void Create(char *path) = 0;

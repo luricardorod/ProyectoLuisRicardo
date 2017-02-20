@@ -7,6 +7,9 @@
 
 #include "PrimitiveBase.h"
 #include "UtilsGL.h"
+#include "TextureGL.h"
+#include <vector>
+#include <map>
 
 class CObject3D : public PrimitiveBase {
 public:
@@ -21,6 +24,8 @@ public:
 	GLint	vertexAttribLoc;
 	GLint	normalAttribLoc;
 	GLint	uvAttribLoc;
+	GLint	diffuseLoc;
+	int		TexId[32];
 
 	GLint  matWorldViewProjUniformLoc;
 	GLint  matWorldUniformLoc;
@@ -28,10 +33,15 @@ public:
 	CVertex*		vertices;
 	unsigned short*	indices;
 	GLuint			VB;
-	GLuint			IB;
+	GLuint			IB[20];
+	std::vector<unsigned short> bufferIndex[20];
+	std::map <std::string, unsigned short> list;
 	int sizeIndex;
 
+
 	CMatrix4D	transform;
+	Texture		*tex[20];
+
 };
 
 

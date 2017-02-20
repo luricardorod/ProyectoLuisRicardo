@@ -2,6 +2,13 @@
 #define BUFFER_OFFSET(i) ((char *)NULL + (i))
 
 void CubeGL::Create(char* path) {
+
+	Texture *tex = new TextureGL;
+	TexId = tex->LoadTexture("cerdo_D.tga");
+	if (TexId == -1) {
+		delete tex;
+	}
+
 	shaderID = glCreateProgram();
 
 	char *vsSourceP = file2string("VS.glsl");
@@ -9,6 +16,9 @@ void CubeGL::Create(char* path) {
 
 	GLuint vshader_id = createShader(GL_VERTEX_SHADER, vsSourceP);
 	GLuint fshader_id = createShader(GL_FRAGMENT_SHADER, fsSourceP);
+
+	delete[] vsSourceP;
+	delete[] fsSourceP;
 
 	glAttachShader(shaderID, vshader_id);
 	glAttachShader(shaderID, fshader_id);
@@ -23,6 +33,8 @@ void CubeGL::Create(char* path) {
 	matWorldViewProjUniformLoc = glGetUniformLocation(shaderID, "WVP");
 	matWorldUniformLoc		   = glGetUniformLocation(shaderID, "World");
 	
+	diffuseLoc = glGetUniformLocation(shaderID, "diffuse");
+
 	// +Y SIDE
 	vertices[0] = { -1.0f,  1.0f, -1.0f, 1.0f,  0.0f, 1.0f, 0.0f, 1.0f,  0.0f, 1.0f };
 	vertices[1] = {  1.0f,  1.0f, -1.0f, 1.0f,  0.0f, 1.0f, 0.0f, 1.0f,  1.0f, 1.0f };
@@ -112,6 +124,7 @@ void CubeGL::Create(char* path) {
 	indices[34] = 22;
 	indices[35] = 23;
 
+
 	glGenBuffers(1, &IB);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IB);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, 36 * sizeof(unsigned short), indices, GL_STATIC_DRAW);
@@ -150,6 +163,10 @@ void CubeGL::Draw(float *t,float *vp) {
 	
 	if(uvAttribLoc!=-1)
 		glVertexAttribPointer(uvAttribLoc, 2, GL_FLOAT, GL_FALSE, sizeof(CVertex), BUFFER_OFFSET(32));
+
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, TexId);
+	glUniform1i(diffuseLoc, 0);
 
 	glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_SHORT, 0);
 	
