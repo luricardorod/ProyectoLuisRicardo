@@ -40,7 +40,6 @@ public:
 
 
 	CMatrix4D	transform;
-	Texture		*tex[20];
 
 };
 

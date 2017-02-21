@@ -392,24 +392,18 @@ void CObject3D::Create(char * path) {
 		}
 	}
 
-	int tempcount = 0;
+	//no ligting   busediffusemap diffusemap speclevel specularmap glossmap glossiness normalmap bflipgreenchanel
 	for (std::map<std::string, unsigned short>::iterator it = list.begin(); it != list.end(); ++it) {
-		tex[tempcount] = new TextureGL;
+		Texture	*tex = new TextureGL;
 		char *tempChar;
 		tempChar = new char[(it->first.size() + 1)];
 		memcpy(tempChar, it->first.c_str(), it->first.size() + 1);
-		TexId[tempcount] = tex[tempcount]->LoadTexture(tempChar);
-		if (TexId[tempcount] == -1) {
+		TexId[it->second] = tex->LoadTexture(tempChar);
+		if (TexId[it->second] == -1) {
 			delete tex;
 		}
-		else
-		{
-			glActiveTexture(GL_TEXTURE0 + tempcount);
-			glBindTexture(GL_TEXTURE_2D, TexId[tempcount]);
-		}
-		tempcount++;
+		delete tempChar;
 	}
-
 
 	//Crear macro size and vertex buffer
 	int sumVertexSize = 0;
@@ -475,10 +469,10 @@ void CObject3D::Create(char * path) {
 	
 
 	transform = Identity();
-	delete vsSourceP;
-	delete fsSourceP;
-	//delete buffer1;
-	delete archivo;
+	delete[] vsSourceP;
+	delete[] fsSourceP;
+	//delete[] buffer1;
+	delete[] archivo;
 }
 
 void CObject3D::Transform(float *t) {
@@ -519,11 +513,11 @@ void CObject3D::Draw(float *t, float *vp) {
 
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IB[i]);
 
-		glActiveTexture(GL_TEXTURE1);
+		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, TexId[i]);
 		glUniform1i(diffuseLoc, 0);
 
-		glDrawElements(GL_TRIANGLES, sizeIndex, GL_UNSIGNED_SHORT, 0);
+		glDrawElements(GL_TRIANGLES, bufferIndex[i].size(), GL_UNSIGNED_SHORT, 0);
 	}
 
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
