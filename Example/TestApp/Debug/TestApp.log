@@ -1,4 +1,5 @@
 ﻿  Application.cpp
-c:\users\bluemonkey\desktop\class\proyectoluisricardo\example\testapp\application.cpp(29): warning C4305: 'argumento': truncamiento de 'double' a 'float'
-  TestApp.vcxproj -> C:\Users\blueMonkey\Desktop\CLASS\ProyectoLuisRicardo\Example\bin\TestApp.exe
-  TestApp.vcxproj -> C:\Users\blueMonkey\Desktop\CLASS\ProyectoLuisRicardo\Example\bin\TestApp.pdb (Full PDB)
+e:\uad\5to\graficas\proyectoluisricardo\example\testapp\application.cpp(36): warning C4305: 'argument': truncation from 'double' to 'float'
+e:\uad\5to\graficas\proyectoluisricardo\example\testapp\application.cpp(59): warning C4305: 'argument': truncation from 'double' to 'float'
+  TestApp.vcxproj -> E:\UAD\5to\graficas\ProyectoLuisRicardo\Example\bin\TestApp.exe
+  TestApp.vcxproj -> E:\UAD\5to\graficas\ProyectoLuisRicardo\Example\bin\TestApp.pdb (Full PDB)

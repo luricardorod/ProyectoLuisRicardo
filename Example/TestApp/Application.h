@@ -25,6 +25,9 @@ public:
 	PrimitiveInst	primitiveFigs[10];
 
 	CVector4D		Position;
+	CVector4D		PositionCamera;
+	CMatrix4D		proj;
+	CVector4D       Up;
 	CVector4D		Orientation;
 	CVector4D		Scaling;
 
