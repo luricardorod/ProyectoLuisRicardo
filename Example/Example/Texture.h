@@ -7,6 +7,11 @@ enum TEXT_BASIC_FORMAT {
 	CH_RGBA = 4
 };
 
+enum TEXT_BASIC_PARAMS {
+	TILED = 1,
+	CLAMP_TO_EDGE = 2,
+	MIPMAPS = 4
+};
 class Texture {
 public:
 	Texture() :

@@ -2,13 +2,22 @@
 #define BUFFER_OFFSET(i) ((char *)NULL + (i))
 #include <string>
 
-void CObject3D::Create(char * path) {
+#define CHANGE_TO_RH 0
+#define DEBUG_MODEL 0
 
-	shaderID = glCreateProgram();
+#ifdef USING_D3D11
+extern ComPtr<ID3D11Device>            D3D11Device;
+extern ComPtr<ID3D11DeviceContext>     D3D11DeviceContext;
+#endif
+
+void CObject3D::Create(char * path) {
 
 	char *vsSourceP = file2string("VS.glsl");
 	char *fsSourceP = file2string("FS.glsl");
+	
 
+#ifdef USING_OPENGL_ES
+	shaderID = glCreateProgram();
 	GLuint vshader_id = createShader(GL_VERTEX_SHADER, vsSourceP);
 	GLuint fshader_id = createShader(GL_FRAGMENT_SHADER, fsSourceP);
 
@@ -26,6 +35,7 @@ void CObject3D::Create(char * path) {
 	matWorldUniformLoc = glGetUniformLocation(shaderID, "World");
 
 	diffuseLoc = glGetUniformLocation(shaderID, "diffuse");
+#endif
 
 	long sizeFile;
 	char *archivo = file2string(path, &sizeFile);
@@ -375,7 +385,30 @@ void CObject3D::Create(char * path) {
 		counter++;
 
 	}
+	//Crear macro size and vertex buffer
+	int sumVertexSize = 0;
+	unsigned short sumIndexSize = 0;
+	for (int i = 0; i < numberOfObjects; i++)
+	{
+		sumVertexSize += sizeVertex[i];
+		sumIndexSize += tempSizeIndex[i];
+	}
 
+	vertices = new CVertex[(sumVertexSize)];
+	indices = new unsigned short[(sumIndexSize)];
+
+	int sizeTempVert = 0;
+	int sizeTempInd = 0;
+
+	for (int i = 0; i < numberOfObjects; i++)
+	{
+		memcpy(vertices + sizeTempVert, vertexTemp[i], sizeVertex[i] * sizeof(CVertex));
+		sizeTempVert = sizeVertex[i];
+		memcpy(indices + sizeTempInd, indicesTemp[i], tempSizeIndex[i] * sizeof(unsigned short));
+		sizeTempInd = tempSizeIndex[i];
+	}
+	sizeIndex = sumIndexSize;
+#ifdef USING_OPENGL_ES
 	//map de texturas unicas
 	unsigned short asignBuffer = 0;
 	for (int i = 0; i < numberOfObjects; i++)
@@ -405,29 +438,7 @@ void CObject3D::Create(char * path) {
 		delete tempChar;
 	}
 
-	//Crear macro size and vertex buffer
-	int sumVertexSize = 0;
-	unsigned short sumIndexSize = 0;
-	for (int i = 0; i < numberOfObjects; i++)
-	{
-		sumVertexSize += sizeVertex[i];
-		sumIndexSize += tempSizeIndex[i];
-	}
-
-	vertices = new CVertex[(sumVertexSize)];
-	indices = new unsigned short[(sumIndexSize)];
-
-	int sizeTempVert = 0;
-	int sizeTempInd = 0;
-
-	for (int i = 0; i < numberOfObjects; i++)
-	{
-		memcpy(vertices + sizeTempVert, vertexTemp[i], sizeVertex[i] * sizeof(CVertex));
-		sizeTempVert = sizeVertex[i];
-		memcpy(indices + sizeTempInd, indicesTemp[i], tempSizeIndex[i] * sizeof(unsigned short));
-		sizeTempInd = tempSizeIndex[i];
-	}
-	sizeIndex = sumIndexSize;
+	
 	//crear nuevo index buffers
 	
 	std::map<std::string, unsigned short>::iterator it;
@@ -467,12 +478,12 @@ void CObject3D::Create(char * path) {
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 	}
 	
-
+#endif
 	transform = Identity();
 	delete[] vsSourceP;
 	delete[] fsSourceP;
 	//delete[] buffer1;
-	delete[] archivo;
+	//delete[] archivo;
 }
 
 void CObject3D::Transform(float *t) {
@@ -480,11 +491,12 @@ void CObject3D::Transform(float *t) {
 }
 
 void CObject3D::Draw(float *t, float *vp) {
-	glUseProgram(shaderID);
 
 	if (t)
 		transform = t;
-
+#if USING_OPENGL_ES
+	
+	glUseProgram(shaderID);
 	CMatrix4D VP = CMatrix4D(vp);
 	CMatrix4D WVP = transform*VP;
 
@@ -534,8 +546,38 @@ void CObject3D::Draw(float *t, float *vp) {
 	}
 
 	glUseProgram(0);
+#elif defined(USING_D3D11)
+
+	CMatrix4D VP = CMatrix4D(vp);
+	CMatrix4D WVP = transform*VP;
+	CnstBuffer.WVP = WVP;
+	CnstBuffer.World = transform;
+
+	UINT stride = sizeof(CVertex);
+	UINT offset = 0;
+	// We bound to use the vertex and pixel shader of this primitive
+	D3D11DeviceContext->VSSetShader(pVS.Get(), 0, 0);
+	D3D11DeviceContext->PSSetShader(pFS.Get(), 0, 0);
+	// Set the input layout to let the shader program know what kind of vertex data we have
+	D3D11DeviceContext->IASetInputLayout(Layout.Get());
+	// We update the constant buffer with the current matrices
+	D3D11DeviceContext->UpdateSubresource(pd3dConstantBuffer.Get(), 0, 0, &CnstBuffer, 0, 0);
+	// Once updated the constant buffer we send them to the shader programs
+	D3D11DeviceContext->VSSetConstantBuffers(0, 1, pd3dConstantBuffer.GetAddressOf());
+	D3D11DeviceContext->PSSetConstantBuffers(0, 1, pd3dConstantBuffer.GetAddressOf());
+	// We let d3d that we are using our vertex and index buffers, they require the stride and offset
+	D3D11DeviceContext->IASetVertexBuffers(0, 1, VB.GetAddressOf(), &stride, &offset);
+	// Same for the index buffer
+	D3D11DeviceContext->IASetIndexBuffer(IB.Get(), DXGI_FORMAT_R16_UINT, 0);
+	// Instruct to use triangle list
+	D3D11DeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	// Draw the primitive sending the number of indices
+	D3D11DeviceContext->DrawIndexed(6, 0, 0);
+#endif
 }
 
 void CObject3D::Destroy() {
+#ifdef USING_OPENGL_ES
 	glDeleteProgram(shaderID);
+#endif
 }

@@ -12,7 +12,7 @@ PrimitiveBase*	PrimitiveManager::GetPrimitive(unsigned int index) {
 }
 
 int  PrimitiveManager::CreateTriangle() {
-	PrimitiveBase *primitive = new TrangleGL();
+	PrimitiveBase *primitive = new Trangle();
 	primitive->Create("NULL");
 	primitives.push_back(primitive);
 	return (int)(primitives.size()-1);

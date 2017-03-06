@@ -11,12 +11,14 @@ void TestApp::InitVars() {
 void TestApp::CreateAssets() {	
 	PrimitiveMgr.SetVP(&VP);
 
-	int indexCerdo = PrimitiveMgr.CreateObject3D("NuCroc.X");
-	int indexBatman = PrimitiveMgr.CreateObject3D("NuBatman.X");
+	int lu = PrimitiveMgr.CreateTriangle();
+
+	//int indexCerdo = PrimitiveMgr.CreateObject3D("NuCroc.X");
+	//int indexBatman = PrimitiveMgr.CreateObject3D("NuBatman.X");
 
 	//int cubo = PrimitiveMgr.CreateCube();
-	primitiveFigs[0].CreateInstance(PrimitiveMgr.GetPrimitive(indexCerdo), &VP);
-	primitiveFigs[1].CreateInstance(PrimitiveMgr.GetPrimitive(indexBatman), &VP);
+	primitiveFigs[0].CreateInstance(PrimitiveMgr.GetPrimitive(lu), &VP);
+	//primitiveFigs[1].CreateInstance(PrimitiveMgr.GetPrimitive(indexBatman), &VP);
 
 	Position.x = 0;
 	Position.y = 0;
@@ -79,7 +81,7 @@ void TestApp::OnDraw() {
 	pFramework->pVideoDriver->Clear();
 	
 	primitiveFigs[0].Draw();
-	primitiveFigs[1].Draw();
+	//primitiveFigs[1].Draw();
 	pFramework->pVideoDriver->SwapBuffers();
 }
 
