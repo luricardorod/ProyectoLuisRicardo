@@ -22,6 +22,9 @@ public:
 	void	LoadAPITexture(unsigned char* buffer);
 	void	LoadAPITextureCompressed(unsigned char* buffer);
 
+
+	void	SetTextureParams(unsigned int &params, unsigned int &target) {};
+
 	ComPtr<ID3D11Texture2D>				Tex;
 	ComPtr<ID3D11ShaderResourceView>    pSRVTex;
 	ComPtr<ID3D11SamplerState>          pSampler;

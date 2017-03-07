@@ -1,5 +1,28 @@
-﻿cl : Command line warning D9028: minimal rebuild failure, reverting to normal build
-  PrimitiveManager.cpp
+﻿  CObject3D.cpp
+c:\users\bluemonkey\desktop\class\proyectoluisricardo\example\example\cobject3d.cpp(99): warning C4244: '=': conversión de 'double' a 'int'; posible pérdida de datos
+c:\users\bluemonkey\desktop\class\proyectoluisricardo\example\example\cobject3d.cpp(112): warning C4244: '=': conversión de 'double' a 'float'; posible pérdida de datos
+c:\users\bluemonkey\desktop\class\proyectoluisricardo\example\example\cobject3d.cpp(124): warning C4244: '=': conversión de 'double' a 'float'; posible pérdida de datos
+c:\users\bluemonkey\desktop\class\proyectoluisricardo\example\example\cobject3d.cpp(136): warning C4244: '=': conversión de 'double' a 'float'; posible pérdida de datos
+c:\users\bluemonkey\desktop\class\proyectoluisricardo\example\example\cobject3d.cpp(155): warning C4244: '-=': conversión de 'double' a 'int'; posible pérdida de datos
+c:\users\bluemonkey\desktop\class\proyectoluisricardo\example\example\cobject3d.cpp(156): warning C4244: '=': conversión de 'double' a 'unsigned short'; posible pérdida de datos
+c:\users\bluemonkey\desktop\class\proyectoluisricardo\example\example\cobject3d.cpp(175): warning C4244: '=': conversión de 'double' a 'float'; posible pérdida de datos
+c:\users\bluemonkey\desktop\class\proyectoluisricardo\example\example\cobject3d.cpp(176): warning C4244: '=': conversión de 'float' a 'unsigned short'; posible pérdida de datos
+c:\users\bluemonkey\desktop\class\proyectoluisricardo\example\example\cobject3d.cpp(188): warning C4244: '=': conversión de 'double' a 'float'; posible pérdida de datos
+c:\users\bluemonkey\desktop\class\proyectoluisricardo\example\example\cobject3d.cpp(189): warning C4244: '=': conversión de 'float' a 'unsigned short'; posible pérdida de datos
+c:\users\bluemonkey\desktop\class\proyectoluisricardo\example\example\cobject3d.cpp(201): warning C4244: '=': conversión de 'double' a 'float'; posible pérdida de datos
+c:\users\bluemonkey\desktop\class\proyectoluisricardo\example\example\cobject3d.cpp(202): warning C4244: '=': conversión de 'float' a 'unsigned short'; posible pérdida de datos
+c:\users\bluemonkey\desktop\class\proyectoluisricardo\example\example\cobject3d.cpp(226): warning C4244: '=': conversión de 'double' a 'float'; posible pérdida de datos
+c:\users\bluemonkey\desktop\class\proyectoluisricardo\example\example\cobject3d.cpp(238): warning C4244: '=': conversión de 'double' a 'float'; posible pérdida de datos
+c:\users\bluemonkey\desktop\class\proyectoluisricardo\example\example\cobject3d.cpp(250): warning C4244: '=': conversión de 'double' a 'float'; posible pérdida de datos
+c:\users\bluemonkey\desktop\class\proyectoluisricardo\example\example\cobject3d.cpp(275): warning C4244: '=': conversión de 'double' a 'float'; posible pérdida de datos
+c:\users\bluemonkey\desktop\class\proyectoluisricardo\example\example\cobject3d.cpp(287): warning C4244: '=': conversión de 'double' a 'float'; posible pérdida de datos
+c:\users\bluemonkey\desktop\class\proyectoluisricardo\example\example\cobject3d.cpp(346): warning C4244: '=': conversión de 'double' a 'float'; posible pérdida de datos
+c:\users\bluemonkey\desktop\class\proyectoluisricardo\example\example\cobject3d.cpp(347): warning C4244: '=': conversión de 'float' a 'unsigned short'; posible pérdida de datos
+c:\users\bluemonkey\desktop\class\proyectoluisricardo\example\example\cobject3d.cpp(63): warning C4101: 'pathsTextures': variable local sin referencia
+  Generando código...
+  Compilando...
   TriangleGL.cpp
-  Generating Code...
-  Example.vcxproj -> E:\UAD\5to\graficas\ProyectoLuisRicardo\Example\Debug\Framework.lib
+  TextureD3D.cpp
+  PrimitiveManager.cpp
+  Generando código...
+  Example.vcxproj -> C:\Users\blueMonkey\Desktop\CLASS\ProyectoLuisRicardo\Example\Debug\Framework.lib

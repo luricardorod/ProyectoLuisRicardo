@@ -11,13 +11,13 @@ void TestApp::InitVars() {
 void TestApp::CreateAssets() {	
 	PrimitiveMgr.SetVP(&VP);
 
-	int lu = PrimitiveMgr.CreateTriangle();
+	//int lu = PrimitiveMgr.CreateTriangle();
 
-	//int indexCerdo = PrimitiveMgr.CreateObject3D("NuCroc.X");
+	int indexCerdo = PrimitiveMgr.CreateObject3D("NuCroc.X");
 	//int indexBatman = PrimitiveMgr.CreateObject3D("NuBatman.X");
 
 	//int cubo = PrimitiveMgr.CreateCube();
-	primitiveFigs[0].CreateInstance(PrimitiveMgr.GetPrimitive(lu), &VP);
+	primitiveFigs[0].CreateInstance(PrimitiveMgr.GetPrimitive(indexCerdo), &VP);
 	//primitiveFigs[1].CreateInstance(PrimitiveMgr.GetPrimitive(indexBatman), &VP);
 
 	Position.x = 0;
@@ -88,7 +88,7 @@ void TestApp::OnDraw() {
 void TestApp::OnInput() {
 	int x, y;
 	SDL_GetMouseState(&x, &y);
-	printf("%d/n", x);
+	//printf("%d/n", x);
 
 	if (x < 620)
 	{

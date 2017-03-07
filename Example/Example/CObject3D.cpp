@@ -12,9 +12,14 @@ extern ComPtr<ID3D11DeviceContext>     D3D11DeviceContext;
 
 void CObject3D::Create(char * path) {
 
-	char *vsSourceP = file2string("VS.glsl");
-	char *fsSourceP = file2string("FS.glsl");
-	
+#ifdef USING_OPENGL_ES
+	char *vsSourceP = file2string("Shaders/VS_Mesh.glsl");
+	char *fsSourceP = file2string("Shaders/FS_Mesh.glsl");
+#elif defined(USING_D3D11)
+	char *vsSourceP = file2string("Shaders/VS_Mesh.hlsl");
+	char *fsSourceP = file2string("Shaders/FS_Mesh.hlsl");
+#endif
+
 
 #ifdef USING_OPENGL_ES
 	shaderID = glCreateProgram();
@@ -408,7 +413,6 @@ void CObject3D::Create(char * path) {
 		sizeTempInd = tempSizeIndex[i];
 	}
 	sizeIndex = sumIndexSize;
-#ifdef USING_OPENGL_ES
 	//map de texturas unicas
 	unsigned short asignBuffer = 0;
 	for (int i = 0; i < numberOfObjects; i++)
@@ -424,7 +428,124 @@ void CObject3D::Create(char * path) {
 			}
 		}
 	}
+#ifdef USING_D3D11
+	HRESULT hr;
+	{
+		VS_blob = nullptr; // VS_blob would contain the binary compiled vertex shader program
+		ComPtr<ID3DBlob> errorBlob = nullptr; // In case of error, this blob would contain the compilation errors
+												// We compile the source, the entry point is VS in our vertex shader, and we are using shader model 5 (d3d11)
+		hr = D3DCompile(vsSourceP, (UINT)strlen(vsSourceP), 0, 0, 0, "VS", "vs_5_0", 0, 0, &VS_blob, &errorBlob);
+		if (hr != S_OK) { // some error
 
+			if (errorBlob) { // print the error if the blob is valid
+				printf("errorBlob shader[%s]", (char*)errorBlob->GetBufferPointer());
+				return;
+			}
+			// No binary data, return.
+			if (VS_blob) {
+				return;
+			}
+		}
+		// With the binary blob now we create the Vertex Shader Object
+		hr = D3D11Device->CreateVertexShader(VS_blob->GetBufferPointer(), VS_blob->GetBufferSize(), 0, &pVS);
+		if (hr != S_OK) {
+			printf("Error Creating Vertex Shader\n");
+			return;
+		}
+	}
+	// Same for the Pixel Shader, just change the entry point, blob, etc, same exact method
+	{
+		FS_blob = nullptr;
+		ComPtr<ID3DBlob> errorBlob = nullptr;
+		hr = D3DCompile(fsSourceP, (UINT)strlen(fsSourceP), 0, 0, 0, "FS", "ps_5_0", 0, 0, &FS_blob, &errorBlob);
+		if (hr != S_OK) {
+			if (errorBlob) {
+				printf("errorBlob shader[%s]", (char*)errorBlob->GetBufferPointer());
+				return;
+			}
+
+			if (FS_blob) {
+				return;
+			}
+		}
+
+		hr = D3D11Device->CreatePixelShader(FS_blob->GetBufferPointer(), FS_blob->GetBufferSize(), 0, &pFS);
+		if (hr != S_OK) {
+			printf("Error Creating Pixel Shader\n");
+			return;
+		}
+	}
+
+	D3D11DeviceContext->VSSetShader(pVS.Get(), 0, 0);
+	D3D11DeviceContext->PSSetShader(pFS.Get(), 0, 0);
+
+	D3D11_INPUT_ELEMENT_DESC vertexDeclaration[] = {
+		{ "POSITION" , 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0,  D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "NORMAL"   , 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "TEXCOORD"   , 0, DXGI_FORMAT_R32G32_FLOAT, 0, 24, D3D11_INPUT_PER_VERTEX_DATA, 0 }
+	};
+	hr = D3D11Device->CreateInputLayout(vertexDeclaration, ARRAYSIZE(vertexDeclaration), VS_blob->GetBufferPointer(), VS_blob->GetBufferSize(), &Layout);
+	if (hr != S_OK) {
+		printf("Error Creating Input Layout\n");
+		return;
+	}
+
+	// We Bound the input layout
+	D3D11DeviceContext->IASetInputLayout(Layout.Get());
+	D3D11_BUFFER_DESC bdesc = { 0 };
+	bdesc.Usage = D3D11_USAGE_DEFAULT;
+	bdesc.ByteWidth = sizeof(CObject3D::CBuffer);
+	bdesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+
+	hr = D3D11Device->CreateBuffer(&bdesc, 0, pd3dConstantBuffer.GetAddressOf());
+	if (hr != S_OK) {
+		printf("Error Creating Buffer Layout\n");
+		return;
+	}
+
+	// Set the constant buffer to the shader programs: Note that we use the Device Context to manage the resources
+	D3D11DeviceContext->VSSetConstantBuffers(0, 1, pd3dConstantBuffer.GetAddressOf());
+	D3D11DeviceContext->PSSetConstantBuffers(0, 1, pd3dConstantBuffer.GetAddressOf());
+
+	bdesc = { 0 };
+	bdesc.ByteWidth = sizeof(CVertex) * sumVertexSize;
+	bdesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	// Resource sub data is just a structure friendly to set our pointer to the vertex data
+	D3D11_SUBRESOURCE_DATA subData = { vertices, 0, 0 };
+	hr = D3D11Device->CreateBuffer(&bdesc, &subData, &VB);
+	if (hr != S_OK) {
+		printf("Error Creating Vertex Buffer\n");
+		return;
+	}
+
+	// Same for the index buffer
+	bdesc = { 0 };
+	bdesc.ByteWidth = sizeIndex * sizeof(USHORT);
+	bdesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
+
+	subData = { indices, 0, 0 };
+
+	hr = D3D11Device->CreateBuffer(&bdesc, &subData, &IB);
+	if (hr != S_OK) {
+		printf("Error Creating Index Buffer\n");
+		return;
+	}
+
+	for (std::map<std::string, unsigned short>::iterator it = list.begin(); it != list.end(); ++it) {
+		Texture	*tex = new TextureD3D;
+		char *tempChar;
+		tempChar = new char[(it->first.size() + 1)];
+		memcpy(tempChar, it->first.c_str(), it->first.size() + 1);
+		TexId[it->second] = tex->LoadTexture(tempChar);
+		if (TexId[it->second] == -1) {
+			delete tex;
+		}
+		Textures.push_back(tex);
+		delete tempChar;
+	}
+#endif // USING_D3D11
+
+#ifdef USING_OPENGL_ES
 	//no ligting   busediffusemap diffusemap speclevel specularmap glossmap glossiness normalmap bflipgreenchanel
 	for (std::map<std::string, unsigned short>::iterator it = list.begin(); it != list.end(); ++it) {
 		Texture	*tex = new TextureGL;
@@ -438,9 +559,9 @@ void CObject3D::Create(char * path) {
 		delete tempChar;
 	}
 
-	
+
 	//crear nuevo index buffers
-	
+
 	std::map<std::string, unsigned short>::iterator it;
 	int counterIndexBuffer = 0;
 	for (int i = 0; i < numberOfObjects; i++)
@@ -463,7 +584,7 @@ void CObject3D::Create(char * path) {
 		}
 	}
 
-	
+
 	glGenBuffers(1, &VB);
 	glBindBuffer(GL_ARRAY_BUFFER, VB);
 	glBufferData(GL_ARRAY_BUFFER, sumVertexSize * sizeof(CVertex), &vertices[0], GL_STATIC_DRAW);
@@ -477,7 +598,7 @@ void CObject3D::Create(char * path) {
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, bufferIndex[i].size() * sizeof(unsigned short), &bufferIndex[i][0], GL_STATIC_DRAW);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 	}
-	
+
 #endif
 	transform = Identity();
 	delete[] vsSourceP;
@@ -495,7 +616,7 @@ void CObject3D::Draw(float *t, float *vp) {
 	if (t)
 		transform = t;
 #if USING_OPENGL_ES
-	
+
 	glUseProgram(shaderID);
 	CMatrix4D VP = CMatrix4D(vp);
 	CMatrix4D WVP = transform*VP;
@@ -519,7 +640,7 @@ void CObject3D::Draw(float *t, float *vp) {
 
 	if (uvAttribLoc != -1)
 		glVertexAttribPointer(uvAttribLoc, 2, GL_FLOAT, GL_FALSE, sizeof(CVertex), BUFFER_OFFSET(32));
-	
+
 	for (int i = 0; i < list.size(); i++)
 	{
 
@@ -536,7 +657,7 @@ void CObject3D::Draw(float *t, float *vp) {
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
 	glDisableVertexAttribArray(vertexAttribLoc);
-	
+
 	if (normalAttribLoc != -1) {
 		glDisableVertexAttribArray(normalAttribLoc);
 	}
@@ -565,14 +686,20 @@ void CObject3D::Draw(float *t, float *vp) {
 	// Once updated the constant buffer we send them to the shader programs
 	D3D11DeviceContext->VSSetConstantBuffers(0, 1, pd3dConstantBuffer.GetAddressOf());
 	D3D11DeviceContext->PSSetConstantBuffers(0, 1, pd3dConstantBuffer.GetAddressOf());
+
 	// We let d3d that we are using our vertex and index buffers, they require the stride and offset
 	D3D11DeviceContext->IASetVertexBuffers(0, 1, VB.GetAddressOf(), &stride, &offset);
 	// Same for the index buffer
+	
+	TextureD3D *texd3d = dynamic_cast<TextureD3D*>(Textures[0]);
+	D3D11DeviceContext->PSSetShaderResources(0, 1, texd3d->pSRVTex.GetAddressOf());
+	D3D11DeviceContext->PSSetSamplers(0, 1, texd3d->pSampler.GetAddressOf()); 
+	
 	D3D11DeviceContext->IASetIndexBuffer(IB.Get(), DXGI_FORMAT_R16_UINT, 0);
 	// Instruct to use triangle list
 	D3D11DeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	// Draw the primitive sending the number of indices
-	D3D11DeviceContext->DrawIndexed(6, 0, 0);
+	D3D11DeviceContext->DrawIndexed(sizeIndex, 0, 0);
 #endif
 }
 

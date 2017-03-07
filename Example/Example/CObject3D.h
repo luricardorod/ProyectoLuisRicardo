@@ -34,6 +34,8 @@ public:
 	CVertex*		vertices;
 	unsigned short*	indices;
 	int sizeIndex;
+	std::map <std::string, unsigned short> list;
+	int		TexId[32];
 #ifdef USING_OPENGL_ES
 	CObject3D() : shaderID(0) {}
 	GLuint	shaderID;
@@ -41,7 +43,6 @@ public:
 	GLint	normalAttribLoc;
 	GLint	uvAttribLoc;
 	GLint	diffuseLoc;
-	int		TexId[32];
 
 	GLint  matWorldViewProjUniformLoc;
 	GLint  matWorldUniformLoc;
@@ -49,7 +50,6 @@ public:
 	GLuint			VB;
 	GLuint			IB[20];
 	std::vector<unsigned short> bufferIndex[20];
-	std::map <std::string, unsigned short> list;
 #elif defined(USING_D3D11)
 	CObject3D() {}
 	ComPtr<ID3D11Buffer>		IB;
@@ -64,6 +64,7 @@ public:
 	std::vector<D3D11_INPUT_ELEMENT_DESC>	VertexDecl;
 
 	CObject3D::CBuffer				CnstBuffer;
+	std::vector<Texture*> Textures;
 
 #endif
 };
