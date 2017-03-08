@@ -31,8 +31,7 @@ void Trangle::Create(char *) {
 	GLuint fshader_id = createShader(GL_FRAGMENT_SHADER, fsSourceP);
 
 	// Once the shader programs are created we can safely free the buffers
-	free(vsSourceP);
-	free(fsSourceP);
+
 
 	// We attach the id of the vertex and pixel shader to this shader program
 	glAttachShader(shaderID, vshader_id);

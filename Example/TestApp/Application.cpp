@@ -14,11 +14,11 @@ void TestApp::CreateAssets() {
 	//int lu = PrimitiveMgr.CreateTriangle();
 
 	int indexCerdo = PrimitiveMgr.CreateObject3D("NuCroc.X");
-	//int indexBatman = PrimitiveMgr.CreateObject3D("NuBatman.X");
+	int indexBatman = PrimitiveMgr.CreateObject3D("NuBatman.X");
 
 	//int cubo = PrimitiveMgr.CreateCube();
 	primitiveFigs[0].CreateInstance(PrimitiveMgr.GetPrimitive(indexCerdo), &VP);
-	//primitiveFigs[1].CreateInstance(PrimitiveMgr.GetPrimitive(indexBatman), &VP);
+	primitiveFigs[1].CreateInstance(PrimitiveMgr.GetPrimitive(indexBatman), &VP);
 
 	Position.x = 0;
 	Position.y = 0;
@@ -68,12 +68,12 @@ void TestApp::OnUpdate() {
 	//primitiveFigs[0].RotateZAbsolute(Orientation.z);
 	//primitiveFigs[0].ScaleAbsolute(Scaling.x);
 	//primitiveFigs[0].Update();
-	//primitiveFigs[1].TranslateAbsolute(Position.x+1, Position.y, Position.z);
+	primitiveFigs[1].TranslateAbsolute(100, Position.y, Position.z);
 	//primitiveFigs[1].RotateXAbsolute(Orientation.x);
 	//primitiveFigs[1].RotateYAbsolute(Orientation.y);
 	//primitiveFigs[1].RotateZAbsolute(Orientation.z);
 	//primitiveFigs[1].ScaleAbsolute(Scaling.x);
-	//primitiveFigs[1].Update();
+	primitiveFigs[1].Update();
 	OnDraw();
 }
 
@@ -81,7 +81,7 @@ void TestApp::OnDraw() {
 	pFramework->pVideoDriver->Clear();
 	
 	primitiveFigs[0].Draw();
-	//primitiveFigs[1].Draw();
+	primitiveFigs[1].Draw();
 	pFramework->pVideoDriver->SwapBuffers();
 }
 

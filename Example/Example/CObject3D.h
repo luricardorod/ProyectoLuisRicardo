@@ -36,6 +36,7 @@ public:
 	int sizeIndex;
 	std::map <std::string, unsigned short> list;
 	int		TexId[32];
+	std::vector<unsigned short> bufferIndex[20];
 #ifdef USING_OPENGL_ES
 	CObject3D() : shaderID(0) {}
 	GLuint	shaderID;
@@ -49,10 +50,9 @@ public:
 
 	GLuint			VB;
 	GLuint			IB[20];
-	std::vector<unsigned short> bufferIndex[20];
 #elif defined(USING_D3D11)
 	CObject3D() {}
-	ComPtr<ID3D11Buffer>		IB;
+	ComPtr<ID3D11Buffer>		IB[20];
 	ComPtr<ID3D11Buffer>		VB;
 	ComPtr<ID3D11VertexShader>  pVS;
 	ComPtr<ID3D11PixelShader>   pFS;
@@ -64,7 +64,7 @@ public:
 	std::vector<D3D11_INPUT_ELEMENT_DESC>	VertexDecl;
 
 	CObject3D::CBuffer				CnstBuffer;
-	std::vector<Texture*> Textures;
+	Texture *Textures[20];
 
 #endif
 };
