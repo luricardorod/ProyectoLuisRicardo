@@ -1,6 +1,6 @@
-cbuffer ConstantBuffer{
-    float4x4 WVP;
-	float4x4 World;    
+cbuffer ConstantBuffer
+{
+    float4x4 WVP, World;
 }
 
 struct VS_INPUT{
@@ -43,7 +43,8 @@ struct VS_OUTPUT{
 #endif
 };
 
-VS_OUTPUT VS( VS_INPUT input ){
+VS_OUTPUT VS( VS_INPUT input )
+{
     VS_OUTPUT OUT;
     OUT.hposition = mul( WVP , input.position );
 	

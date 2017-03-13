@@ -10,14 +10,15 @@ extern ComPtr<ID3D11Device>            D3D11Device;
 extern ComPtr<ID3D11DeviceContext>     D3D11DeviceContext;
 #endif
 
-void CObject3D::Create(char * path) {
 
+void CObject3D::Create(char * path)
+{
 #ifdef USING_OPENGL_ES
-	char *vsSourceP = file2string("Shaders/VS_Mesh.glsl");
-	char *fsSourceP = file2string("Shaders/FS_Mesh.glsl");
+	char *vsSourceP = file2string("Shaders/VS_luzP.glsl");
+	char *fsSourceP = file2string("Shaders/FS_luzP.glsl");
 #elif defined(USING_D3D11)
-	char *vsSourceP = file2string("Shaders/VS.hlsl");
-	char *fsSourceP = file2string("Shaders/FS.hlsl");
+	char *vsSourceP = file2string("Shaders/VS_Mesh.hlsl");
+	char *fsSourceP = file2string("Shaders/FS_Mesh.hlsl");
 #endif
 	std::string vstr = std::string(vsSourceP);
 	std::string fstr = std::string(fsSourceP);
@@ -47,6 +48,8 @@ void CObject3D::Create(char * path) {
 
 	matWorldViewProjUniformLoc = glGetUniformLocation(shaderID, "WVP");
 	matWorldUniformLoc = glGetUniformLocation(shaderID, "World");
+
+	lightGL = glGetUniformLocation(shaderID, "lightPoint");
 
 	diffuseLoc = glGetUniformLocation(shaderID, "diffuse");
 #endif
@@ -458,7 +461,7 @@ void CObject3D::Create(char * path) {
 			bufferIndex[tempList[indexTexture[i][j]]].push_back(indices[counterIndexBuffer]);
 			counterIndexBuffer++;
 		}
-	}
+ 	}
 #ifdef USING_D3D11
 	HRESULT hr;
 	{
@@ -620,12 +623,13 @@ void CObject3D::Create(char * path) {
 	//delete[] archivo;
 }
 
-void CObject3D::Transform(float *t) {
+void CObject3D::Transform(float *t)
+{
 	transform = t;
 }
 
-void CObject3D::Draw(float *t, float *vp) {
-
+void CObject3D::Draw(float *t, float *vp)
+{
 	if (t)
 		transform = t;
 #ifdef USING_OPENGL_ES
@@ -633,6 +637,8 @@ void CObject3D::Draw(float *t, float *vp) {
 	glUseProgram(shaderID);
 	CMatrix4D VP = CMatrix4D(vp);
 	CMatrix4D WVP = transform*VP;
+
+	glUniform4f(lightGL, (*lightPosBase).x, (*lightPosBase).y , (*lightPosBase).z, (*lightPosBase).w);
 
 	glUniformMatrix4fv(matWorldUniformLoc, 1, GL_FALSE, &transform.m[0][0]);
 	glUniformMatrix4fv(matWorldViewProjUniformLoc, 1, GL_FALSE, &WVP.m[0][0]);
@@ -718,7 +724,8 @@ void CObject3D::Draw(float *t, float *vp) {
 #endif
 }
 
-void CObject3D::Destroy() {
+void CObject3D::Destroy()
+{
 #ifdef USING_OPENGL_ES
 	glDeleteProgram(shaderID);
 #endif

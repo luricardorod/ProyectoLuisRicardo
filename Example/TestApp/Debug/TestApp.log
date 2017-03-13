@@ -1,2 +1,5 @@
-﻿  TestApp.vcxproj -> E:\UAD\5to\graficas\ProyectoLuisRicardo\Example\bin\TestApp.exe
+﻿  Application.cpp
+e:\uad\5to\graficas\proyectoluisricardo\example\testapp\application.cpp(44): warning C4305: 'argument': truncation from 'double' to 'float'
+e:\uad\5to\graficas\proyectoluisricardo\example\testapp\application.cpp(66): warning C4305: 'argument': truncation from 'double' to 'float'
+  TestApp.vcxproj -> E:\UAD\5to\graficas\ProyectoLuisRicardo\Example\bin\TestApp.exe
   TestApp.vcxproj -> E:\UAD\5to\graficas\ProyectoLuisRicardo\Example\bin\TestApp.pdb (Full PDB)

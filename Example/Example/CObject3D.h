@@ -17,10 +17,12 @@
 #include <vector>
 #include <map>
 
-class CObject3D : public PrimitiveBase {
+class CObject3D : public PrimitiveBase
+{
 public:
 #ifdef USING_D3D11
-	struct CBuffer {
+	struct CBuffer
+	{
 		CMatrix4D WVP;
 		CMatrix4D World;
 	};
@@ -30,9 +32,9 @@ public:
 	void Transform(float *t);
 	void Draw(float *t, float *vp);
 	void Destroy();
-	CMatrix4D	transform;
-	CVertex*		vertices;
-	unsigned short*	indices;
+	CMatrix4D transform;
+	CVertex* vertices;
+	unsigned short* indices;
 	int sizeIndex;
 	std::map <std::string, unsigned short> list;
 	int		TexId[32];
@@ -50,6 +52,8 @@ public:
 
 	GLuint			VB;
 	GLuint			IB[20];
+
+	GLint lightGL;
 #elif defined(USING_D3D11)
 	CObject3D() {}
 	ComPtr<ID3D11Buffer>		IB[20];

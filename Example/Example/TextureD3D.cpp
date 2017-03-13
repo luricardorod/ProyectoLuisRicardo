@@ -40,14 +40,15 @@ void	TextureD3D::SetTextureParams(unsigned int &target) {
 	sdesc.MipLODBias = 0.0f;
 
 	D3D11Device->CreateSamplerState(&sdesc, pSampler.GetAddressOf());
+}
+
+void TextureD3D::GetFormatBpp(unsigned int &props, unsigned int &Format, unsigned int &bpp)
+{
 
 }
 
-void	TextureD3D::GetFormatBpp(unsigned int &props, unsigned int &Format, unsigned int &bpp) {
-
-}
-
-void	TextureD3D::LoadAPITexture(unsigned char* buffer) {
+void TextureD3D::LoadAPITexture(unsigned char* buffer)
+{
 	D3D11_TEXTURE2D_DESC desc = { 0 };
 	desc.Width = this->x;
 	desc.Height = this->y;

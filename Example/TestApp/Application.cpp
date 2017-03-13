@@ -1,14 +1,18 @@
 #include "Application.h"
 #include <SDL\SDL_mouse.h>
 
-void TestApp::InitVars() {
+void TestApp::InitVars()
+{
 	DtTimer.Init();
 	Position	= CVector4D(0.0f, 0.0f, 0.0f, 0);
 	Orientation = CVector4D(0.0f, 0.0f, 1.0f, 0);
 	Scaling		= CVector4D(1.0f, 1.0f, 1.0f, 0);
+
+	LightPosition = CVector4D(1, 0, 0, 0);
 }
 
-void TestApp::CreateAssets() {	
+void TestApp::CreateAssets()
+{
 	PrimitiveMgr.SetVP(&VP);
 
 	//int lu = PrimitiveMgr.CreateTriangle();
@@ -18,7 +22,9 @@ void TestApp::CreateAssets() {
 
 	//int cubo = PrimitiveMgr.CreateCube();
 	primitiveFigs[0].CreateInstance(PrimitiveMgr.GetPrimitive(indexCerdo), &VP);
+	primitiveFigs[0].lightPosInstance = &LightPosition;
 	primitiveFigs[1].CreateInstance(PrimitiveMgr.GetPrimitive(indexBatman), &VP);
+	primitiveFigs[1].lightPosInstance = &LightPosition;
 
 	Position.x = 0;
 	Position.y = 0;
@@ -37,7 +43,6 @@ void TestApp::CreateAssets() {
 	View = LookAtRH(PositionCamera, LookAt, Up);
 	proj = PerspectiveFovRH(45*3.1416/180, 1280.0f / 720.0f, 0.1f, 10000.0f);
 	VP = View * proj;
-
 }
 
 void TestApp::DestroyAssets() {
