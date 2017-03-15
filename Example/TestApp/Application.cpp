@@ -8,7 +8,11 @@ void TestApp::InitVars()
 	Orientation = CVector4D(0.0f, 0.0f, 1.0f, 0);
 	Scaling		= CVector4D(1.0f, 1.0f, 1.0f, 0);
 
-	LightPosition = CVector4D(1, 0, 0, 0);
+	DirGlobalLight = CVector4D(1, 0, 0, 0);
+	ColorGlobalLight = CVector4D(.2, 0, 0, 0);
+	PosPointLight = CVector4D(50, 52, .5, 0);
+	ColorPointLight = CVector4D(0, 0, 0.4, 0);
+
 }
 
 void TestApp::CreateAssets()
@@ -22,9 +26,17 @@ void TestApp::CreateAssets()
 
 	//int cubo = PrimitiveMgr.CreateCube();
 	primitiveFigs[0].CreateInstance(PrimitiveMgr.GetPrimitive(indexCerdo), &VP);
-	primitiveFigs[0].lightPosInstance = &LightPosition;
+	primitiveFigs[0].dirGlobal = &DirGlobalLight;
+	primitiveFigs[0].colorGlobal = &ColorGlobalLight;
+	primitiveFigs[0].posPoint = &PosPointLight;
+	primitiveFigs[0].colorPoint = &ColorPointLight;
+
+
 	primitiveFigs[1].CreateInstance(PrimitiveMgr.GetPrimitive(indexBatman), &VP);
-	primitiveFigs[1].lightPosInstance = &LightPosition;
+	primitiveFigs[1].dirGlobal = &DirGlobalLight;
+	primitiveFigs[1].colorGlobal = &ColorGlobalLight;
+	primitiveFigs[1].posPoint = &PosPointLight;
+	primitiveFigs[1].colorPoint = &ColorPointLight;
 
 	Position.x = 0;
 	Position.y = 0;

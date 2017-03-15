@@ -1,7 +1,7 @@
 #include "CObject3D.h"
 #define BUFFER_OFFSET(i) ((char *)NULL + (i))
 #include <string>
-
+#include <vector>
 #define CHANGE_TO_RH 0
 #define DEBUG_MODEL 0
 
@@ -26,7 +26,9 @@ void CObject3D::Create(char * path)
 
 	Defines += "#define USE_NORMALS\n\n";
 	Defines += "#define USE_TEXCOORD0\n\n";
-
+	Defines += "#define USE_GLOBALLIGHT\n\n";
+	Defines += "#define USE_POINT_LIGHT\n\n";
+	
 	vstr = Defines + vstr;
 	fstr = Defines + fstr;
 
@@ -49,16 +51,25 @@ void CObject3D::Create(char * path)
 	matWorldViewProjUniformLoc = glGetUniformLocation(shaderID, "WVP");
 	matWorldUniformLoc = glGetUniformLocation(shaderID, "World");
 
-	lightGL = glGetUniformLocation(shaderID, "lightPoint");
+	DirectionGlobalLight = glGetUniformLocation(shaderID, "DirectionGlobalLight");
+	ColorGlobalLight = glGetUniformLocation(shaderID, "ColorGlobalLight");
+	PositionPointLight = glGetUniformLocation(shaderID, "PositionPointLight");
+	ColorPointLight = glGetUniformLocation(shaderID, "ColorPointLight");
 
 	diffuseLoc = glGetUniformLocation(shaderID, "diffuse");
 #endif
-
+	/////
+	int counterBufferVertex = 0;
+	int tempSizeBufferVertex = 0;
+	std::vector<unsigned short> macroBufferIndex;
+	int tempSizeBufferIndex = 0;
+	int counterBufferIndex = 0;
+	int offsetVertex = 0;
+	/////
 	long sizeFile;
 	char *archivo = file2string(path, &sizeFile);
 	int counter = 0;
 	int dif;
-
 	float numberConvert;
 	int positionBuffer;
 	bool flag = true;
@@ -68,15 +79,11 @@ void CObject3D::Create(char * path)
 	char**listPathsNames[20];
 	int numberOfTextures[20];
 
-	CVertex* vertexTemp [20];
-	int sizeVertex[20];
-	unsigned short tempSizeIndex[20];
 	int numberOfObjects = 0;
 	char * pathsTextures[20];
 	unsigned short	sizeMeshTexture[20];
 	unsigned short*	indexTexture[20];
 
-	unsigned short*	indicesTemp [20];
 	unsigned short  sumIndex = 0;
 	while (counter < sizeFile)
 	{
@@ -90,8 +97,7 @@ void CObject3D::Create(char * path)
 			archivo[counter + 5] == 'm'
 			)
 		{
-			char* temp = new char[20];
-			buffer1 = temp;
+
 			counter += 9;
 			flag = true;
 			while (flag)
@@ -108,9 +114,10 @@ void CObject3D::Create(char * path)
 						counter++;
 					}
 					buffer1[positionBuffer] = '\0';
-					(sizeVertex[numberOfObjects]) = std::atof(buffer1);
-					vertexTemp[numberOfObjects] = new CVertex[(sizeVertex[numberOfObjects])];
-					for (int i = 0; i < (sizeVertex[numberOfObjects]); i++)
+					tempSizeBufferVertex = std::atof(buffer1);
+					offsetVertex = bufferVertex.size();
+					bufferVertex.resize(bufferVertex.size() + tempSizeBufferVertex);
+					for (int i = 0; i < tempSizeBufferVertex; i++)
 					{
 						counter++;
 						positionBuffer = 0;
@@ -121,8 +128,7 @@ void CObject3D::Create(char * path)
 							positionBuffer++;
 						}
 						buffer1[positionBuffer] = '\0';
-						numberConvert = std::atof(buffer1);
-						vertexTemp[numberOfObjects][i].x = numberConvert;
+						bufferVertex[counterBufferVertex].x = std::atof(buffer1);
 						counter++;
 
 						positionBuffer = 0;
@@ -133,8 +139,7 @@ void CObject3D::Create(char * path)
 							counter++;
 						}
 						buffer1[positionBuffer] = '\0';
-						numberConvert = std::atof(buffer1);
-						vertexTemp[numberOfObjects][i].y = numberConvert;
+						bufferVertex[counterBufferVertex].y = std::atof(buffer1);
 						counter++;
 
 						positionBuffer = 0;
@@ -145,9 +150,9 @@ void CObject3D::Create(char * path)
 							counter++;
 						}
 						buffer1[positionBuffer] = '\0';
-						numberConvert = std::atof(buffer1);
-						vertexTemp[numberOfObjects][i].z = numberConvert;
-						vertexTemp[numberOfObjects][i].w = 1;
+						bufferVertex[counterBufferVertex].z = std::atof(buffer1);
+						bufferVertex[counterBufferVertex].w = 1;
+						counterBufferVertex++;
 						counter++;
 					}
 					//end vertex
@@ -165,9 +170,10 @@ void CObject3D::Create(char * path)
 					}
 					buffer1[positionBuffer] = '\0';
 					dif -= std::atof(buffer1);
-					(tempSizeIndex[numberOfObjects]) = (std::atof(buffer1) * 3);
-					indicesTemp[numberOfObjects] = new unsigned short[(tempSizeIndex[numberOfObjects])];
-					for (int i = 0; i < (tempSizeIndex[numberOfObjects]); i++)
+					tempSizeBufferIndex = (std::atof(buffer1) * 3);
+					macroBufferIndex.resize(macroBufferIndex.size() + tempSizeBufferIndex);
+
+					for (int i = 0; i < tempSizeBufferIndex; i++)
 					{
 
 						counter++;
@@ -184,8 +190,8 @@ void CObject3D::Create(char * path)
 							positionBuffer++;
 						}
 						buffer1[positionBuffer] = '\0';
-						numberConvert = std::atof(buffer1);
-						indicesTemp[numberOfObjects][i + 2] = numberConvert + sumIndex;
+
+						macroBufferIndex[counterBufferIndex + 2] = std::atof(buffer1) + offsetVertex;
 						counter++;
 						i++;
 
@@ -197,8 +203,8 @@ void CObject3D::Create(char * path)
 							positionBuffer++;
 						}
 						buffer1[positionBuffer] = '\0';
-						numberConvert = std::atof(buffer1);
-						indicesTemp[numberOfObjects][i] = numberConvert + sumIndex;
+						macroBufferIndex[counterBufferIndex+1] = std::atof(buffer1) + offsetVertex;
+
 						counter++;
 						i++;
 
@@ -210,10 +216,10 @@ void CObject3D::Create(char * path)
 							positionBuffer++;
 						}
 						buffer1[positionBuffer] = '\0';
-						numberConvert = std::atof(buffer1);
-						indicesTemp[numberOfObjects][i - 2] = numberConvert + sumIndex;
-						counter++;
+						macroBufferIndex[counterBufferIndex] = std::atof(buffer1) + offsetVertex;
 
+						counter++;
+						counterBufferIndex += 3;
 					}
 					//endIndex
 
@@ -224,7 +230,8 @@ void CObject3D::Create(char * path)
 					{
 						counter++;
 					}
-					for (int i = 0; i < (sizeVertex[numberOfObjects]); i++)
+					counterBufferVertex -= tempSizeBufferVertex;
+					for (int i = 0; i < tempSizeBufferVertex; i++)
 					{
 						counter++;
 						positionBuffer = 0;
@@ -235,8 +242,7 @@ void CObject3D::Create(char * path)
 							positionBuffer++;
 						}
 						buffer1[positionBuffer] = '\0';
-						numberConvert = std::atof(buffer1);
-						vertexTemp[numberOfObjects][i].nx = numberConvert;
+						bufferVertex[counterBufferVertex].nx = std::atof(buffer1);
 						counter++;
 
 						positionBuffer = 0;
@@ -247,8 +253,8 @@ void CObject3D::Create(char * path)
 							counter++;
 						}
 						buffer1[positionBuffer] = '\0';
-						numberConvert = std::atof(buffer1);
-						vertexTemp[numberOfObjects][i].ny = numberConvert;
+						bufferVertex[counterBufferVertex].ny = std::atof(buffer1);
+
 						counter++;
 
 						positionBuffer = 0;
@@ -259,10 +265,11 @@ void CObject3D::Create(char * path)
 							counter++;
 						}
 						buffer1[positionBuffer] = '\0';
-						numberConvert = std::atof(buffer1);
-						vertexTemp[numberOfObjects][i].nz = numberConvert;
-						vertexTemp[numberOfObjects][i].nw = 1;
+						bufferVertex[counterBufferVertex].nz = std::atof(buffer1);
+						bufferVertex[counterBufferVertex].nw = 1;
+
 						counter++;
+						counterBufferVertex++;
 					}
 					//endnormals
 
@@ -273,7 +280,8 @@ void CObject3D::Create(char * path)
 						counter++;
 					}
 					counter++;
-					for (int i = 0; i < (sizeVertex[numberOfObjects]); i++)
+					counterBufferVertex -= tempSizeBufferVertex;
+					for (int i = 0; i < tempSizeBufferVertex; i++)
 					{
 						counter++;
 						positionBuffer = 0;
@@ -284,8 +292,7 @@ void CObject3D::Create(char * path)
 							positionBuffer++;
 						}
 						buffer1[positionBuffer] = '\0';
-						numberConvert = std::atof(buffer1);
-						vertexTemp[numberOfObjects][i].s = numberConvert;
+						bufferVertex[counterBufferVertex].s = std::atof(buffer1);
 						counter++;
 
 						positionBuffer = 0;
@@ -296,13 +303,12 @@ void CObject3D::Create(char * path)
 							counter++;
 						}
 						buffer1[positionBuffer] = '\0';
-						numberConvert = std::atof(buffer1);
-						vertexTemp[numberOfObjects][i].t = numberConvert;
+						bufferVertex[counterBufferVertex].t = std::atof(buffer1);
+						counterBufferVertex++;
 						counter++;
 					}
 					//enduvs
 					flag = false;
-					sumIndex = sumIndex + sizeVertex[numberOfObjects];
 					numberOfObjects++;
 				}
 				counter++;
@@ -320,8 +326,6 @@ void CObject3D::Create(char * path)
 			archivo[counter + 8] == 's'
 			)
 		{
-			char* temp = new char[20];
-			buffer1 = temp;
 			counter = counter + 12;
 			positionBuffer = 0;
 			while (archivo[counter] != ';')
@@ -383,16 +387,15 @@ void CObject3D::Create(char * path)
 					}
 					counter += 2;
 					char* temp = new char[20];
-					buffer1 = temp;
 					positionBuffer = 0;
 					while (archivo[counter] != '"')
 					{
-						buffer1[positionBuffer] = archivo[counter];
+						temp[positionBuffer] = archivo[counter];
 						positionBuffer++;
 						counter++;
 					}
-					buffer1[positionBuffer] = '\0';
-					pathsNames[temporalCounter] = &buffer1[0];
+					temp[positionBuffer] = '\0';
+					pathsNames[temporalCounter] = &temp[0];
 
 					temporalCounter++;
 				}
@@ -403,28 +406,9 @@ void CObject3D::Create(char * path)
 
 	}
 	//Crear macro size and vertex buffer
-	int sumVertexSize = 0;
-	unsigned short sumIndexSize = 0;
-	for (int i = 0; i < numberOfObjects; i++)
-	{
-		sumVertexSize += sizeVertex[i];
-		sumIndexSize += tempSizeIndex[i];
-	}
 
-	vertices = new CVertex[(sumVertexSize)];
-	indices = new unsigned short[(sumIndexSize)];
+	sizeIndex = macroBufferIndex.size();
 
-	int sizeTempVert = 0;
-	int sizeTempInd = 0;
-
-	for (int i = 0; i < numberOfObjects; i++)
-	{
-		memcpy(vertices + sizeTempVert, vertexTemp[i], sizeVertex[i] * sizeof(CVertex));
-		sizeTempVert = sizeVertex[i];
-		memcpy(indices + sizeTempInd, indicesTemp[i], tempSizeIndex[i] * sizeof(unsigned short));
-		sizeTempInd = tempSizeIndex[i];
-	}
-	sizeIndex = sumIndexSize;
 	//map de texturas unicas
 	unsigned short asignBuffer = 0;
 	for (int i = 0; i < numberOfObjects; i++)
@@ -454,11 +438,11 @@ void CObject3D::Create(char * path)
 		}
 		for (int j = 0; j < sizeMeshTexture[i]; j++)
 		{
-			bufferIndex[tempList[indexTexture[i][j]]].push_back(indices[counterIndexBuffer]);
+			bufferIndex[tempList[indexTexture[i][j]]].push_back(macroBufferIndex[counterIndexBuffer]);
 			counterIndexBuffer++;
-			bufferIndex[tempList[indexTexture[i][j]]].push_back(indices[counterIndexBuffer]);
+			bufferIndex[tempList[indexTexture[i][j]]].push_back(macroBufferIndex[counterIndexBuffer]);
 			counterIndexBuffer++;
-			bufferIndex[tempList[indexTexture[i][j]]].push_back(indices[counterIndexBuffer]);
+			bufferIndex[tempList[indexTexture[i][j]]].push_back(macroBufferIndex[counterIndexBuffer]);
 			counterIndexBuffer++;
 		}
  	}
@@ -593,7 +577,7 @@ void CObject3D::Create(char * path)
 		if (TexId[it->second] == -1) {
 			delete tex;
 		}
-		delete tempChar;
+		delete []tempChar;
 	}
 
 
@@ -603,7 +587,7 @@ void CObject3D::Create(char * path)
 
 	glGenBuffers(1, &VB);
 	glBindBuffer(GL_ARRAY_BUFFER, VB);
-	glBufferData(GL_ARRAY_BUFFER, sumVertexSize * sizeof(CVertex), &vertices[0], GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, bufferVertex.size() * sizeof(CVertex), bufferVertex.data(), GL_STATIC_DRAW);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 
@@ -619,8 +603,8 @@ void CObject3D::Create(char * path)
 	transform = Identity();
 	delete[] vsSourceP;
 	delete[] fsSourceP;
-	//delete[] buffer1;
-	//delete[] archivo;
+	delete[] buffer1;
+	delete[] archivo;
 }
 
 void CObject3D::Transform(float *t)
@@ -638,7 +622,12 @@ void CObject3D::Draw(float *t, float *vp)
 	CMatrix4D VP = CMatrix4D(vp);
 	CMatrix4D WVP = transform*VP;
 
-	glUniform4f(lightGL, (*lightPosBase).x, (*lightPosBase).y , (*lightPosBase).z, (*lightPosBase).w);
+	glUniform3f(DirectionGlobalLight, (*dirGlobal).x, (*dirGlobal).y , (*dirGlobal).z);
+	glUniform3f(ColorGlobalLight, (*colorGlobal).x, (*colorGlobal).y, (*colorGlobal).z);
+	glUniform3f(PositionPointLight, (*posPoint).x, (*posPoint).y, (*posPoint).z);
+	glUniform3f(ColorPointLight, (*colorPoint).x, (*colorPoint).y, (*colorPoint).z);
+
+
 
 	glUniformMatrix4fv(matWorldUniformLoc, 1, GL_FALSE, &transform.m[0][0]);
 	glUniformMatrix4fv(matWorldViewProjUniformLoc, 1, GL_FALSE, &WVP.m[0][0]);

@@ -14,7 +14,12 @@ public:
 	virtual void Transform(float *t) = 0;
 	virtual void Draw(float *t, float *vp) = 0;
 	virtual void Destroy() = 0;
-	CVector4D *lightPosBase;
+	CVector4D *dirGlobal;
+	CVector4D *colorGlobal;
+	CVector4D *posPoint;
+	CVector4D *colorPoint;
+
+
 };
 
 struct CVertex

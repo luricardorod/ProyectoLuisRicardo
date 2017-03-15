@@ -35,7 +35,11 @@ class PrimitiveInst
 		void	Update();
 		void	Draw();
 
-		CVector4D		*lightPosInstance;
+		CVector4D		*dirGlobal;
+		CVector4D		*colorGlobal;
+		CVector4D		*posPoint;
+		CVector4D		*colorPoint;
+
 
 		CMatrix4D		position;
 		CMatrix4D		scale;

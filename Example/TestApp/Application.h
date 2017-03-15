@@ -25,7 +25,11 @@ public:
 	PrimitiveManager PrimitiveMgr;
 	PrimitiveInst	primitiveFigs[10];
 
-	CVector4D		LightPosition;
+	CVector4D		DirGlobalLight;
+	CVector4D		ColorGlobalLight;
+	CVector4D		PosPointLight;
+	CVector4D		ColorPointLight;
+
 
 	CVector4D		Position;
 	CVector4D		PositionCamera;

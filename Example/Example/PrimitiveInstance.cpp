@@ -56,6 +56,9 @@ void PrimitiveInst::Update() {
 
 void PrimitiveInst::Draw()
 {
-	pBase->lightPosBase = lightPosInstance;
+	pBase->dirGlobal = dirGlobal;
+	pBase->colorGlobal = colorGlobal;
+	pBase->posPoint = posPoint;
+	pBase->colorPoint = colorPoint;
 	pBase->Draw(&final.m[0][0],&(*pViewProj).m[0][0]);
 }

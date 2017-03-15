@@ -33,12 +33,13 @@ public:
 	void Draw(float *t, float *vp);
 	void Destroy();
 	CMatrix4D transform;
-	CVertex* vertices;
-	unsigned short* indices;
 	int sizeIndex;
 	std::map <std::string, unsigned short> list;
 	int		TexId[32];
 	std::vector<unsigned short> bufferIndex[20];
+	std::vector<CVertex> bufferVertex;
+	~CObject3D() {};
+
 #ifdef USING_OPENGL_ES
 	CObject3D() : shaderID(0) {}
 	GLuint	shaderID;
@@ -51,9 +52,15 @@ public:
 	GLint  matWorldUniformLoc;
 
 	GLuint			VB;
+	GLuint			IBlu;
+
 	GLuint			IB[20];
 
-	GLint lightGL;
+	GLint DirectionGlobalLight;
+	GLint ColorGlobalLight;
+	GLint PositionPointLight;
+	GLint ColorPointLight;
+
 #elif defined(USING_D3D11)
 	CObject3D() {}
 	ComPtr<ID3D11Buffer>		IB[20];

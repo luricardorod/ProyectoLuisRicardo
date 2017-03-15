@@ -18,13 +18,20 @@ varying highp vec2 vecUVCoords;
 #endif
 
 varying highp vec3 vecTransformed;
-uniform highp vec4 lightPoint;
-varying highp vec4 light;
+
 uniform highp mat4 WVP;
 uniform highp mat4 World;
 
-attribute highp vec4 verColor;
 
+varying highp vec3 light;
+varying highp vec3 color;
+varying highp vec3 posPoint;
+varying highp vec3 colorPoint;
+
+uniform highp vec3 DirectionGlobalLight;
+uniform highp vec3 ColorGlobalLight;
+uniform highp vec3 PositionPointLight;
+uniform highp vec3 ColorPointLight;
 
 void main()
 {
@@ -37,6 +44,9 @@ void main()
 #ifdef USE_TEXCOORD0
 	vecUVCoords = UV;
 #endif
-	light = lightPoint;
+	light = DirectionGlobalLight;
+	color = ColorGlobalLight;
+	posPoint = PositionPointLight;
+	colorPoint = ColorPointLight;
 	gl_Position = WVP*Vertex;
 }

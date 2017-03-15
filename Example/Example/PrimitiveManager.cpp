@@ -3,7 +3,7 @@
 #include "TriangleGL.h"
 #include "CubeGL.h"
 #include "CObject3D.h"
-
+#include "RevObj.h"
 PrimitiveBase*	PrimitiveManager::GetPrimitive(unsigned int index) {
 	if (index >= primitives.size())
 		return 0;
