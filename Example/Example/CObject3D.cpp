@@ -1,93 +1,39 @@
 #include "CObject3D.h"
 #define BUFFER_OFFSET(i) ((char *)NULL + (i))
 #include <string>
-#include <vector>
-#define CHANGE_TO_RH 0
-#define DEBUG_MODEL 0
+#include <map>
 
 #ifdef USING_D3D11
 extern ComPtr<ID3D11Device>            D3D11Device;
 extern ComPtr<ID3D11DeviceContext>     D3D11DeviceContext;
 #endif
 
+struct infotex {
+public:
+	unsigned short numberOfTextures;
+	std::vector<unsigned short> indicesTextures;
+	std::vector<char*> namesTextures;
+};
 
-void CObject3D::Create(char * path)
-{
-#ifdef USING_OPENGL_ES
-	char *vsSourceP = file2string("Shaders/VS_luzP.glsl");
-	char *fsSourceP = file2string("Shaders/FS_luzP.glsl");
-#elif defined(USING_D3D11)
-	char *vsSourceP = file2string("Shaders/VS_Mesh.hlsl");
-	char *fsSourceP = file2string("Shaders/FS_Mesh.hlsl");
-#endif
-	std::string vstr = std::string(vsSourceP);
-	std::string fstr = std::string(fsSourceP);
-	std::string Defines = "";
+void CObject3D::Create(char * path) {
 
-	Defines += "#define USE_NORMALS\n\n";
-	Defines += "#define USE_TEXCOORD0\n\n";
-	Defines += "#define USE_GLOBALLIGHT\n\n";
-	Defines += "#define USE_POINT_LIGHT\n\n";
-	
-	vstr = Defines + vstr;
-	fstr = Defines + fstr;
-
-#ifdef USING_OPENGL_ES
-	shaderID = glCreateProgram();
-
-	GLuint vshader_id = createShader(GL_VERTEX_SHADER, (char*)vstr.c_str());
-	GLuint fshader_id = createShader(GL_FRAGMENT_SHADER, (char*)fstr.c_str());
-
-	glAttachShader(shaderID, vshader_id);
-	glAttachShader(shaderID, fshader_id);
-
-	glLinkProgram(shaderID);
-	glUseProgram(shaderID);
-
-	vertexAttribLoc = glGetAttribLocation(shaderID, "Vertex");
-	normalAttribLoc = glGetAttribLocation(shaderID, "Normal");
-	uvAttribLoc = glGetAttribLocation(shaderID, "UV");
-
-	matWorldViewProjUniformLoc = glGetUniformLocation(shaderID, "WVP");
-	matWorldUniformLoc = glGetUniformLocation(shaderID, "World");
-
-	DirectionGlobalLight = glGetUniformLocation(shaderID, "DirectionGlobalLight");
-	ColorGlobalLight = glGetUniformLocation(shaderID, "ColorGlobalLight");
-	PositionPointLight = glGetUniformLocation(shaderID, "PositionPointLight");
-	ColorPointLight = glGetUniformLocation(shaderID, "ColorPointLight");
-
-	diffuseLoc = glGetUniformLocation(shaderID, "diffuse");
-#endif
-	/////
-	int counterBufferVertex = 0;
-	int tempSizeBufferVertex = 0;
-	std::vector<unsigned short> macroBufferIndex;
-	int tempSizeBufferIndex = 0;
-	int counterBufferIndex = 0;
-	int offsetVertex = 0;
-	/////
 	long sizeFile;
 	char *archivo = file2string(path, &sizeFile);
 	int counter = 0;
+	int tempSizeBufferIndex = 0;
+	int counterBufferIndex = 0;
+	int offsetVertex = 0;
+	int counterBufferVertex = 0;
+	int tempSizeBufferVertex = 0;
 	int dif;
-	float numberConvert;
 	int positionBuffer;
 	bool flag = true;
 	char* buffer1 = new char[20];
+	std::vector<infotex> infoMeshTextures;
+	std::vector<unsigned short> macroBufferIndex;
 
-	char* *pathsNames;
-	char**listPathsNames[20];
-	int numberOfTextures[20];
-
-	int numberOfObjects = 0;
-	char * pathsTextures[20];
-	unsigned short	sizeMeshTexture[20];
-	unsigned short*	indexTexture[20];
-
-	unsigned short  sumIndex = 0;
 	while (counter < sizeFile)
 	{
-
 		if (
 			archivo[counter] == 'M' &&
 			archivo[counter + 1] == 'e' &&
@@ -97,7 +43,6 @@ void CObject3D::Create(char * path)
 			archivo[counter + 5] == 'm'
 			)
 		{
-
 			counter += 9;
 			flag = true;
 			while (flag)
@@ -203,7 +148,7 @@ void CObject3D::Create(char * path)
 							positionBuffer++;
 						}
 						buffer1[positionBuffer] = '\0';
-						macroBufferIndex[counterBufferIndex+1] = std::atof(buffer1) + offsetVertex;
+						macroBufferIndex[counterBufferIndex + 1] = std::atof(buffer1) + offsetVertex;
 
 						counter++;
 						i++;
@@ -309,7 +254,6 @@ void CObject3D::Create(char * path)
 					}
 					//enduvs
 					flag = false;
-					numberOfObjects++;
 				}
 				counter++;
 			}
@@ -326,6 +270,7 @@ void CObject3D::Create(char * path)
 			archivo[counter + 8] == 's'
 			)
 		{
+			infotex tempContentInfotext;
 			counter = counter + 12;
 			positionBuffer = 0;
 			while (archivo[counter] != ';')
@@ -335,7 +280,7 @@ void CObject3D::Create(char * path)
 				counter++;
 			}
 			buffer1[positionBuffer] = '\0';
-			numberOfTextures[numberOfObjects-1] = std::atoi(buffer1);
+			tempContentInfotext.numberOfTextures = std::atoi(buffer1);
 			counter++;
 			positionBuffer = 0;
 			while (archivo[counter] != ';')
@@ -345,10 +290,9 @@ void CObject3D::Create(char * path)
 				counter++;
 			}
 			buffer1[positionBuffer] = '\0';
-			sizeMeshTexture[numberOfObjects-1] = std::atoi(buffer1);
-			indexTexture[numberOfObjects-1] = new unsigned short[(sizeMeshTexture[numberOfObjects-1])];
+			tempContentInfotext.indicesTextures.resize(std::atoi(buffer1));
 			counter++;
-			for (int i = 0; i < sizeMeshTexture[numberOfObjects-1]; i++)
+			for (int i = 0; i < tempContentInfotext.indicesTextures.size(); i++)
 			{
 				positionBuffer = 0;
 				while (archivo[counter] != ';' && archivo[counter] != ',')
@@ -359,13 +303,11 @@ void CObject3D::Create(char * path)
 				}
 				counter++;
 				buffer1[positionBuffer] = '\0';
-				numberConvert = std::atof(buffer1);
-				indexTexture[numberOfObjects-1][i] = numberConvert;
+				tempContentInfotext.indicesTextures[i] = std::atof(buffer1);
 			}
-			pathsNames = new char*[numberOfTextures[numberOfObjects-1]];
-			listPathsNames[numberOfObjects - 1] = &pathsNames[0];
+
 			int temporalCounter = 0;
-			while (temporalCounter < numberOfTextures[numberOfObjects-1])
+			while (temporalCounter < tempContentInfotext.numberOfTextures)
 			{
 				counter++;
 				if (
@@ -395,63 +337,117 @@ void CObject3D::Create(char * path)
 						counter++;
 					}
 					temp[positionBuffer] = '\0';
-					pathsNames[temporalCounter] = &temp[0];
-
+					tempContentInfotext.namesTextures.push_back(temp);
 					temporalCounter++;
 				}
 			}
-
+			infoMeshTextures.push_back(tempContentInfotext);
 		}
 		counter++;
 
 	}
-	//Crear macro size and vertex buffer
+	//
 
-	sizeIndex = macroBufferIndex.size();
+	std::vector<std::string> list;
 
-	//map de texturas unicas
-	unsigned short asignBuffer = 0;
-	for (int i = 0; i < numberOfObjects; i++)
-	{
-		for (int r = 0; r < numberOfTextures[i]; r++)
-		{
-			printf("%s", listPathsNames[i][r]);
-			std::string tempString(listPathsNames[i][r]);
-			if (list.find(tempString) == list.end())
+	for (auto it = infoMeshTextures.begin(); it != infoMeshTextures.end(); ++it) {
+		for (auto it2 = it->namesTextures.begin(); it2 != it->namesTextures.end(); ++it2) {
+			std::string tempString((*it2));
+			auto iteradorFind = std::find(list.begin(), list.end(), tempString);
+			if (iteradorFind == list.end())
 			{
-				list[tempString] = asignBuffer;
-				asignBuffer++;
+				list.push_back(tempString);
 			}
 		}
 	}
 
-	std::map<std::string, unsigned short>::iterator it;
-	int counterIndexBuffer = 0;
-	for (int i = 0; i < numberOfObjects; i++)
+	for (auto i = list.begin(); i != list.end(); i++)
 	{
+		std::vector<unsigned short> *temp;
+		temp = new std::vector<unsigned short>;
+		bufferIndexForText.push_back(temp);
+	}
+	unsigned short counterTemp;
+	int counterIndexBuffer = 0;
+	for (auto it = infoMeshTextures.begin(); it != infoMeshTextures.end(); ++it) {
 		std::map <unsigned short, unsigned short> tempList;
-		for (int k = 0; k < numberOfTextures[i]; k++)
-		{
-			std::string tempString(listPathsNames[i][k]);
-			it = list.find(tempString);
-			tempList[k] = it->second;
+		counterTemp = 0;
+		for (auto it2 = it->namesTextures.begin(); it2 != it->namesTextures.end(); ++it2) {
+			std::string tempString((*it2));
+			auto iteradorFind = std::find(list.begin(), list.end(), tempString);
+			unsigned short index = std::distance(list.begin(), iteradorFind);
+			tempList[counterTemp] = index;
+			counterTemp++;
 		}
-		for (int j = 0; j < sizeMeshTexture[i]; j++)
+		for (int i = 0; i < it->indicesTextures.size(); i++)
 		{
-			bufferIndex[tempList[indexTexture[i][j]]].push_back(macroBufferIndex[counterIndexBuffer]);
+			bufferIndexForText[tempList[it->indicesTextures[i]]]->push_back(macroBufferIndex[counterIndexBuffer]);
 			counterIndexBuffer++;
-			bufferIndex[tempList[indexTexture[i][j]]].push_back(macroBufferIndex[counterIndexBuffer]);
+			bufferIndexForText[tempList[it->indicesTextures[i]]]->push_back(macroBufferIndex[counterIndexBuffer]);
 			counterIndexBuffer++;
-			bufferIndex[tempList[indexTexture[i][j]]].push_back(macroBufferIndex[counterIndexBuffer]);
+			bufferIndexForText[tempList[it->indicesTextures[i]]]->push_back(macroBufferIndex[counterIndexBuffer]);
 			counterIndexBuffer++;
 		}
- 	}
-#ifdef USING_D3D11
+	}
+#ifdef USING_OPENGL_ES
+	shaderID = glCreateProgram();
+	char *vsSourceP = file2string("Shaders/VS.glsl");
+	char *fsSourceP = file2string("Shaders/FS.glsl");
+#elif defined(USING_D3D11)
+	char *vsSourceP = file2string("Shaders/VS.hlsl");
+	char *fsSourceP = file2string("Shaders/FS.hlsl");
+#endif
+
+#ifdef USING_OPENGL_ES
+
+	GLuint vshader_id = createShader(GL_VERTEX_SHADER, vsSourceP);
+	GLuint fshader_id = createShader(GL_FRAGMENT_SHADER, fsSourceP);
+
+	glAttachShader(shaderID, vshader_id);
+	glAttachShader(shaderID, fshader_id);
+
+	glLinkProgram(shaderID);
+	glUseProgram(shaderID);
+
+	vertexAttribLoc = glGetAttribLocation(shaderID, "Vertex");
+	normalAttribLoc = glGetAttribLocation(shaderID, "Normal");
+	uvAttribLoc = glGetAttribLocation(shaderID, "UV");
+
+	matWorldViewProjUniformLoc = glGetUniformLocation(shaderID, "WVP");
+	matWorldUniformLoc = glGetUniformLocation(shaderID, "World");
+	diffuseLoc = glGetUniformLocation(shaderID, "diffuse");
+	glGenBuffers(1, &VB);
+	glBindBuffer(GL_ARRAY_BUFFER, VB);
+	glBufferData(GL_ARRAY_BUFFER, bufferVertex.size() * sizeof(CVertex), bufferVertex.data(), GL_STATIC_DRAW);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+	for (int i = 0; i < bufferIndexForText.size(); i++)
+	{
+		glGenBuffers(1, &IB[i]);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IB[i]);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, (*bufferIndexForText[i]).size() * sizeof(unsigned short), (*bufferIndexForText[i]).data(), GL_STATIC_DRAW);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+	}
+
+	int countertext = 0;
+	for (auto i = list.begin(); i != list.end(); i++) {
+		Texture	*tex = new TextureGL;
+		char *tempChar;
+		tempChar = new char[((*i).size() + 1)];
+		memcpy(tempChar, (*i).c_str(), (*i).size() + 1);
+		TexId[countertext] = tex->LoadTexture(tempChar);
+		if (TexId[countertext] == -1) {
+			delete tex;
+		}
+		countertext++;
+		delete[]tempChar;
+	}
+#elif defined(USING_D3D11)
 	HRESULT hr;
 	{
 		VS_blob = nullptr; // VS_blob would contain the binary compiled vertex shader program
 		ComPtr<ID3DBlob> errorBlob = nullptr; // In case of error, this blob would contain the compilation errors
-												// We compile the source, the entry point is VS in our vertex shader, and we are using shader model 5 (d3d11)
+											  // We compile the source, the entry point is VS in our vertex shader, and we are using shader model 5 (d3d11)
 		hr = D3DCompile(vsSourceP, (UINT)strlen(vsSourceP), 0, 0, 0, "VS", "vs_5_0", 0, 0, &VS_blob, &errorBlob);
 		if (hr != S_OK) { // some error
 
@@ -550,7 +546,7 @@ void CObject3D::Create(char * path)
 		}
 	}
 	// Same for the index buffer
-	
+
 	for (std::map<std::string, unsigned short>::iterator it = list.begin(); it != list.end(); ++it) {
 		Texture	*tex = new TextureD3D;
 		char *tempChar;
@@ -563,71 +559,28 @@ void CObject3D::Create(char * path)
 		Textures[it->second] = tex;;
 		delete tempChar;
 	}
-	
-#endif // USING_D3D11
-
-#ifdef USING_OPENGL_ES
-	//no ligting   busediffusemap diffusemap speclevel specularmap glossmap glossiness normalmap bflipgreenchanel
-	for (std::map<std::string, unsigned short>::iterator it = list.begin(); it != list.end(); ++it) {
-		Texture	*tex = new TextureGL;
-		char *tempChar;
-		tempChar = new char[(it->first.size() + 1)];
-		memcpy(tempChar, it->first.c_str(), it->first.size() + 1);
-		TexId[it->second] = tex->LoadTexture(tempChar);
-		if (TexId[it->second] == -1) {
-			delete tex;
-		}
-		delete []tempChar;
-	}
-
-
-	//crear nuevo index buffers
-
-
-
-	glGenBuffers(1, &VB);
-	glBindBuffer(GL_ARRAY_BUFFER, VB);
-	glBufferData(GL_ARRAY_BUFFER, bufferVertex.size() * sizeof(CVertex), bufferVertex.data(), GL_STATIC_DRAW);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-
-	for (int i = 0; i < list.size(); i++)
-	{
-		glGenBuffers(1, &IB[i]);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IB[i]);
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, bufferIndex[i].size() * sizeof(unsigned short), &bufferIndex[i][0], GL_STATIC_DRAW);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-	}
-
 #endif
 	transform = Identity();
-	delete[] vsSourceP;
-	delete[] fsSourceP;
-	delete[] buffer1;
-	delete[] archivo;
+	delete vsSourceP;
+	delete fsSourceP;
+	delete buffer1;
+	delete archivo;
+
+
 }
 
-void CObject3D::Transform(float *t)
-{
+void CObject3D::Transform(float *t) {
 	transform = t;
 }
 
-void CObject3D::Draw(float *t, float *vp)
-{
+void CObject3D::Draw(float *t, float *vp) {
+	glUseProgram(shaderID);
+
 	if (t)
 		transform = t;
-#ifdef USING_OPENGL_ES
 
-	glUseProgram(shaderID);
 	CMatrix4D VP = CMatrix4D(vp);
 	CMatrix4D WVP = transform*VP;
-
-	glUniform3f(DirectionGlobalLight, (*dirGlobal).x, (*dirGlobal).y , (*dirGlobal).z);
-	glUniform3f(ColorGlobalLight, (*colorGlobal).x, (*colorGlobal).y, (*colorGlobal).z);
-	glUniform3f(PositionPointLight, (*posPoint).x, (*posPoint).y, (*posPoint).z);
-	glUniform3f(ColorPointLight, (*colorPoint).x, (*colorPoint).y, (*colorPoint).z);
-
-
 
 	glUniformMatrix4fv(matWorldUniformLoc, 1, GL_FALSE, &transform.m[0][0]);
 	glUniformMatrix4fv(matWorldViewProjUniformLoc, 1, GL_FALSE, &WVP.m[0][0]);
@@ -635,87 +588,38 @@ void CObject3D::Draw(float *t, float *vp)
 	glBindBuffer(GL_ARRAY_BUFFER, VB);
 
 	glEnableVertexAttribArray(vertexAttribLoc);
-
-	if (normalAttribLoc != -1)
-		glEnableVertexAttribArray(normalAttribLoc);
+	glEnableVertexAttribArray(normalAttribLoc);
 
 	if (uvAttribLoc != -1)
 		glEnableVertexAttribArray(uvAttribLoc);
 
 	glVertexAttribPointer(vertexAttribLoc, 4, GL_FLOAT, GL_FALSE, sizeof(CVertex), BUFFER_OFFSET(0));
-	if (normalAttribLoc != -1)
-		glVertexAttribPointer(normalAttribLoc, 4, GL_FLOAT, GL_FALSE, sizeof(CVertex), BUFFER_OFFSET(16));
+	glVertexAttribPointer(normalAttribLoc, 4, GL_FLOAT, GL_FALSE, sizeof(CVertex), BUFFER_OFFSET(16));
 
 	if (uvAttribLoc != -1)
 		glVertexAttribPointer(uvAttribLoc, 2, GL_FLOAT, GL_FALSE, sizeof(CVertex), BUFFER_OFFSET(32));
 
-	for (int i = 0; i < list.size(); i++)
+	for (int i = 0; i < bufferIndexForText.size(); i++)
 	{
-
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IB[i]);
-
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, TexId[i]);
 		glUniform1i(diffuseLoc, 0);
-
-		glDrawElements(GL_TRIANGLES, bufferIndex[i].size(), GL_UNSIGNED_SHORT, 0);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IB[i]);
+		glDrawElements(GL_TRIANGLES, (*bufferIndexForText[i]).size(), GL_UNSIGNED_SHORT, 0);
 	}
-
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
 	glDisableVertexAttribArray(vertexAttribLoc);
-
-	if (normalAttribLoc != -1) {
-		glDisableVertexAttribArray(normalAttribLoc);
-	}
+	glDisableVertexAttribArray(normalAttribLoc);
 
 	if (uvAttribLoc != -1) {
 		glDisableVertexAttribArray(uvAttribLoc);
 	}
 
 	glUseProgram(0);
-#elif defined(USING_D3D11)
-
-	CMatrix4D VP = CMatrix4D(vp);
-	CMatrix4D WVP = transform*VP;
-	CnstBuffer.WVP = WVP;
-	CnstBuffer.World = transform;
-
-	UINT stride = sizeof(CVertex);
-	UINT offset = 0;
-	// We bound to use the vertex and pixel shader of this primitive
-	D3D11DeviceContext->VSSetShader(pVS.Get(), 0, 0);
-	D3D11DeviceContext->PSSetShader(pFS.Get(), 0, 0);
-	// Set the input layout to let the shader program know what kind of vertex data we have
-	D3D11DeviceContext->IASetInputLayout(Layout.Get());
-	// We update the constant buffer with the current matrices
-	D3D11DeviceContext->UpdateSubresource(pd3dConstantBuffer.Get(), 0, 0, &CnstBuffer, 0, 0);
-	// Once updated the constant buffer we send them to the shader programs
-	D3D11DeviceContext->VSSetConstantBuffers(0, 1, pd3dConstantBuffer.GetAddressOf());
-	D3D11DeviceContext->PSSetConstantBuffers(0, 1, pd3dConstantBuffer.GetAddressOf());
-
-	// We let d3d that we are using our vertex and index buffers, they require the stride and offset
-	D3D11DeviceContext->IASetVertexBuffers(0, 1, VB.GetAddressOf(), &stride, &offset);
-	// Same for the index buffer
-	for (int i = 0; i < list.size(); i++)
-	{
-		TextureD3D *texd3d = dynamic_cast<TextureD3D*>(Textures[i]);
-		D3D11DeviceContext->PSSetShaderResources(0, 1, texd3d->pSRVTex.GetAddressOf());
-		D3D11DeviceContext->PSSetSamplers(0, 1, texd3d->pSampler.GetAddressOf());
-
-		D3D11DeviceContext->IASetIndexBuffer(IB[i].Get(), DXGI_FORMAT_R16_UINT, 0);
-		// Instruct to use triangle list
-		D3D11DeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-		// Draw the primitive sending the number of indices
-		D3D11DeviceContext->DrawIndexed(sizeIndex, 0, 0);
-	}
-#endif
 }
 
-void CObject3D::Destroy()
-{
-#ifdef USING_OPENGL_ES
+void CObject3D::Destroy() {
 	glDeleteProgram(shaderID);
-#endif
 }

@@ -19,7 +19,7 @@ public:
 
 	void	Clear();
 	void	SwapBuffers();
-	void	SetDimensions(int, int);
+
 	EGLDisplay			eglDisplay;
 	EGLConfig			eglConfig;
 	EGLSurface			eglSurface;

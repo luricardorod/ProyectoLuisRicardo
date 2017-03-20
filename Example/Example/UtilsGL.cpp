@@ -86,7 +86,6 @@ unsigned char * loadBMPFile(char * path)
 	int width = *(int*)&file[18];
 	int height = *(int*)&file[22];
 	int size = 3 * width*height;
-	int channels = *(int*)&file[22];
 
 	if (
 		(file[0]) == 'B' &&

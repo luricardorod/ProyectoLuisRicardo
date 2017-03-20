@@ -3,7 +3,7 @@
 #include "TriangleGL.h"
 #include "CubeGL.h"
 #include "CObject3D.h"
-#include "RevObj.h"
+
 PrimitiveBase*	PrimitiveManager::GetPrimitive(unsigned int index) {
 	if (index >= primitives.size())
 		return 0;
@@ -12,7 +12,7 @@ PrimitiveBase*	PrimitiveManager::GetPrimitive(unsigned int index) {
 }
 
 int  PrimitiveManager::CreateTriangle() {
-	PrimitiveBase *primitive = new Trangle();
+	PrimitiveBase *primitive = new TrangleGL();
 	primitive->Create("NULL");
 	primitives.push_back(primitive);
 	return (int)(primitives.size()-1);

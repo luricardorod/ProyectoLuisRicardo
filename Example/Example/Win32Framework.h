@@ -5,7 +5,6 @@
 #include "BaseDriver.h"
 #include <memory>
 #include "Config.h"
-
 class Win32Framework : public RootFramework {
 public:
 	Win32Framework(AppBase *pBaseApp) : RootFramework(pBaseApp), m_alive(true) 	{ 

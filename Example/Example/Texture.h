@@ -1,8 +1,6 @@
 #ifndef UAD_TEXTURE_H
 #define UAD_TEXTURE_H
 
-#include "Config.h"
-
 enum TEXT_BASIC_FORMAT {
 	CH_ALPHA = 1,
 	CH_RGB = 2,

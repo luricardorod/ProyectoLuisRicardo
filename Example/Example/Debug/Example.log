@@ -1,21 +1,30 @@
-﻿  CObject3D.cpp
-e:\uad\5to\graficas\proyectoluisricardo\example\example\cobject3d.cpp(117): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
-e:\uad\5to\graficas\proyectoluisricardo\example\example\cobject3d.cpp(131): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-e:\uad\5to\graficas\proyectoluisricardo\example\example\cobject3d.cpp(142): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-e:\uad\5to\graficas\proyectoluisricardo\example\example\cobject3d.cpp(153): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-e:\uad\5to\graficas\proyectoluisricardo\example\example\cobject3d.cpp(172): warning C4244: '-=': conversion from 'double' to 'int', possible loss of data
-e:\uad\5to\graficas\proyectoluisricardo\example\example\cobject3d.cpp(173): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
-e:\uad\5to\graficas\proyectoluisricardo\example\example\cobject3d.cpp(194): warning C4244: '=': conversion from 'double' to 'unsigned short', possible loss of data
-e:\uad\5to\graficas\proyectoluisricardo\example\example\cobject3d.cpp(206): warning C4244: '=': conversion from 'double' to 'unsigned short', possible loss of data
-e:\uad\5to\graficas\proyectoluisricardo\example\example\cobject3d.cpp(219): warning C4244: '=': conversion from 'double' to 'unsigned short', possible loss of data
-e:\uad\5to\graficas\proyectoluisricardo\example\example\cobject3d.cpp(245): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-e:\uad\5to\graficas\proyectoluisricardo\example\example\cobject3d.cpp(256): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-e:\uad\5to\graficas\proyectoluisricardo\example\example\cobject3d.cpp(268): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-e:\uad\5to\graficas\proyectoluisricardo\example\example\cobject3d.cpp(295): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-e:\uad\5to\graficas\proyectoluisricardo\example\example\cobject3d.cpp(306): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-e:\uad\5to\graficas\proyectoluisricardo\example\example\cobject3d.cpp(362): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-e:\uad\5to\graficas\proyectoluisricardo\example\example\cobject3d.cpp(363): warning C4244: '=': conversion from 'float' to 'unsigned short', possible loss of data
-e:\uad\5to\graficas\proyectoluisricardo\example\example\cobject3d.cpp(594): warning C4018: '<': signed/unsigned mismatch
-e:\uad\5to\graficas\proyectoluisricardo\example\example\cobject3d.cpp(83): warning C4101: 'pathsTextures': unreferenced local variable
-e:\uad\5to\graficas\proyectoluisricardo\example\example\cobject3d.cpp(652): warning C4018: '<': signed/unsigned mismatch
-  Example.vcxproj -> E:\UAD\5to\graficas\ProyectoLuisRicardo\Example\Debug\Framework.lib
+﻿  TextureD3D.cpp
+  CObject3D.cpp
+e:\uad\5to\graficas\chemonky\example\example\cobject3d.cpp(62): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
+e:\uad\5to\graficas\chemonky\example\example\cobject3d.cpp(76): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+e:\uad\5to\graficas\chemonky\example\example\cobject3d.cpp(87): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+e:\uad\5to\graficas\chemonky\example\example\cobject3d.cpp(98): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+e:\uad\5to\graficas\chemonky\example\example\cobject3d.cpp(117): warning C4244: '-=': conversion from 'double' to 'int', possible loss of data
+e:\uad\5to\graficas\chemonky\example\example\cobject3d.cpp(118): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
+e:\uad\5to\graficas\chemonky\example\example\cobject3d.cpp(139): warning C4244: '=': conversion from 'double' to 'unsigned short', possible loss of data
+e:\uad\5to\graficas\chemonky\example\example\cobject3d.cpp(151): warning C4244: '=': conversion from 'double' to 'unsigned short', possible loss of data
+e:\uad\5to\graficas\chemonky\example\example\cobject3d.cpp(164): warning C4244: '=': conversion from 'double' to 'unsigned short', possible loss of data
+e:\uad\5to\graficas\chemonky\example\example\cobject3d.cpp(190): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+e:\uad\5to\graficas\chemonky\example\example\cobject3d.cpp(201): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+e:\uad\5to\graficas\chemonky\example\example\cobject3d.cpp(213): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+e:\uad\5to\graficas\chemonky\example\example\cobject3d.cpp(240): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+e:\uad\5to\graficas\chemonky\example\example\cobject3d.cpp(251): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+e:\uad\5to\graficas\chemonky\example\example\cobject3d.cpp(295): warning C4018: '<': signed/unsigned mismatch
+e:\uad\5to\graficas\chemonky\example\example\cobject3d.cpp(306): warning C4244: '=': conversion from 'double' to 'unsigned short', possible loss of data
+e:\uad\5to\graficas\chemonky\example\example\cobject3d.cpp(382): warning C4018: '<': signed/unsigned mismatch
+e:\uad\5to\graficas\chemonky\example\example\cobject3d.cpp(424): warning C4018: '<': signed/unsigned mismatch
+e:\uad\5to\graficas\chemonky\example\example\cobject3d.cpp(602): warning C4018: '<': signed/unsigned mismatch
+  Generating Code...
+  Compiling...
+  PrimitiveManager.cpp
+  Generating Code...
+  Skipping... (no relevant changes detected)
+  Win32Framework.cpp
+  TextureGL.cpp
+  D3DXDriver.cpp
+  Example.vcxproj -> E:\UAD\5to\graficas\chemonky\Example\Debug\Framework.lib

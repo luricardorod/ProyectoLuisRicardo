@@ -54,11 +54,6 @@ void PrimitiveInst::Update() {
 	final = scale*rotationX*rotationY*rotationZ*position;
 }
 
-void PrimitiveInst::Draw()
-{
-	pBase->dirGlobal = dirGlobal;
-	pBase->colorGlobal = colorGlobal;
-	pBase->posPoint = posPoint;
-	pBase->colorPoint = colorPoint;
+void PrimitiveInst::Draw(){
 	pBase->Draw(&final.m[0][0],&(*pViewProj).m[0][0]);
 }

@@ -5,8 +5,7 @@
 #include "CVector4D.h"
 #include <Timer.h>
 
-class TestApp : public AppBase
-{
+class TestApp : public AppBase {
 public:
 	TestApp() : AppBase() {}
 	void InitVars();
@@ -25,16 +24,7 @@ public:
 	PrimitiveManager PrimitiveMgr;
 	PrimitiveInst	primitiveFigs[10];
 
-	CVector4D		DirGlobalLight;
-	CVector4D		ColorGlobalLight;
-	CVector4D		PosPointLight;
-	CVector4D		ColorPointLight;
-
-
 	CVector4D		Position;
-	CVector4D		PositionCamera;
-	CMatrix4D		proj;
-	CVector4D       Up;
 	CVector4D		Orientation;
 	CVector4D		Scaling;
 

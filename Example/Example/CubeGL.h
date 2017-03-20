@@ -7,7 +7,6 @@
 #include "PrimitiveBase.h"
 #include "UtilsGL.h"
 #include "CMatrix4D.h"
-#include "TextureGL.h"
 
 class CubeGL : public PrimitiveBase {
 public:
@@ -21,8 +20,7 @@ public:
 	GLint	vertexAttribLoc;
 	GLint	normalAttribLoc;
 	GLint	uvAttribLoc;
-	GLint	diffuseLoc;
-	int		TexId;
+
 	GLint  matWorldViewProjUniformLoc;
 	GLint  matWorldUniformLoc;
 
@@ -31,7 +29,6 @@ public:
 	GLuint			VB;
 	GLuint			IB;
 
-	Texture		*tex;
 	CMatrix4D	transform;
 };
 

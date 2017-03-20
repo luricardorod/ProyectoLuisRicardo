@@ -5,11 +5,9 @@
 #include "CMatrix4D.h"
 
 
-class PrimitiveInst
-{
+class PrimitiveInst {
 	public:
-		void CreateInstance(PrimitiveBase *pPrim, CMatrix4D *pVP)
-		{
+		void	CreateInstance(PrimitiveBase *pPrim, CMatrix4D *pVP) {
 			pBase = pPrim;
 			pViewProj = pVP;
 			position = Identity();
@@ -34,12 +32,6 @@ class PrimitiveInst
 
 		void	Update();
 		void	Draw();
-
-		CVector4D		*dirGlobal;
-		CVector4D		*colorGlobal;
-		CVector4D		*posPoint;
-		CVector4D		*colorPoint;
-
 
 		CMatrix4D		position;
 		CMatrix4D		scale;
