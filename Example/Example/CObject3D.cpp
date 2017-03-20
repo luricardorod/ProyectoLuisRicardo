@@ -522,10 +522,10 @@ void CObject3D::Create(char * path) {
 	D3D11DeviceContext->PSSetConstantBuffers(0, 1, pd3dConstantBuffer.GetAddressOf());
 
 	bdesc = { 0 };
-	bdesc.ByteWidth = sizeof(CVertex) * sumVertexSize;
+	bdesc.ByteWidth = sizeof(CVertex) * bufferVertex.size();
 	bdesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 	// Resource sub data is just a structure friendly to set our pointer to the vertex data
-	D3D11_SUBRESOURCE_DATA subData = { vertices, 0, 0 };
+	D3D11_SUBRESOURCE_DATA subData = { bufferVertex.data(), 0, 0 };
 	hr = D3D11Device->CreateBuffer(&bdesc, &subData, &VB);
 	if (hr != S_OK) {
 		printf("Error Creating Vertex Buffer\n");
@@ -534,10 +534,10 @@ void CObject3D::Create(char * path) {
 	for (int i = 0; i < list.size(); i++)
 	{
 		bdesc = { 0 };
-		bdesc.ByteWidth = bufferIndex[i].size() * sizeof(USHORT);
+		bdesc.ByteWidth = (*bufferIndexForText[i]).size() * sizeof(USHORT);
 		bdesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
 
-		subData = { &bufferIndex[i][0], 0, 0 };
+		subData = { &(*bufferIndexForText[i])[0], 0, 0 };
 
 		hr = D3D11Device->CreateBuffer(&bdesc, &subData, &IB[i]);
 		if (hr != S_OK) {
@@ -547,17 +547,19 @@ void CObject3D::Create(char * path) {
 	}
 	// Same for the index buffer
 
-	for (std::map<std::string, unsigned short>::iterator it = list.begin(); it != list.end(); ++it) {
+	int countertext = 0;
+	for (auto i = list.begin(); i != list.end(); i++) {
 		Texture	*tex = new TextureD3D;
 		char *tempChar;
-		tempChar = new char[(it->first.size() + 1)];
-		memcpy(tempChar, it->first.c_str(), it->first.size() + 1);
-		TexId[it->second] = tex->LoadTexture(tempChar);
-		if (TexId[it->second] == -1) {
+		tempChar = new char[((*i).size() + 1)];
+		memcpy(tempChar, (*i).c_str(), (*i).size() + 1);
+		TexId[countertext] = tex->LoadTexture(tempChar);
+		if (TexId[countertext] == -1) {
 			delete tex;
 		}
-		Textures[it->second] = tex;;
-		delete tempChar;
+		Textures[countertext] = tex;
+		countertext++;
+		delete[]tempChar;
 	}
 #endif
 	transform = Identity();
@@ -574,11 +576,12 @@ void CObject3D::Transform(float *t) {
 }
 
 void CObject3D::Draw(float *t, float *vp) {
-	glUseProgram(shaderID);
 
 	if (t)
 		transform = t;
+#ifdef USING_OPENGL_ES
 
+	glUseProgram(shaderID);
 	CMatrix4D VP = CMatrix4D(vp);
 	CMatrix4D WVP = transform*VP;
 
@@ -618,8 +621,46 @@ void CObject3D::Draw(float *t, float *vp) {
 	}
 
 	glUseProgram(0);
+	glUseProgram(0);
+#elif defined(USING_D3D11)
+	CMatrix4D VP = CMatrix4D(vp);
+	CMatrix4D WVP = transform*VP;
+	CnstBuffer.WVP = WVP;
+	CnstBuffer.World = transform;
+
+	UINT stride = sizeof(CVertex);
+	UINT offset = 0;
+	// We bound to use the vertex and pixel shader of this primitive
+	D3D11DeviceContext->VSSetShader(pVS.Get(), 0, 0);
+	D3D11DeviceContext->PSSetShader(pFS.Get(), 0, 0);
+	// Set the input layout to let the shader program know what kind of vertex data we have
+	D3D11DeviceContext->IASetInputLayout(Layout.Get());
+	// We update the constant buffer with the current matrices
+	D3D11DeviceContext->UpdateSubresource(pd3dConstantBuffer.Get(), 0, 0, &CnstBuffer, 0, 0);
+	// Once updated the constant buffer we send them to the shader programs
+	D3D11DeviceContext->VSSetConstantBuffers(0, 1, pd3dConstantBuffer.GetAddressOf());
+	D3D11DeviceContext->PSSetConstantBuffers(0, 1, pd3dConstantBuffer.GetAddressOf());
+
+	// We let d3d that we are using our vertex and index buffers, they require the stride and offset
+	D3D11DeviceContext->IASetVertexBuffers(0, 1, VB.GetAddressOf(), &stride, &offset);
+	// Same for the index buffer
+	for (int i = 0; i < bufferIndexForText.size(); i++)
+	{
+		TextureD3D *texd3d = dynamic_cast<TextureD3D*>(Textures[i]);
+		D3D11DeviceContext->PSSetShaderResources(0, 1, texd3d->pSRVTex.GetAddressOf());
+		D3D11DeviceContext->PSSetSamplers(0, 1, texd3d->pSampler.GetAddressOf());
+
+		D3D11DeviceContext->IASetIndexBuffer(IB[i].Get(), DXGI_FORMAT_R16_UINT, 0);
+		// Instruct to use triangle list
+		D3D11DeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+		// Draw the primitive sending the number of indices
+		D3D11DeviceContext->DrawIndexed((*bufferIndexForText[i]).size(), 0, 0);
+	}
+#endif
 }
 
 void CObject3D::Destroy() {
+#ifdef USING_OPENGL_ES
 	glDeleteProgram(shaderID);
+#endif
 }

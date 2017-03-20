@@ -111,3 +111,7 @@ void	GLDriver::Clear() {
 void	GLDriver::SwapBuffers() {
 	eglSwapBuffers(eglDisplay, eglSurface);
 }
+
+void GLDriver::SetDimensions(int, int)
+{
+}
