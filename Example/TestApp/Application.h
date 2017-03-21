@@ -27,7 +27,8 @@ public:
 	CVector4D		Position;
 	CVector4D		Orientation;
 	CVector4D		Scaling;
-
+	CVector4D		PositionCamera;
+	float			rotationCam = 0;
 	CMatrix4D		View;
 	CMatrix4D		Projection;
 	CMatrix4D		VP;

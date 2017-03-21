@@ -319,19 +319,27 @@ void CObject3D::Create(char * path) {
 					archivo[counter + 5] == 'u' &&
 					archivo[counter + 6] == 's' &&
 					archivo[counter + 7] == 'e' &&
-					archivo[counter + 8] == 'M'
-					) {
+					archivo[counter + 8] == 'M' &&
+					archivo[counter + 9] == 'a' &&
+					archivo[counter + 10] == 'p' &&
+					archivo[counter + 11] == '"'
+				) {
 
-					counter = counter + 8;
-					while (archivo[counter] != 92)
+					counter = counter + 12;
+
+					while (archivo[counter] != '"')
 					{
 						counter++;
 					}
-					counter += 2;
-					char* temp = new char[20];
+					counter++;
+					char* temp = new char[30];
 					positionBuffer = 0;
 					while (archivo[counter] != '"')
 					{
+						if (archivo[counter] == 92) {
+							positionBuffer = 0;
+							counter++;
+						}
 						temp[positionBuffer] = archivo[counter];
 						positionBuffer++;
 						counter++;
