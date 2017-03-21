@@ -16,6 +16,6 @@ e:\uad\5to\graficas\chemonky\example\example\cobject3d.cpp(251): warning C4244: 
 e:\uad\5to\graficas\chemonky\example\example\cobject3d.cpp(295): warning C4018: '<': signed/unsigned mismatch
 e:\uad\5to\graficas\chemonky\example\example\cobject3d.cpp(306): warning C4244: '=': conversion from 'double' to 'unsigned short', possible loss of data
 e:\uad\5to\graficas\chemonky\example\example\cobject3d.cpp(390): warning C4018: '<': signed/unsigned mismatch
-e:\uad\5to\graficas\chemonky\example\example\cobject3d.cpp(432): warning C4018: '<': signed/unsigned mismatch
-e:\uad\5to\graficas\chemonky\example\example\cobject3d.cpp(613): warning C4018: '<': signed/unsigned mismatch
+e:\uad\5to\graficas\chemonky\example\example\cobject3d.cpp(456): warning C4018: '<': signed/unsigned mismatch
+e:\uad\5to\graficas\chemonky\example\example\cobject3d.cpp(645): warning C4018: '<': signed/unsigned mismatch
   Example.vcxproj -> E:\UAD\5to\graficas\chemonky\Example\Debug\Framework.lib

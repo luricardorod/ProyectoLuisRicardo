@@ -13,3 +13,7 @@
 #endif
 
 #endif
+
+#define USE_POINTLIGHT
+//#define USE_GLOBALLIGHT
+#define USE_TEXCOORD0

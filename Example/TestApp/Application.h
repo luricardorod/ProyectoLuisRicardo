@@ -25,6 +25,8 @@ public:
 	PrimitiveInst	primitiveFigs[10];
 
 	CVector4D		Position;
+	CVector4D		PositionLight;
+
 	CVector4D		Orientation;
 	CVector4D		Scaling;
 	CVector4D		PositionCamera;
@@ -32,6 +34,6 @@ public:
 	CMatrix4D		View;
 	CMatrix4D		Projection;
 	CMatrix4D		VP;
-
+	Lights			worldLights;
 	Timer			DtTimer;
 };

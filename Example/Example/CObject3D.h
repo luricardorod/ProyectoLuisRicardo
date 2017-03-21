@@ -40,6 +40,11 @@ public:
 
 	GLuint			VB;
 	GLuint			IB[20];
+
+	GLint DirectionGlobalLight;
+	GLint ColorGlobalLight;
+	GLint PositionPointLight;
+	GLint ColorPointLight;
 #elif defined(USING_D3D11)
 	struct CBuffer
 	{

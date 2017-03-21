@@ -14,9 +14,14 @@ enum {
 void TestApp::InitVars() {
 	DtTimer.Init();
 	Position	= CVector4D(0.0f, 0.0f, 0.0f, 0);
+	PositionLight = CVector4D(0.0f, 0.0f, 0.0f, 0);
 	Orientation = CVector4D(0.0f, 0.0f, 10.0f, 0);
 	Scaling		= CVector4D(1.0f, 1.0f, 1.0f, 0);
 	rotationCam = 0;
+	worldLights.dirGlobal = CVector4D(1, 0, 0, 0);
+	worldLights.colorGlobal = CVector4D(.2, 0, 0, 0);
+	worldLights.colorPoint = CVector4D(0, 0, .5, 0);
+	worldLights.posPoint = CVector4D(50, 100, 10, 0);
 }
 
 void TestApp::CreateAssets() {	
@@ -40,7 +45,9 @@ void TestApp::CreateAssets() {
 	primitiveFigs[6].CreateInstance(PrimitiveMgr.GetPrimitive(index), &VP);
 	primitiveFigs[7].CreateInstance(PrimitiveMgr.GetPrimitive(index), &VP);
 	
-	
+	for (int i = 0; i < TOTAL_INSTANCES; i++) {
+		primitiveFigs[i].lights = &worldLights;
+	}
 	
 	CMatrix4D View;
 	PositionCamera = CVector4D(0.0f, 10.0f, 100.0f, 0);
@@ -83,6 +90,8 @@ void TestApp::CreateAssets() {
 	primitiveFigs[CERDO].RotateXAbsolute(0.0f);
 	primitiveFigs[CERDO].ScaleAbsolute(27.208776f);
 	primitiveFigs[CERDO].Update();
+	worldLights.posPoint = CVector4D(primitiveFigs[7].position.m30, primitiveFigs[7].position.m31, primitiveFigs[7].position.m32,0);
+	PositionLight = worldLights.posPoint;
 }
 
 void TestApp::DestroyAssets() {
@@ -112,6 +121,9 @@ void TestApp::OnUpdate() {
 
 	primitiveFigs[0].Update();
 
+	primitiveFigs[7].TranslateAbsolute(PositionLight.x, PositionLight.y, PositionLight.z);
+	primitiveFigs[7].Update();
+	worldLights.posPoint = CVector4D(primitiveFigs[7].position.m30, primitiveFigs[7].position.m31, primitiveFigs[7].position.m32,0);
 	OnDraw();
 	Orientation = CVector4D(0.0f, 0.0f, 10.0f, 0);
 	Position = CVector4D(0.0f, 0.0f, 0.0f, 0);
@@ -155,52 +167,28 @@ void TestApp::OnInput() {
 	if (IManager.PressedKey(SDLK_RIGHT)) {
 		Position.x += 1.0f*DtTimer.GetDTSecs();
 	}
+	if (IManager.PressedKey(SDLK_w)) {
+		PositionLight.z -= 20.0f*DtTimer.GetDTSecs();
+	}
 
+	if (IManager.PressedKey(SDLK_s)) {
+		PositionLight.z += 20.0f*DtTimer.GetDTSecs();
+	}
+
+	if (IManager.PressedKey(SDLK_a)) {
+		PositionLight.x -= 20.0f*DtTimer.GetDTSecs();
+	}
+
+	if (IManager.PressedKey(SDLK_d)) {
+		PositionLight.x += 20.0f*DtTimer.GetDTSecs();
+	}
 	if (IManager.PressedKey(SDLK_z)) {
-		Position.y += 1.0f*DtTimer.GetDTSecs();
+		PositionLight.y += 20.0f*DtTimer.GetDTSecs();
 	}
 
 	if (IManager.PressedKey(SDLK_x)) {
-		Position.y -= 1.0f*DtTimer.GetDTSecs();
+		PositionLight.y -= 20.0f*DtTimer.GetDTSecs();
 	}
-
-	if (IManager.PressedKey(SDLK_KP_PLUS)) {
-		Scaling.x += 1.0f*DtTimer.GetDTSecs();
-		Scaling.y += 1.0f*DtTimer.GetDTSecs();
-		Scaling.z += 1.0f*DtTimer.GetDTSecs();
-	}
-
-	if (IManager.PressedKey(SDLK_KP_MINUS)) {
-		Scaling.x -= 1.0f*DtTimer.GetDTSecs();
-		Scaling.y -= 1.0f*DtTimer.GetDTSecs();
-		Scaling.z -= 1.0f*DtTimer.GetDTSecs();
-	}
-
-	if (IManager.PressedKey(SDLK_KP5)) {
-		Orientation.x -= 60.0f*DtTimer.GetDTSecs();
-	}
-
-	if (IManager.PressedKey(SDLK_KP6)) {
-		Orientation.x += 60.0f*DtTimer.GetDTSecs();
-	}
-
-	if (IManager.PressedKey(SDLK_KP2)) {
-		Orientation.y -= 60.0f*DtTimer.GetDTSecs();
-	}
-
-	if (IManager.PressedKey(SDLK_KP3)) {
-		Orientation.y += 60.0f*DtTimer.GetDTSecs();
-	}
-
-	if (IManager.PressedKey(SDLK_KP0)) {
-		Orientation.z -= 60.0f*DtTimer.GetDTSecs();
-	}
-
-	if (IManager.PressedKey(SDLK_KP_PERIOD)) {
-		Orientation.z += 60.0f*DtTimer.GetDTSecs();
-	}
-
-	
 }
 
 void TestApp::OnPause() {

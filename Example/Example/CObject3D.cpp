@@ -406,10 +406,26 @@ void CObject3D::Create(char * path) {
 	char *fsSourceP = file2string("Shaders/FS.hlsl");
 #endif
 
+	std::string vstr = std::string(vsSourceP);
+	std::string fstr = std::string(fsSourceP);
+	std::string Defines = "";
+
+#ifdef USE_TEXCOORD0
+	Defines += "#define USE_TEXCOORD0\n\n";
+#endif
+#ifdef USE_GLOBALLIGHT
+	Defines += "#define USE_GLOBALLIGHT\n\n";
+#endif
+#ifdef	USE_POINTLIGHT
+	Defines += "#define USE_POINTLIGHT\n\n";
+#endif
+	vstr = Defines + vstr;
+	fstr = Defines + fstr;
+
 #ifdef USING_OPENGL_ES
 
-	GLuint vshader_id = createShader(GL_VERTEX_SHADER, vsSourceP);
-	GLuint fshader_id = createShader(GL_FRAGMENT_SHADER, fsSourceP);
+	GLuint vshader_id = createShader(GL_VERTEX_SHADER, (char*)vstr.c_str());
+	GLuint fshader_id = createShader(GL_FRAGMENT_SHADER, (char*)fstr.c_str());
 
 	glAttachShader(shaderID, vshader_id);
 	glAttachShader(shaderID, fshader_id);
@@ -424,6 +440,14 @@ void CObject3D::Create(char * path) {
 	matWorldViewProjUniformLoc = glGetUniformLocation(shaderID, "WVP");
 	matWorldUniformLoc = glGetUniformLocation(shaderID, "World");
 	diffuseLoc = glGetUniformLocation(shaderID, "diffuse");
+#ifdef USE_GLOBALLIGHT
+	DirectionGlobalLight = glGetUniformLocation(shaderID, "DirectionGlobalLight");
+	ColorGlobalLight = glGetUniformLocation(shaderID, "ColorGlobalLight");
+#endif
+#ifdef	USE_POINTLIGHT
+	PositionPointLight = glGetUniformLocation(shaderID, "PositionPointLight");
+	ColorPointLight = glGetUniformLocation(shaderID, "ColorPointLight");
+#endif
 	glGenBuffers(1, &VB);
 	glBindBuffer(GL_ARRAY_BUFFER, VB);
 	glBufferData(GL_ARRAY_BUFFER, bufferVertex.size() * sizeof(CVertex), bufferVertex.data(), GL_STATIC_DRAW);
@@ -456,7 +480,7 @@ void CObject3D::Create(char * path) {
 		VS_blob = nullptr; // VS_blob would contain the binary compiled vertex shader program
 		ComPtr<ID3DBlob> errorBlob = nullptr; // In case of error, this blob would contain the compilation errors
 											  // We compile the source, the entry point is VS in our vertex shader, and we are using shader model 5 (d3d11)
-		hr = D3DCompile(vsSourceP, (UINT)strlen(vsSourceP), 0, 0, 0, "VS", "vs_5_0", 0, 0, &VS_blob, &errorBlob);
+		hr = D3DCompile((char*)vstr.c_str(), (UINT)strlen((char*)vstr.c_str()), 0, 0, 0, "VS", "vs_5_0", 0, 0, &VS_blob, &errorBlob);
 		if (hr != S_OK) { // some error
 
 			if (errorBlob) { // print the error if the blob is valid
@@ -479,7 +503,7 @@ void CObject3D::Create(char * path) {
 	{
 		FS_blob = nullptr;
 		ComPtr<ID3DBlob> errorBlob = nullptr;
-		hr = D3DCompile(fsSourceP, (UINT)strlen(fsSourceP), 0, 0, 0, "FS", "ps_5_0", 0, 0, &FS_blob, &errorBlob);
+		hr = D3DCompile((char*)fstr.c_str(), (UINT)strlen((char*)fstr.c_str()), 0, 0, 0, "FS", "ps_5_0", 0, 0, &FS_blob, &errorBlob);
 		if (hr != S_OK) {
 			if (errorBlob) {
 				printf("errorBlob shader1[%s]", (char*)errorBlob->GetBufferPointer());
@@ -592,6 +616,14 @@ void CObject3D::Draw(float *t, float *vp) {
 	glUseProgram(shaderID);
 	CMatrix4D VP = CMatrix4D(vp);
 	CMatrix4D WVP = transform*VP;
+#ifdef USE_GLOBALLIGHT
+	glUniform3f(DirectionGlobalLight, lights->dirGlobal.x, lights->dirGlobal.y, lights->dirGlobal.z);
+	glUniform3f(ColorGlobalLight, lights->colorGlobal.x, lights->colorGlobal.y, lights->colorGlobal.z);
+#endif
+#ifdef	USE_POINTLIGHT
+	glUniform3f(PositionPointLight, lights->posPoint.x, lights->posPoint.y, lights->posPoint.z);
+	glUniform3f(ColorPointLight, lights->colorPoint.x, lights->colorPoint.y, lights->colorPoint.z);
+#endif
 
 	glUniformMatrix4fv(matWorldUniformLoc, 1, GL_FALSE, &transform.m[0][0]);
 	glUniformMatrix4fv(matWorldViewProjUniformLoc, 1, GL_FALSE, &WVP.m[0][0]);

@@ -55,5 +55,6 @@ void PrimitiveInst::Update() {
 }
 
 void PrimitiveInst::Draw(){
+	pBase->lights = lights;
 	pBase->Draw(&final.m[0][0],&(*pViewProj).m[0][0]);
 }

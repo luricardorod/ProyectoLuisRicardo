@@ -41,7 +41,7 @@ class PrimitiveInst {
 		CMatrix4D		final;
 
 		CMatrix4D		*pViewProj;
-
+		Lights			*lights;
 		PrimitiveBase	*pBase;
 };
 
