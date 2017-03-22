@@ -7,6 +7,7 @@ struct Lights
 	CVector4D colorGlobal;
 	CVector4D posPoint;
 	CVector4D colorPoint;
+	CVector4D *posCamera;
 };
 class PrimitiveBase {
 public:

@@ -419,6 +419,9 @@ void CObject3D::Create(char * path) {
 #ifdef	USE_POINTLIGHT
 	Defines += "#define USE_POINTLIGHT\n\n";
 #endif
+#ifdef	USE_DIFFUSE
+	Defines += "#define USE_DIFFUSE\n\n";
+#endif
 	vstr = Defines + vstr;
 	fstr = Defines + fstr;
 
@@ -447,6 +450,9 @@ void CObject3D::Create(char * path) {
 #ifdef	USE_POINTLIGHT
 	PositionPointLight = glGetUniformLocation(shaderID, "PositionPointLight");
 	ColorPointLight = glGetUniformLocation(shaderID, "ColorPointLight");
+#endif
+#ifdef	USE_DIFFUSE
+	PosCamera = glGetUniformLocation(shaderID, "PositionCamera");
 #endif
 	glGenBuffers(1, &VB);
 	glBindBuffer(GL_ARRAY_BUFFER, VB);
@@ -616,6 +622,9 @@ void CObject3D::Draw(float *t, float *vp) {
 	glUseProgram(shaderID);
 	CMatrix4D VP = CMatrix4D(vp);
 	CMatrix4D WVP = transform*VP;
+#ifdef	USE_DIFFUSE
+	glUniform3f(PosCamera, lights->posCamera->x, lights->posCamera->y, lights->posCamera->z);
+#endif
 #ifdef USE_GLOBALLIGHT
 	glUniform3f(DirectionGlobalLight, lights->dirGlobal.x, lights->dirGlobal.y, lights->dirGlobal.z);
 	glUniform3f(ColorGlobalLight, lights->colorGlobal.x, lights->colorGlobal.y, lights->colorGlobal.z);

@@ -21,6 +21,11 @@ varying highp vec3 posPoint;
 varying highp vec3 colorPoint;
 #endif
 
+#ifdef	USE_DIFFUSE
+uniform highp vec3 PositionCamera; 
+varying highp vec3 positionCamera;
+#endif
+
 uniform highp mat4 WVP;
 uniform highp mat4 World;
 
@@ -35,6 +40,9 @@ void main(){
 #endif
 #ifdef USE_TEXCOORD0
 	vecUVCoords = UV;
+#endif
+#ifdef USE_DIFFUSE
+	positionCamera = PositionCamera;
 #endif
 	vecTransformed	= normalize(Normal*World);
 	vert = World*Vertex;

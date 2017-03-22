@@ -11,6 +11,10 @@ varying highp vec3 light;
 varying highp vec3 color;
 #endif
 
+#ifdef	USE_DIFFUSE
+varying highp vec3 positionCamera;
+#endif
+
 #ifdef	USE_POINTLIGHT
 varying highp vec3 posPoint;
 varying highp vec3 colorPoint;
@@ -21,6 +25,18 @@ void main(){
 	lowp vec3 vector = vec3(0, 0, 0);
 	lowp vec3 globalLight = vec3(0, 0, 0);
 	lowp vec3 pointLight = vec3(0, 0, 0);
+	lowp vec3 diffuseLight = vec3(0, 0, 0);
+	highp vec3 colorDiffuse = vec3(.2,0, 0);;
+
+#ifdef	USE_DIFFUSE
+	lightIntensity = pow(dot(normalize(positionCamera.xyz - vert.xyz),reflect(normalize(vert.xyz - posPoint.xyz), vec3(0,1,0))),10.0);
+	if (lightIntensity > 1.0)
+		lightIntensity = 1.0;
+	else if (lightIntensity < 0.0)
+		lightIntensity = 0.0;
+	diffuseLight = lightIntensity*colorDiffuse;
+
+#endif
 
 #if defined(USE_GLOBALLIGHT)
 	lightIntensity = dot(light.xyz, vecTransformed.xyz) / (length(light)*length(vecTransformed.xyz));
@@ -33,8 +49,6 @@ void main(){
 
 #if defined(USE_POINTLIGHT)
 	lightIntensity = 0.0;
-	if	(length(posPoint.xyz - vert.xyz) < 10.0) {
-	}
 	lightIntensity = dot( normalize(posPoint.xyz - vert.xyz ), normalize(vecTransformed.xyz));
 	lightIntensity = lightIntensity*(100.0 / length(posPoint.xyz - vert.xyz));
 	if (lightIntensity > 1.0)
@@ -44,7 +58,7 @@ void main(){
 	pointLight = lightIntensity*colorPoint;
 #endif
 #if defined(USE_TEXCOORD0) 
-	vector = texture2D(diffuse,vecUVCoords).rgb*.3 +texture2D(diffuse,vecUVCoords).rgb*pointLight + texture2D(diffuse,vecUVCoords).rgb*globalLight;
+	vector = texture2D(diffuse,vecUVCoords).rgb*.1 +texture2D(diffuse,vecUVCoords).rgb*pointLight + texture2D(diffuse,vecUVCoords).rgb*globalLight + texture2D(diffuse,vecUVCoords).rgb*diffuseLight*10.0;
 #else
 	vector = normalize(vec3(vecTransformed)*0.5 + 0.5)*.3 +normalize(vec3(vecTransformed)*0.5 + 0.5)*pointLight + normalize(vec3(vecTransformed)*0.5 + 0.5)*globalLight;
 #endif

@@ -45,6 +45,8 @@ public:
 	GLint ColorGlobalLight;
 	GLint PositionPointLight;
 	GLint ColorPointLight;
+	GLint PosCamera;
+
 #elif defined(USING_D3D11)
 	struct CBuffer
 	{

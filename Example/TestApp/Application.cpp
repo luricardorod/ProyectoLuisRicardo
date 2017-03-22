@@ -22,6 +22,7 @@ void TestApp::InitVars() {
 	worldLights.colorGlobal = CVector4D(.2, 0, 0, 0);
 	worldLights.colorPoint = CVector4D(1, 1, 1, 0);
 	worldLights.posPoint = CVector4D(50, 100, 10, 0);
+	worldLights.posCamera = &PositionCamera;
 }
 
 void TestApp::CreateAssets() {	
