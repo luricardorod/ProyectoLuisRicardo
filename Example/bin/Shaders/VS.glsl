@@ -1,7 +1,7 @@
 attribute highp vec4 Vertex;
 attribute highp vec4 Normal;
-varying highp vec3 vecTransformed;
-
+varying highp vec4 vecTransformed;
+varying highp vec4 vert;
 #ifdef USE_TEXCOORD0
 attribute highp vec2 UV;
 varying highp vec2 vecUVCoords;
@@ -36,6 +36,7 @@ void main(){
 #ifdef USE_TEXCOORD0
 	vecUVCoords = UV;
 #endif
-	vecTransformed	= normalize(mat3(World)*vec3(Normal));
+	vecTransformed	= normalize(Normal*World);
+	vert = World*Vertex;
 	gl_Position = WVP*Vertex;
 }

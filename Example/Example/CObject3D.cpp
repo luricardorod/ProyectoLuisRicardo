@@ -704,3 +704,45 @@ void CObject3D::Destroy() {
 	glDeleteProgram(shaderID);
 #endif
 }
+
+//#if defined(USE_GLOBALLIGHT) && defined(USE_TEXCOORD0) && defined(USE_POINTLIGHT)
+//highp float lightIntensity;
+//lightIntensity = dot(light.xyz, vecTransformed.xyz) / (length(light)*length(vecTransformed.xyz));
+//if (lightIntensity > 1.0)
+//lightIntensity = 1.0;
+//else if (lightIntensity < 0.0)
+//	lightIntensity = 0.0;
+//lowp vec3 vector = lightIntensity*color;
+//
+//lightIntensity = dot((vecTransformed.xyz - posPoint.xyz), vecTransformed.xyz) / (length(vecTransformed.xyz - posPoint.xyz)*length(vecTransformed.xyz));
+//if (lightIntensity > 1.0)
+//lightIntensity = 1.0;
+//else if (lightIntensity < 0.0)
+//	lightIntensity = 0.0;
+//vector = texture2D(diffuse, vecUVCoords).rgb*.3 + texture2D(diffuse, vecUVCoords).rgb*lightIntensity*colorPoint + texture2D(diffuse, vecUVCoords).rgb*vector;
+//
+//#elif defined(USE_GLOBALLIGHT) && defined(USE_TEXCOORD0)
+//highp float lightIntensity;
+//lightIntensity = dot(light.xyz, vecTransformed.xyz) / (length(light)*length(vecTransformed.xyz));
+//if (lightIntensity > 1.0)
+//lightIntensity = 1.0;
+//else if (lightIntensity < 0.0)
+//	lightIntensity = 0.0;
+//lowp vec3 vector = texture2D(diffuse, vecUVCoords).rgb*.3 + texture2D(diffuse, vecUVCoords).rgb*lightIntensity*color;
+//#elif defined(USE_POINTLIGHT) && defined(USE_TEXCOORD0)
+//highp float lightIntensity;
+//lightIntensity = 0.0;
+//if (length(posPoint.xyz - vert.xyz) < 10.0) {
+//	lightIntensity = dot(normalize(posPoint.xyz - vert.xyz), normalize(vecTransformed.xyz));
+//}
+//
+//if (lightIntensity > 1.0)
+//lightIntensity = 1.0;
+//else if (lightIntensity < 0.0)
+//	lightIntensity = 0.0;
+//lowp vec3 vector = texture2D(diffuse, vecUVCoords).rgb*.3 + lightIntensity*colorPoint*texture2D(diffuse, vecUVCoords).rgb;
+//#elif defined(USE_TEXCOORD0) 
+//lowp vec3 vector = texture2D(diffuse, vecUVCoords).rgb;
+//#else
+//highp vec3 vector = normalize(vecTransformed*0.5 + 0.5);
+//#endif

@@ -1,21 +1,29 @@
 ﻿  CObject3D.cpp
-e:\uad\5to\graficas\chemonky\example\example\cobject3d.cpp(62): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
-e:\uad\5to\graficas\chemonky\example\example\cobject3d.cpp(76): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-e:\uad\5to\graficas\chemonky\example\example\cobject3d.cpp(87): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-e:\uad\5to\graficas\chemonky\example\example\cobject3d.cpp(98): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-e:\uad\5to\graficas\chemonky\example\example\cobject3d.cpp(117): warning C4244: '-=': conversion from 'double' to 'int', possible loss of data
-e:\uad\5to\graficas\chemonky\example\example\cobject3d.cpp(118): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
-e:\uad\5to\graficas\chemonky\example\example\cobject3d.cpp(139): warning C4244: '=': conversion from 'double' to 'unsigned short', possible loss of data
-e:\uad\5to\graficas\chemonky\example\example\cobject3d.cpp(151): warning C4244: '=': conversion from 'double' to 'unsigned short', possible loss of data
-e:\uad\5to\graficas\chemonky\example\example\cobject3d.cpp(164): warning C4244: '=': conversion from 'double' to 'unsigned short', possible loss of data
-e:\uad\5to\graficas\chemonky\example\example\cobject3d.cpp(190): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-e:\uad\5to\graficas\chemonky\example\example\cobject3d.cpp(201): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-e:\uad\5to\graficas\chemonky\example\example\cobject3d.cpp(213): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-e:\uad\5to\graficas\chemonky\example\example\cobject3d.cpp(240): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-e:\uad\5to\graficas\chemonky\example\example\cobject3d.cpp(251): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-e:\uad\5to\graficas\chemonky\example\example\cobject3d.cpp(295): warning C4018: '<': signed/unsigned mismatch
-e:\uad\5to\graficas\chemonky\example\example\cobject3d.cpp(306): warning C4244: '=': conversion from 'double' to 'unsigned short', possible loss of data
-e:\uad\5to\graficas\chemonky\example\example\cobject3d.cpp(390): warning C4018: '<': signed/unsigned mismatch
-e:\uad\5to\graficas\chemonky\example\example\cobject3d.cpp(456): warning C4018: '<': signed/unsigned mismatch
-e:\uad\5to\graficas\chemonky\example\example\cobject3d.cpp(645): warning C4018: '<': signed/unsigned mismatch
-  Example.vcxproj -> E:\UAD\5to\graficas\chemonky\Example\Debug\Framework.lib
+c:\users\bluemonkey\desktop\class\proyectoluisricardo\example\example\cobject3d.cpp(62): warning C4244: '=': conversión de 'double' a 'int'; posible pérdida de datos
+c:\users\bluemonkey\desktop\class\proyectoluisricardo\example\example\cobject3d.cpp(76): warning C4244: '=': conversión de 'double' a 'float'; posible pérdida de datos
+c:\users\bluemonkey\desktop\class\proyectoluisricardo\example\example\cobject3d.cpp(87): warning C4244: '=': conversión de 'double' a 'float'; posible pérdida de datos
+c:\users\bluemonkey\desktop\class\proyectoluisricardo\example\example\cobject3d.cpp(98): warning C4244: '=': conversión de 'double' a 'float'; posible pérdida de datos
+c:\users\bluemonkey\desktop\class\proyectoluisricardo\example\example\cobject3d.cpp(117): warning C4244: '-=': conversión de 'double' a 'int'; posible pérdida de datos
+c:\users\bluemonkey\desktop\class\proyectoluisricardo\example\example\cobject3d.cpp(118): warning C4244: '=': conversión de 'double' a 'int'; posible pérdida de datos
+c:\users\bluemonkey\desktop\class\proyectoluisricardo\example\example\cobject3d.cpp(139): warning C4244: '=': conversión de 'double' a 'unsigned short'; posible pérdida de datos
+c:\users\bluemonkey\desktop\class\proyectoluisricardo\example\example\cobject3d.cpp(151): warning C4244: '=': conversión de 'double' a 'unsigned short'; posible pérdida de datos
+c:\users\bluemonkey\desktop\class\proyectoluisricardo\example\example\cobject3d.cpp(164): warning C4244: '=': conversión de 'double' a 'unsigned short'; posible pérdida de datos
+c:\users\bluemonkey\desktop\class\proyectoluisricardo\example\example\cobject3d.cpp(190): warning C4244: '=': conversión de 'double' a 'float'; posible pérdida de datos
+c:\users\bluemonkey\desktop\class\proyectoluisricardo\example\example\cobject3d.cpp(201): warning C4244: '=': conversión de 'double' a 'float'; posible pérdida de datos
+c:\users\bluemonkey\desktop\class\proyectoluisricardo\example\example\cobject3d.cpp(213): warning C4244: '=': conversión de 'double' a 'float'; posible pérdida de datos
+c:\users\bluemonkey\desktop\class\proyectoluisricardo\example\example\cobject3d.cpp(240): warning C4244: '=': conversión de 'double' a 'float'; posible pérdida de datos
+c:\users\bluemonkey\desktop\class\proyectoluisricardo\example\example\cobject3d.cpp(251): warning C4244: '=': conversión de 'double' a 'float'; posible pérdida de datos
+c:\users\bluemonkey\desktop\class\proyectoluisricardo\example\example\cobject3d.cpp(295): warning C4018: '<': no coinciden signed/unsigned
+c:\users\bluemonkey\desktop\class\proyectoluisricardo\example\example\cobject3d.cpp(306): warning C4244: '=': conversión de 'double' a 'unsigned short'; posible pérdida de datos
+c:\users\bluemonkey\desktop\class\proyectoluisricardo\example\example\cobject3d.cpp(390): warning C4018: '<': no coinciden signed/unsigned
+c:\users\bluemonkey\desktop\class\proyectoluisricardo\example\example\cobject3d.cpp(456): warning C4018: '<': no coinciden signed/unsigned
+c:\users\bluemonkey\desktop\class\proyectoluisricardo\example\example\cobject3d.cpp(645): warning C4018: '<': no coinciden signed/unsigned
+  Generando código...
+  Compilando...
+  Win32Framework.cpp
+  TextureGL.cpp
+  TextureD3D.cpp
+  PrimitiveManager.cpp
+  D3DXDriver.cpp
+  Generando código...
+  Example.vcxproj -> C:\Users\blueMonkey\Desktop\CLASS\ProyectoLuisRicardo\Example\Debug\Framework.lib

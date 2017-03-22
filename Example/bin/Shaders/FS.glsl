@@ -1,6 +1,8 @@
 uniform highp sampler2D diffuse;
 
-varying highp vec3 vecTransformed;
+varying highp vec4 vecTransformed;
+varying highp vec4 vert;
+
 #ifdef USE_TEXCOORD0
 varying highp vec2 vecUVCoords;
 #endif
@@ -15,42 +17,36 @@ varying highp vec3 colorPoint;
 #endif
 
 void main(){
-#if defined(USE_GLOBALLIGHT) && defined(USE_TEXCOORD0) && defined(USE_POINTLIGHT)
 	highp float lightIntensity;
+	lowp vec3 vector = vec3(0, 0, 0);
+	lowp vec3 globalLight = vec3(0, 0, 0);
+	lowp vec3 pointLight = vec3(0, 0, 0);
+
+#if defined(USE_GLOBALLIGHT)
 	lightIntensity = dot(light.xyz, vecTransformed.xyz) / (length(light)*length(vecTransformed.xyz));
 	if (lightIntensity > 1.0)
 		lightIntensity = 1.0;
 	else if (lightIntensity < 0.0)
 		lightIntensity = 0.0;
-	lowp vec3 vector = lightIntensity*color;
+	globalLight = lightIntensity*color;
+#endif
 
-	lightIntensity = dot( (vecTransformed.xyz -posPoint.xyz), vecTransformed.xyz) / (length(vecTransformed.xyz -posPoint.xyz)*length(vecTransformed.xyz));
+#if defined(USE_POINTLIGHT)
+	lightIntensity = 0.0;
+	if	(length(posPoint.xyz - vert.xyz) < 10.0) {
+	}
+	lightIntensity = dot( normalize(posPoint.xyz - vert.xyz ), normalize(vecTransformed.xyz));
+	lightIntensity = lightIntensity*(100.0 / length(posPoint.xyz - vert.xyz));
 	if (lightIntensity > 1.0)
 		lightIntensity = 1.0;
 	else if (lightIntensity < 0.0)
 		lightIntensity = 0.0;
-	vector = texture2D(diffuse,vecUVCoords).rgb*.1 + texture2D(diffuse,vecUVCoords).rgb*lightIntensity*colorPoint + texture2D(diffuse,vecUVCoords).rgb*vector;
-
-#elif defined(USE_GLOBALLIGHT) && defined(USE_TEXCOORD0)
-	highp float lightIntensity;
-	lightIntensity = dot(light.xyz, vecTransformed.xyz) / (length(light)*length(vecTransformed.xyz));
-	if (lightIntensity > 1.0)
-		lightIntensity = 1.0;
-	else if (lightIntensity < 0.0)
-		lightIntensity = 0.0;
-	lowp vec3 vector = texture2D(diffuse,vecUVCoords).rgb*.1 + texture2D(diffuse,vecUVCoords).rgb*lightIntensity*color;
-#elif defined(USE_POINTLIGHT) && defined(USE_TEXCOORD0)
-	highp float lightIntensity;
-	lightIntensity = dot( (vecTransformed.xyz -posPoint.xyz), vecTransformed.xyz) / (length(vecTransformed.xyz -posPoint.xyz)*length(vecTransformed.xyz));
-	if (lightIntensity > 1.0)
-		lightIntensity = 1.0;
-	else if (lightIntensity < 0.0)
-		lightIntensity = 0.0;
-	lowp vec3 vector = texture2D(diffuse,vecUVCoords).rgb*.1 + texture2D(diffuse,vecUVCoords).rgb*lightIntensity*colorPoint;
-#elif defined(USE_TEXCOORD0) 
-	lowp vec3 vector = texture2D(diffuse,vecUVCoords).rgb;
+	pointLight = lightIntensity*colorPoint;
+#endif
+#if defined(USE_TEXCOORD0) 
+	vector = texture2D(diffuse,vecUVCoords).rgb*.3 +texture2D(diffuse,vecUVCoords).rgb*pointLight + texture2D(diffuse,vecUVCoords).rgb*globalLight;
 #else
-	highp vec3 vector = normalize(vecTransformed*0.5 + 0.5);
+	vector = normalize(vec3(vecTransformed)*0.5 + 0.5)*.3 +normalize(vec3(vecTransformed)*0.5 + 0.5)*pointLight + normalize(vec3(vecTransformed)*0.5 + 0.5)*globalLight;
 #endif
 	gl_FragColor = vec4(vector,1.0);
 }

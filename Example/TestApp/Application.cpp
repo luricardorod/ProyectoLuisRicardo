@@ -20,7 +20,7 @@ void TestApp::InitVars() {
 	rotationCam = 0;
 	worldLights.dirGlobal = CVector4D(1, 0, 0, 0);
 	worldLights.colorGlobal = CVector4D(.2, 0, 0, 0);
-	worldLights.colorPoint = CVector4D(0, 0, .5, 0);
+	worldLights.colorPoint = CVector4D(1, 1, 1, 0);
 	worldLights.posPoint = CVector4D(50, 100, 10, 0);
 }
 
