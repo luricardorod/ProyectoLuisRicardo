@@ -601,12 +601,10 @@ void CObject3D::Create(char * path) {
 	}
 #endif
 	transform = Identity();
-	delete vsSourceP;
-	delete fsSourceP;
+	free(vsSourceP);
+	free(fsSourceP);
+	free(archivo);
 	delete buffer1;
-	delete archivo;
-
-
 }
 
 void CObject3D::Transform(float *t) {
