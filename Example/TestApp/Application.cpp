@@ -20,7 +20,7 @@ void TestApp::InitVars() {
 	rotationCam = 0;
 	worldLights.dirGlobal = CVector4D(1, 0, 0, 0);
 	worldLights.colorGlobal = CVector4D(.2, 0, 0, 0);
-	worldLights.colorPoint = CVector4D(1, 1, 1, 0);
+	worldLights.colorPoint = CVector4D(.2, .2, .2, 0);
 	worldLights.posPoint = CVector4D(50, 100, 10, 0);
 	worldLights.posCamera = &PositionCamera;
 }
@@ -42,7 +42,7 @@ void TestApp::CreateAssets() {
 	primitiveFigs[4].CreateInstance(PrimitiveMgr.GetPrimitive(index), &VP);
 	index = PrimitiveMgr.CreateObject3D("Models/Drone.X");
 	primitiveFigs[5].CreateInstance(PrimitiveMgr.GetPrimitive(index), &VP);
-	index = PrimitiveMgr.CreateObject3D("Models/Cerdo.X");
+	index = PrimitiveMgr.CreateObject3D("Models/CerdoNuevo.X");
 	primitiveFigs[6].CreateInstance(PrimitiveMgr.GetPrimitive(index), &VP);
 	primitiveFigs[7].CreateInstance(PrimitiveMgr.GetPrimitive(index), &VP);
 	
@@ -60,11 +60,11 @@ void TestApp::CreateAssets() {
 	VP = View * proj;
 
 
-	primitiveFigs[CROC].TranslateAbsolute(-43.871941f, 0.064795f, -58.153839f);
+	/*primitiveFigs[CROC].TranslateAbsolute(-43.871941f, 0.064795f, -58.153839f);
 	primitiveFigs[CROC].RotateXAbsolute(0.0f);
 	primitiveFigs[CROC].RotateYAbsolute(207.731613f);
 	primitiveFigs[CROC].RotateXAbsolute(0.0f);
-	primitiveFigs[CROC].ScaleAbsolute(0.151794f);
+	primitiveFigs[CROC].ScaleAbsolute(0.151794f);*/
 	primitiveFigs[CROC].Update();
 
 	primitiveFigs[LINK].TranslateAbsolute(12.499269f, -0.079694f, -63.019135f);
@@ -85,10 +85,10 @@ void TestApp::CreateAssets() {
 	primitiveFigs[HOUSE_R].RotateXAbsolute(0.0f);
 	primitiveFigs[HOUSE_R].ScaleAbsolute(0.670580f);
 	primitiveFigs[HOUSE_R].Update();
-	primitiveFigs[CERDO].TranslateAbsolute(-14.064236f, -3.514139f, -29.351925f);
-	primitiveFigs[CERDO].RotateXAbsolute(0.0f);
+	primitiveFigs[CERDO].TranslateAbsolute(-14.064236f, 50, -29.351925f);
+	primitiveFigs[CERDO].RotateXAbsolute(100);
 	primitiveFigs[CERDO].RotateYAbsolute(0.0f);
-	primitiveFigs[CERDO].RotateXAbsolute(0.0f);
+	primitiveFigs[CERDO].RotateZAbsolute(0.0f);
 	primitiveFigs[CERDO].ScaleAbsolute(27.208776f);
 	primitiveFigs[CERDO].Update();
 	worldLights.posPoint = CVector4D(primitiveFigs[7].position.m30, primitiveFigs[7].position.m31, primitiveFigs[7].position.m32,0);

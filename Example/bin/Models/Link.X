@@ -167,7 +167,7 @@ KeyValuePair {
 }
 
 Frame polySurface332 {
-
+ 
 
  FrameTransformMatrix relative {
   -0.000001,5.543543,0.000000,0.000000,0.000000,0.000000,5.543543,0.000000,5.543543,0.000001,-0.000000,0.000000,0.000000,0.000000,0.000000,1.000000;;
@@ -118192,7 +118192,7 @@ Frame polySurface332 {
 
      EffectParamString {
       "diffuseMap";
-      "/Link_D.tga";
+      "Link_D.tga";
      }
 
      EffectParamDWord {

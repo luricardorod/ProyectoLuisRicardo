@@ -8,13 +8,6 @@ extern ComPtr<ID3D11Device>            D3D11Device;
 extern ComPtr<ID3D11DeviceContext>     D3D11DeviceContext;
 #endif
 
-struct infotex {
-public:
-	unsigned short numberOfTextures;
-	std::vector<unsigned short> indicesTextures;
-	std::vector<char*> namesTextures;
-};
-
 void CObject3D::Create(char * path) {
 
 	long sizeFile;
@@ -29,9 +22,8 @@ void CObject3D::Create(char * path) {
 	int positionBuffer;
 	bool flag = true;
 	char* buffer1 = new char[20];
-	std::vector<infotex> infoMeshTextures;
-	std::vector<unsigned short> macroBufferIndex;
 
+	mesh tempMesh;
 	while (counter < sizeFile)
 	{
 		if (
@@ -43,6 +35,7 @@ void CObject3D::Create(char * path) {
 			archivo[counter + 5] == 'm'
 			)
 		{
+			
 			counter += 9;
 			flag = true;
 			while (flag)
@@ -51,7 +44,6 @@ void CObject3D::Create(char * path) {
 				{
 					counter += 1;
 					positionBuffer = 0;
-
 					while (archivo[counter] != ';')
 					{
 						buffer1[positionBuffer] = archivo[counter];
@@ -59,10 +51,8 @@ void CObject3D::Create(char * path) {
 						counter++;
 					}
 					buffer1[positionBuffer] = '\0';
-					tempSizeBufferVertex = std::atof(buffer1);
-					offsetVertex = bufferVertex.size();
-					bufferVertex.resize(bufferVertex.size() + tempSizeBufferVertex);
-					for (int i = 0; i < tempSizeBufferVertex; i++)
+					tempMesh.bufferVertex.resize(std::atof(buffer1));
+					for (int i = 0; i < tempMesh.bufferVertex.size(); i++)
 					{
 						counter++;
 						positionBuffer = 0;
@@ -73,7 +63,7 @@ void CObject3D::Create(char * path) {
 							positionBuffer++;
 						}
 						buffer1[positionBuffer] = '\0';
-						bufferVertex[counterBufferVertex].x = std::atof(buffer1);
+						tempMesh.bufferVertex[i].x = std::atof(buffer1);
 						counter++;
 
 						positionBuffer = 0;
@@ -84,7 +74,8 @@ void CObject3D::Create(char * path) {
 							counter++;
 						}
 						buffer1[positionBuffer] = '\0';
-						bufferVertex[counterBufferVertex].y = std::atof(buffer1);
+						tempMesh.bufferVertex[i].y = std::atof(buffer1);
+
 						counter++;
 
 						positionBuffer = 0;
@@ -95,8 +86,10 @@ void CObject3D::Create(char * path) {
 							counter++;
 						}
 						buffer1[positionBuffer] = '\0';
-						bufferVertex[counterBufferVertex].z = std::atof(buffer1);
-						bufferVertex[counterBufferVertex].w = 1;
+						tempMesh.bufferVertex[i].z = std::atof(buffer1);
+						tempMesh.bufferVertex[i].w = 1;
+
+
 						counterBufferVertex++;
 						counter++;
 					}
@@ -115,10 +108,8 @@ void CObject3D::Create(char * path) {
 					}
 					buffer1[positionBuffer] = '\0';
 					dif -= std::atof(buffer1);
-					tempSizeBufferIndex = (std::atof(buffer1) * 3);
-					macroBufferIndex.resize(macroBufferIndex.size() + tempSizeBufferIndex);
-
-					for (int i = 0; i < tempSizeBufferIndex; i++)
+					tempMesh.bufferIndex.resize(std::atof(buffer1) * 3);
+					for (int i = 0; i < tempMesh.bufferIndex.size(); i +=3)
 					{
 
 						counter++;
@@ -136,9 +127,8 @@ void CObject3D::Create(char * path) {
 						}
 						buffer1[positionBuffer] = '\0';
 
-						macroBufferIndex[counterBufferIndex + 2] = std::atof(buffer1) + offsetVertex;
+						tempMesh.bufferIndex[i + 2] = std::atof(buffer1);
 						counter++;
-						i++;
 
 						positionBuffer = 0;
 						while (archivo[counter] != ',')
@@ -148,10 +138,10 @@ void CObject3D::Create(char * path) {
 							positionBuffer++;
 						}
 						buffer1[positionBuffer] = '\0';
-						macroBufferIndex[counterBufferIndex + 1] = std::atof(buffer1) + offsetVertex;
+						tempMesh.bufferIndex[i + 1] = std::atof(buffer1);
+
 
 						counter++;
-						i++;
 
 						positionBuffer = 0;
 						while (archivo[counter] != ';')
@@ -161,10 +151,11 @@ void CObject3D::Create(char * path) {
 							positionBuffer++;
 						}
 						buffer1[positionBuffer] = '\0';
-						macroBufferIndex[counterBufferIndex] = std::atof(buffer1) + offsetVertex;
+						tempMesh.bufferIndex[i] = std::atof(buffer1);
 
 						counter++;
 						counterBufferIndex += 3;
+						
 					}
 					//endIndex
 
@@ -176,7 +167,7 @@ void CObject3D::Create(char * path) {
 						counter++;
 					}
 					counterBufferVertex -= tempSizeBufferVertex;
-					for (int i = 0; i < tempSizeBufferVertex; i++)
+					for (int i = 0; i < tempMesh.bufferVertex.size(); i++)
 					{
 						counter++;
 						positionBuffer = 0;
@@ -187,7 +178,7 @@ void CObject3D::Create(char * path) {
 							positionBuffer++;
 						}
 						buffer1[positionBuffer] = '\0';
-						bufferVertex[counterBufferVertex].nx = std::atof(buffer1);
+						tempMesh.bufferVertex[i].nx = std::atof(buffer1);
 						counter++;
 
 						positionBuffer = 0;
@@ -198,7 +189,8 @@ void CObject3D::Create(char * path) {
 							counter++;
 						}
 						buffer1[positionBuffer] = '\0';
-						bufferVertex[counterBufferVertex].ny = std::atof(buffer1);
+						tempMesh.bufferVertex[i].ny = std::atof(buffer1);
+
 
 						counter++;
 
@@ -210,8 +202,9 @@ void CObject3D::Create(char * path) {
 							counter++;
 						}
 						buffer1[positionBuffer] = '\0';
-						bufferVertex[counterBufferVertex].nz = std::atof(buffer1);
-						bufferVertex[counterBufferVertex].nw = 1;
+						tempMesh.bufferVertex[i].nz = std::atof(buffer1);
+						tempMesh.bufferVertex[i].nw = 1;
+
 
 						counter++;
 						counterBufferVertex++;
@@ -226,7 +219,7 @@ void CObject3D::Create(char * path) {
 					}
 					counter++;
 					counterBufferVertex -= tempSizeBufferVertex;
-					for (int i = 0; i < tempSizeBufferVertex; i++)
+					for (int i = 0; i < tempMesh.bufferVertex.size(); i++)
 					{
 						counter++;
 						positionBuffer = 0;
@@ -237,7 +230,7 @@ void CObject3D::Create(char * path) {
 							positionBuffer++;
 						}
 						buffer1[positionBuffer] = '\0';
-						bufferVertex[counterBufferVertex].s = std::atof(buffer1);
+						tempMesh.bufferVertex[i].s = std::atof(buffer1);
 						counter++;
 
 						positionBuffer = 0;
@@ -248,11 +241,128 @@ void CObject3D::Create(char * path) {
 							counter++;
 						}
 						buffer1[positionBuffer] = '\0';
-						bufferVertex[counterBufferVertex].t = std::atof(buffer1);
+						tempMesh.bufferVertex[i].t = std::atof(buffer1);
+
 						counterBufferVertex++;
 						counter++;
 					}
 					//enduvs
+
+					//DEclData
+					while (archivo[counter] != '{')
+					{
+						counter++;
+					}
+					counter++;
+					positionBuffer = 0;
+					while (archivo[counter] != ';')
+					{
+						buffer1[positionBuffer] = archivo[counter];
+						positionBuffer++;
+						counter++;
+					}
+					buffer1[positionBuffer] = '\0';
+					//numero de valores del decl data
+					while (!(archivo[counter] == ';' && archivo[counter+1] == ';'))
+					{
+						counter++;
+					}
+					counter += 2;
+
+					positionBuffer = 0;
+					while (archivo[counter] != ';')
+					{
+						buffer1[positionBuffer] = archivo[counter];
+						positionBuffer++;
+						counter++;
+					}
+					buffer1[positionBuffer] = '\0';
+					unsigned int sizeDeclData = std::atoi(buffer1);
+					counter++;
+					///
+					unsigned long tempNumber;
+					float *castFloat;
+					for (int i = 0; i < tempMesh.bufferVertex.size(); i++)
+					{
+						positionBuffer = 0;
+						while (archivo[counter] != ',')
+						{
+							buffer1[positionBuffer] = archivo[counter];
+							positionBuffer++;
+							counter++;
+						}
+						counter++;
+						buffer1[positionBuffer] = '\0';
+						tempNumber = std::strtoul(buffer1, NULL, 0);
+						castFloat = (float*)&tempNumber;
+						tempMesh.bufferVertex[i].bix = (*castFloat);
+						
+						positionBuffer = 0;
+						while (archivo[counter] != ',')
+						{
+							buffer1[positionBuffer] = archivo[counter];
+							positionBuffer++;
+							counter++;
+						}
+						counter++;
+						buffer1[positionBuffer] = '\0';
+						tempNumber = std::strtoul(buffer1, NULL, 0);
+						castFloat = (float*)&tempNumber;
+						tempMesh.bufferVertex[i].biy = (*castFloat);
+
+						positionBuffer = 0;
+						while (archivo[counter] != ',')
+						{
+							buffer1[positionBuffer] = archivo[counter];
+							positionBuffer++;
+							counter++;
+						}
+						counter++;
+						buffer1[positionBuffer] = '\0';
+						tempNumber = std::strtoul(buffer1, NULL, 0);
+						castFloat = (float*)&tempNumber;
+						tempMesh.bufferVertex[i].biz = (*castFloat);
+
+						positionBuffer = 0;
+						while (archivo[counter] != ',')
+						{
+							buffer1[positionBuffer] = archivo[counter];
+							positionBuffer++;
+							counter++;
+						}
+						counter++;
+						buffer1[positionBuffer] = '\0';
+						tempNumber = std::strtoul(buffer1, NULL, 0);
+						castFloat = (float*)&tempNumber;
+						tempMesh.bufferVertex[i].tanx = (*castFloat);
+
+						positionBuffer = 0;
+						while (archivo[counter] != ',')
+						{
+							buffer1[positionBuffer] = archivo[counter];
+							positionBuffer++;
+							counter++;
+						}
+						counter++;
+						buffer1[positionBuffer] = '\0';
+						tempNumber = std::strtoul(buffer1, NULL, 0);
+						castFloat = (float*)&tempNumber;
+						tempMesh.bufferVertex[i].tany = (*castFloat);
+
+						positionBuffer = 0;
+						while (archivo[counter] != ',' && archivo[counter] != ';')
+						{
+							buffer1[positionBuffer] = archivo[counter];
+							positionBuffer++;
+							counter++;
+						}
+						counter++;
+						buffer1[positionBuffer] = '\0';
+						tempNumber = std::strtoul(buffer1, NULL, 0);
+						castFloat = (float*)&tempNumber;
+						tempMesh.bufferVertex[i].tanz = (*castFloat);
+
+					}
 					flag = false;
 				}
 				counter++;
@@ -306,10 +416,46 @@ void CObject3D::Create(char * path) {
 				tempContentInfotext.indicesTextures[i] = std::atof(buffer1);
 			}
 
-			int temporalCounter = 0;
-			while (temporalCounter < tempContentInfotext.numberOfTextures)
+			textureByMesh tempTextureMesh;
+			while (tempContentInfotext.textures.size() < tempContentInfotext.numberOfTextures)
 			{
-				counter++;
+				if (
+					archivo[counter-1] == ' ' &&
+					archivo[counter] == 'M' &&
+					archivo[counter + 1] == 'a' &&
+					archivo[counter + 2] == 't' &&
+					archivo[counter + 3] == 'e' &&
+					archivo[counter + 4] == 'r' &&
+					archivo[counter + 5] == 'i' &&
+					archivo[counter + 6] == 'a' &&
+					archivo[counter + 7] == 'l' &&
+					archivo[counter + 8] == ' '
+					) {
+					counter += 8;
+					tempTextureMesh.gloss = false;
+					tempTextureMesh.normal = false;
+					tempTextureMesh.specular = false;
+				}
+				if (
+					archivo[counter] == 'T' &&
+					archivo[counter + 1] == 'e' &&
+					archivo[counter + 2] == 'x' &&
+					archivo[counter + 3] == 't' &&
+					archivo[counter + 4] == 'u' &&
+					archivo[counter + 5] == 'r' &&
+					archivo[counter + 6] == 'e' &&
+					archivo[counter + 7] == 'F' &&
+					archivo[counter + 8] == 'i' &&
+					archivo[counter + 9] == 'l' &&
+					archivo[counter + 10] == 'e' &&
+					archivo[counter + 11] == 'n' &&
+					archivo[counter + 12] == 'a' &&
+					archivo[counter + 13] == 'm' &&
+					archivo[counter + 14] == 'e'
+				) {
+					counter += 15;
+					tempContentInfotext.textures.push_back(tempTextureMesh);
+				}
 				if (
 					archivo[counter] == '"' &&
 					archivo[counter + 1] == 'd' &&
@@ -323,8 +469,8 @@ void CObject3D::Create(char * path) {
 					archivo[counter + 9] == 'a' &&
 					archivo[counter + 10] == 'p' &&
 					archivo[counter + 11] == '"'
-				) {
-
+					)
+				{
 					counter = counter + 12;
 
 					while (archivo[counter] != '"')
@@ -340,24 +486,173 @@ void CObject3D::Create(char * path) {
 							positionBuffer = 0;
 							counter++;
 						}
-						temp[positionBuffer] = archivo[counter];
-						positionBuffer++;
-						counter++;
+						else {
+							temp[positionBuffer] = archivo[counter];
+							positionBuffer++;
+							counter++;
+						}
 					}
 					temp[positionBuffer] = '\0';
-					tempContentInfotext.namesTextures.push_back(temp);
-					temporalCounter++;
+					tempTextureMesh.diffuseName = temp;
 				}
+				//SPECULAR
+				if (
+					archivo[counter] == '"' &&
+					archivo[counter + 1] == 's' &&
+					archivo[counter + 2] == 'p' &&
+					archivo[counter + 3] == 'e' &&
+					archivo[counter + 4] == 'c' &&
+					archivo[counter + 5] == 'u' &&
+					archivo[counter + 6] == 'l' &&
+					archivo[counter + 7] == 'a' &&
+					archivo[counter + 8] == 'r' &&
+					archivo[counter + 9] == 'M' &&
+					archivo[counter + 10] == 'a' &&
+					archivo[counter + 11] == 'p' &&
+					archivo[counter + 12] == '"'
+					)
+				{
+					counter = counter + 13;
+
+					while (archivo[counter] != '"')
+					{
+						counter++;
+					}
+					counter++;
+					char* temp = new char[30];
+					positionBuffer = 0;
+					while (archivo[counter] != '"')
+					{
+						if (archivo[counter] == 92) {
+							positionBuffer = 0;
+							counter++;
+						}
+						else {
+							temp[positionBuffer] = archivo[counter];
+							positionBuffer++;
+							counter++;
+						}
+					}
+					temp[positionBuffer] = '\0';
+					tempTextureMesh.specularName = temp;
+					tempTextureMesh.specular = true;
+				}
+				//GLOSSS
+				if (
+					archivo[counter] == '"' &&
+					archivo[counter + 1] == 'g' &&
+					archivo[counter + 2] == 'l' &&
+					archivo[counter + 3] == 'o' &&
+					archivo[counter + 4] == 's' &&
+					archivo[counter + 5] == 's' &&
+					archivo[counter + 6] == 'M' &&
+					archivo[counter + 7] == 'a' &&
+					archivo[counter + 8] == 'p' &&
+					archivo[counter + 9] == '"'
+					)
+				{
+					counter = counter + 10;
+
+					while (archivo[counter] != '"')
+					{
+						counter++;
+					}
+					counter++;
+					char* temp = new char[30];
+					positionBuffer = 0;
+					while (archivo[counter] != '"')
+					{
+						if (archivo[counter] == 92) {
+							positionBuffer = 0;
+							counter++;
+						}
+						else {
+							temp[positionBuffer] = archivo[counter];
+							positionBuffer++;
+							counter++;
+						}
+					}
+					temp[positionBuffer] = '\0';
+					tempTextureMesh.glossName = temp;
+					tempTextureMesh.gloss = true;
+				}
+				//NORMAL
+				if (
+					archivo[counter] == '"' &&
+					archivo[counter + 1] == 'n' &&
+					archivo[counter + 2] == 'o' &&
+					archivo[counter + 3] == 'r' &&
+					archivo[counter + 4] == 'm' &&
+					archivo[counter + 5] == 'a' &&
+					archivo[counter + 6] == 'l' &&
+					archivo[counter + 7] == 'M' &&
+					archivo[counter + 8] == 'a' &&
+					archivo[counter + 9] == 'p' &&
+					archivo[counter + 10] == '"'
+					)
+				{
+					counter = counter + 11;
+
+					while (archivo[counter] != '"')
+					{
+						counter++;
+					}
+					counter++;
+					char* temp = new char[30];
+					positionBuffer = 0;
+					while (archivo[counter] != '"')
+					{
+						if (archivo[counter] == 92) {
+							positionBuffer = 0;
+							counter++;
+						}
+						else {
+							temp[positionBuffer] = archivo[counter];
+							positionBuffer++;
+							counter++;
+						}
+					}
+					temp[positionBuffer] = '\0';
+					tempTextureMesh.normalName = temp;
+					tempTextureMesh.normal = true;
+
+				}
+				counter++;
 			}
-			infoMeshTextures.push_back(tempContentInfotext);
+			tempMesh.infoTexture = tempContentInfotext;
+			meshes.push_back(tempMesh);
+			//infoMeshTextures.push_back(tempContentInfotext);
 		}
 		counter++;
 
 	}
-	//
+	for (auto i = meshes.begin(); i != meshes.end(); i++) {
+		
+		for (int j = 0; j < i->infoTexture.numberOfTextures; j++)
+		{
+			std::vector<unsigned short> *temp;
+			temp = new std::vector<unsigned short>;
+			i->bufferIndexForTextures.push_back(temp);
+		}
 
-	std::vector<std::string> list;
+		int countIndex = 0;
+		for (auto textureCount = i->infoTexture.indicesTextures.begin(); textureCount != i->infoTexture.indicesTextures.end(); textureCount++)
+		{
+			i->bufferIndexForTextures[(*textureCount)]->push_back(i->bufferIndex[countIndex]);
+			countIndex++;
+			i->bufferIndexForTextures[(*textureCount)]->push_back(i->bufferIndex[countIndex]);
+			countIndex++;
+			i->bufferIndexForTextures[(*textureCount)]->push_back(i->bufferIndex[countIndex]);
+			countIndex++;
+		}
+	}
+	
 
+	int countertext = 0;
+
+
+	/*std::vector<std::string> list;
+	meshes;
 	for (auto it = infoMeshTextures.begin(); it != infoMeshTextures.end(); ++it) {
 		for (auto it2 = it->namesTextures.begin(); it2 != it->namesTextures.end(); ++it2) {
 			std::string tempString((*it2));
@@ -396,7 +691,7 @@ void CObject3D::Create(char * path) {
 			bufferIndexForText[tempList[it->indicesTextures[i]]]->push_back(macroBufferIndex[counterIndexBuffer]);
 			counterIndexBuffer++;
 		}
-	}
+	}*/
 #ifdef USING_OPENGL_ES
 	shaderID = glCreateProgram();
 	char *vsSourceP = file2string("Shaders/VS.glsl");
@@ -438,11 +733,15 @@ void CObject3D::Create(char * path) {
 
 	vertexAttribLoc = glGetAttribLocation(shaderID, "Vertex");
 	normalAttribLoc = glGetAttribLocation(shaderID, "Normal");
+	binormalAttribLoc = glGetAttribLocation(shaderID, "Binormal");
+	tangenteAttribLoc = glGetAttribLocation(shaderID, "Tangente");
 	uvAttribLoc = glGetAttribLocation(shaderID, "UV");
 
 	matWorldViewProjUniformLoc = glGetUniformLocation(shaderID, "WVP");
 	matWorldUniformLoc = glGetUniformLocation(shaderID, "World");
 	diffuseLoc = glGetUniformLocation(shaderID, "diffuse");
+	normalLoc = glGetUniformLocation(shaderID, "normalLoc");
+
 #ifdef USE_GLOBALLIGHT
 	DirectionGlobalLight = glGetUniformLocation(shaderID, "DirectionGlobalLight");
 	ColorGlobalLight = glGetUniformLocation(shaderID, "ColorGlobalLight");
@@ -454,32 +753,94 @@ void CObject3D::Create(char * path) {
 #ifdef	USE_DIFFUSE
 	PosCamera = glGetUniformLocation(shaderID, "PositionCamera");
 #endif
-	glGenBuffers(1, &VB);
-	glBindBuffer(GL_ARRAY_BUFFER, VB);
-	glBufferData(GL_ARRAY_BUFFER, bufferVertex.size() * sizeof(CVertex), bufferVertex.data(), GL_STATIC_DRAW);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-	for (int i = 0; i < bufferIndexForText.size(); i++)
+	for (auto i = meshes.begin(); i != meshes.end(); i++)
 	{
-		glGenBuffers(1, &IB[i]);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IB[i]);
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, (*bufferIndexForText[i]).size() * sizeof(unsigned short), (*bufferIndexForText[i]).data(), GL_STATIC_DRAW);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+		glGenBuffers(1, &((*i).VB));
+		glBindBuffer(GL_ARRAY_BUFFER, ((*i).VB));
+		glBufferData(GL_ARRAY_BUFFER, (*i).bufferVertex.size() * sizeof(CVertex), (*i).bufferVertex.data(), GL_STATIC_DRAW);
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+		for (int index = 0; index < (*i).bufferIndexForTextures.size(); index++)
+		{
+			glGenBuffers(1, &((*i).IB[index]));
+			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ((*i).IB[index]));
+			glBufferData(GL_ELEMENT_ARRAY_BUFFER, (*i).bufferIndexForTextures[index]->size() * sizeof(unsigned short), (*i).bufferIndexForTextures[index]->data(), GL_STATIC_DRAW);
+			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+		}
 	}
 
-	int countertext = 0;
-	for (auto i = list.begin(); i != list.end(); i++) {
-		Texture	*tex = new TextureGL;
-		char *tempChar;
-		tempChar = new char[((*i).size() + 1)];
-		memcpy(tempChar, (*i).c_str(), (*i).size() + 1);
-		TexId[countertext] = tex->LoadTexture(tempChar);
-		if (TexId[countertext] == -1) {
-			delete tex;
+	std::map<std::string, int> list;
+	for (auto mesh = meshes.begin(); mesh != meshes.end(); mesh++)
+	{
+		for (auto textures = (*mesh).infoTexture.textures.begin(); textures != (*mesh).infoTexture.textures.end(); textures++) {
+			std::string tempString((*textures).diffuseName);
+			auto iteradorFind = list.find(tempString);
+			if (iteradorFind == list.end())
+			{
+				Texture	*tex = new TextureGL;
+				list[tempString] = tex->LoadTexture((*textures).diffuseName);
+				if (list[tempString] == -1) {
+					delete tex;
+				}
+			}
+			(*textures).idDiffuse = list[tempString];
+			if ((*textures).specular)
+			{
+				std::string tempString((*textures).specularName);
+				auto iteradorFind = list.find(tempString);
+				if (iteradorFind == list.end())
+				{
+					Texture	*tex = new TextureGL;
+					list[tempString] = tex->LoadTexture((*textures).specularName);
+					if (list[tempString] == -1) {
+						delete tex;
+					}
+				}
+				(*textures).idSpecular = list[tempString];
+			}
+			if ((*textures).gloss)
+			{
+				std::string tempString((*textures).glossName);
+				auto iteradorFind = list.find(tempString);
+				if (iteradorFind == list.end())
+				{
+					Texture	*tex = new TextureGL;
+					list[tempString] = tex->LoadTexture((*textures).glossName);
+					if (list[tempString] == -1) {
+						delete tex;
+					}
+				}
+				(*textures).idGloss = list[tempString];
+			}
+			if ((*textures).normal)
+			{
+				std::string tempString((*textures).normalName);				
+				auto iteradorFind = list.find(tempString);
+				if (iteradorFind == list.end())
+				{
+					Texture	*tex = new TextureGL;
+					list[tempString] = tex->LoadTexture((*textures).normalName);
+					if (list[tempString] == -1) {
+						delete tex;
+					}
+				}
+				(*textures).idNormal = list[tempString];
+			}
 		}
-		countertext++;
-		delete[]tempChar;
 	}
+	//int countertext = 0;
+	//for (auto i = list.begin(); i != list.end(); i++) {
+	//	Texture	*tex = new TextureGL;
+	//	char *tempChar;
+	//	tempChar = new char[((*i).size() + 1)];
+	//	memcpy(tempChar, (*i).c_str(), (*i).size() + 1);
+	//	TexId[countertext] = tex->LoadTexture(tempChar);
+	//	if (TexId[countertext] == -1) {
+	//		delete tex;
+	//	}
+	//	countertext++;
+	//	delete[]tempChar;
+	//}
 #elif defined(USING_D3D11)
 	HRESULT hr;
 	{
@@ -635,28 +996,46 @@ void CObject3D::Draw(float *t, float *vp) {
 	glUniformMatrix4fv(matWorldUniformLoc, 1, GL_FALSE, &transform.m[0][0]);
 	glUniformMatrix4fv(matWorldViewProjUniformLoc, 1, GL_FALSE, &WVP.m[0][0]);
 
-	glBindBuffer(GL_ARRAY_BUFFER, VB);
 
-	glEnableVertexAttribArray(vertexAttribLoc);
-	glEnableVertexAttribArray(normalAttribLoc);
+	
 
-	if (uvAttribLoc != -1)
-		glEnableVertexAttribArray(uvAttribLoc);
-
-	glVertexAttribPointer(vertexAttribLoc, 4, GL_FLOAT, GL_FALSE, sizeof(CVertex), BUFFER_OFFSET(0));
-	glVertexAttribPointer(normalAttribLoc, 4, GL_FLOAT, GL_FALSE, sizeof(CVertex), BUFFER_OFFSET(16));
-
-	if (uvAttribLoc != -1)
-		glVertexAttribPointer(uvAttribLoc, 2, GL_FLOAT, GL_FALSE, sizeof(CVertex), BUFFER_OFFSET(32));
-
-	for (int i = 0; i < bufferIndexForText.size(); i++)
+	for (auto i = meshes.begin(); i != meshes.end(); i++)
 	{
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, TexId[i]);
-		glUniform1i(diffuseLoc, 0);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IB[i]);
-		glDrawElements(GL_TRIANGLES, (*bufferIndexForText[i]).size(), GL_UNSIGNED_SHORT, 0);
+		glBindBuffer(GL_ARRAY_BUFFER, (*i).VB);
+		glEnableVertexAttribArray(vertexAttribLoc);
+		glEnableVertexAttribArray(normalAttribLoc);
+
+		if (uvAttribLoc != -1)
+			glEnableVertexAttribArray(uvAttribLoc);
+		glEnableVertexAttribArray(binormalAttribLoc);
+		glEnableVertexAttribArray(tangenteAttribLoc);
+
+		glVertexAttribPointer(vertexAttribLoc, 4, GL_FLOAT, GL_FALSE, sizeof(CVertex), BUFFER_OFFSET(0));
+		glVertexAttribPointer(normalAttribLoc, 4, GL_FLOAT, GL_FALSE, sizeof(CVertex), BUFFER_OFFSET(16));
+
+		if (uvAttribLoc != -1)
+			glVertexAttribPointer(uvAttribLoc, 2, GL_FLOAT, GL_FALSE, sizeof(CVertex), BUFFER_OFFSET(32));
+
+		glVertexAttribPointer(binormalAttribLoc, 4, GL_FLOAT, GL_FALSE, sizeof(CVertex), BUFFER_OFFSET(40));
+		glVertexAttribPointer(tangenteAttribLoc, 4, GL_FLOAT, GL_FALSE, sizeof(CVertex), BUFFER_OFFSET(56));
+
+
+		for (int index = 0; index < (*i).bufferIndexForTextures.size(); index++)
+		{
+			glActiveTexture(GL_TEXTURE0);
+			glBindTexture(GL_TEXTURE_2D, (*i).infoTexture.textures[index].idDiffuse);
+			glUniform1i(diffuseLoc, 0);
+			if ((*i).infoTexture.textures[index].normal)
+			{
+				glActiveTexture(GL_TEXTURE1);
+				glBindTexture(GL_TEXTURE_2D, (*i).infoTexture.textures[index].idNormal);
+				glUniform1i(normalLoc, 1);
+			}
+			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, (*i).IB[index]);
+			glDrawElements(GL_TRIANGLES, (*i).bufferIndexForTextures[index]->size(), GL_UNSIGNED_SHORT, 0);
+		}
 	}
+
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 

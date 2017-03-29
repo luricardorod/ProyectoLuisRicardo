@@ -741,6 +741,11 @@ Frame Plane002 {
       "diffuseMap";
       "Grass.tga";
      }
+	 
+	 EffectParamString {
+      "specularMap";
+      "Black.tga";
+     }
 
      EffectParamDWord {
       "diffuseMapmapChannel";
@@ -1290,7 +1295,7 @@ Frame Box001 {
 
      EffectParamDWord {
       "NoLighting";
-      0;
+      1;
      }
 
      EffectParamDWord {
@@ -1722,7 +1727,7 @@ Frame Box001 {
 
      EffectParamDWord {
       "NoLighting";
-      0;
+      1;
      }
 
      EffectParamDWord {
@@ -2154,7 +2159,7 @@ Frame Box001 {
 
      EffectParamDWord {
       "NoLighting";
-      0;
+      1;
      }
 
      EffectParamDWord {
@@ -2586,7 +2591,7 @@ Frame Box001 {
 
      EffectParamDWord {
       "NoLighting";
-      0;
+      1;
      }
 
      EffectParamDWord {
@@ -3018,7 +3023,7 @@ Frame Box001 {
 
      EffectParamDWord {
       "NoLighting";
-      0;
+      1;
      }
 
      EffectParamDWord {
@@ -3450,7 +3455,7 @@ Frame Box001 {
 
      EffectParamDWord {
       "NoLighting";
-      0;
+      1;
      }
 
      EffectParamDWord {

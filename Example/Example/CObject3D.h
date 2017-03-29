@@ -16,30 +16,62 @@
 #include "UtilsGL.h"
 #include <vector>
 
-class CObject3D : public PrimitiveBase {
+struct textureByMesh
+{
+	bool specular;
+	bool gloss;
+	bool normal;
+	char* specularName;
+	char* glossName;
+	char* normalName;
+	char *diffuseName;
+	int  idSpecular;
+	int  idNormal;
+	int  idDiffuse;
+	int	 idGloss;
+};
+
+struct infotex {
 public:
-	std::vector<CVertex> bufferVertex;
-	std::vector<std::vector<unsigned short>*> bufferIndexForText;
+	unsigned short numberOfTextures;
+	std::vector<unsigned short> indicesTextures;
+	std::vector<textureByMesh> textures;
+};
+
+class CObject3D : public PrimitiveBase {
+	
+public:
+
 	CMatrix4D	transform;
-	int		TexId[32];
 
 	void Create(char * path);
 	void Transform(float *t);
 	void Draw(float *t, float *vp);
 	void Destroy();
+
 #ifdef USING_OPENGL_ES
+	struct mesh {
+		GLuint			VB;
+		GLuint			IB[20];
+		std::vector<CVertex> bufferVertex;
+		std::vector<unsigned short> bufferIndex;
+		infotex infoTexture;
+		std::vector<std::vector<unsigned short>*> bufferIndexForTextures;
+	};
+
+	std::vector<mesh> meshes;
 	CObject3D() : shaderID(0) {}
 	GLuint	shaderID;
 	GLint	vertexAttribLoc;
 	GLint	normalAttribLoc;
+	GLint	binormalAttribLoc;
+	GLint	tangenteAttribLoc;
 	GLint	uvAttribLoc;
+	GLint	normalLoc;
 	GLint	diffuseLoc;
-
 	GLint  matWorldViewProjUniformLoc;
 	GLint  matWorldUniformLoc;
 
-	GLuint			VB;
-	GLuint			IB[20];
 
 	GLint DirectionGlobalLight;
 	GLint ColorGlobalLight;
