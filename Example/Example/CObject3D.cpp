@@ -322,6 +322,8 @@ void CObject3D::Create(char * path) {
 						tempNumber = std::strtoul(buffer1, NULL, 0);
 						castFloat = (float*)&tempNumber;
 						tempMesh.bufferVertex[i].biz = (*castFloat);
+						tempMesh.bufferVertex[i].biw = 1;
+
 
 						positionBuffer = 0;
 						while (archivo[counter] != ',')
@@ -361,6 +363,7 @@ void CObject3D::Create(char * path) {
 						tempNumber = std::strtoul(buffer1, NULL, 0);
 						castFloat = (float*)&tempNumber;
 						tempMesh.bufferVertex[i].tanz = (*castFloat);
+						tempMesh.bufferVertex[i].tanw = 1;
 
 					}
 					flag = false;
@@ -647,51 +650,6 @@ void CObject3D::Create(char * path) {
 		}
 	}
 	
-
-	int countertext = 0;
-
-
-	/*std::vector<std::string> list;
-	meshes;
-	for (auto it = infoMeshTextures.begin(); it != infoMeshTextures.end(); ++it) {
-		for (auto it2 = it->namesTextures.begin(); it2 != it->namesTextures.end(); ++it2) {
-			std::string tempString((*it2));
-			auto iteradorFind = std::find(list.begin(), list.end(), tempString);
-			if (iteradorFind == list.end())
-			{
-				list.push_back(tempString);
-			}
-		}
-	}
-
-	for (auto i = list.begin(); i != list.end(); i++)
-	{
-		std::vector<unsigned short> *temp;
-		temp = new std::vector<unsigned short>;
-		bufferIndexForText.push_back(temp);
-	}
-	unsigned short counterTemp;
-	int counterIndexBuffer = 0;
-	for (auto it = infoMeshTextures.begin(); it != infoMeshTextures.end(); ++it) {
-		std::map <unsigned short, unsigned short> tempList;
-		counterTemp = 0;
-		for (auto it2 = it->namesTextures.begin(); it2 != it->namesTextures.end(); ++it2) {
-			std::string tempString((*it2));
-			auto iteradorFind = std::find(list.begin(), list.end(), tempString);
-			unsigned short index = std::distance(list.begin(), iteradorFind);
-			tempList[counterTemp] = index;
-			counterTemp++;
-		}
-		for (int i = 0; i < it->indicesTextures.size(); i++)
-		{
-			bufferIndexForText[tempList[it->indicesTextures[i]]]->push_back(macroBufferIndex[counterIndexBuffer]);
-			counterIndexBuffer++;
-			bufferIndexForText[tempList[it->indicesTextures[i]]]->push_back(macroBufferIndex[counterIndexBuffer]);
-			counterIndexBuffer++;
-			bufferIndexForText[tempList[it->indicesTextures[i]]]->push_back(macroBufferIndex[counterIndexBuffer]);
-			counterIndexBuffer++;
-		}
-	}*/
 #ifdef USING_OPENGL_ES
 	shaderID = glCreateProgram();
 	char *vsSourceP = file2string("Shaders/VS.glsl");
@@ -895,7 +853,9 @@ void CObject3D::Create(char * path) {
 	D3D11_INPUT_ELEMENT_DESC vertexDeclaration[] = {
 		{ "POSITION" , 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 0,  D3D11_INPUT_PER_VERTEX_DATA, 0 },
 		{ "NORMAL"   , 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 16, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-		{ "TEXCOORD"   , 0, DXGI_FORMAT_R32G32_FLOAT, 0, 32, D3D11_INPUT_PER_VERTEX_DATA, 0 }
+		{ "TEXCOORD"   , 0, DXGI_FORMAT_R32G32_FLOAT, 0, 32, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "BINORMAL"   , 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 40, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "TANGENTE"   , 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 56, D3D11_INPUT_PER_VERTEX_DATA, 0 }
 	};
 	hr = D3D11Device->CreateInputLayout(vertexDeclaration, ARRAYSIZE(vertexDeclaration), VS_blob->GetBufferPointer(), VS_blob->GetBufferSize(), &Layout);
 	if (hr != S_OK) {
@@ -905,6 +865,8 @@ void CObject3D::Create(char * path) {
 
 	// We Bound the input layout
 	D3D11DeviceContext->IASetInputLayout(Layout.Get());
+
+
 	D3D11_BUFFER_DESC bdesc = { 0 };
 	bdesc.Usage = D3D11_USAGE_DEFAULT;
 	bdesc.ByteWidth = sizeof(CObject3D::CBuffer);
@@ -915,51 +877,109 @@ void CObject3D::Create(char * path) {
 		printf("Error Creating Buffer Layout\n");
 		return;
 	}
-
 	// Set the constant buffer to the shader programs: Note that we use the Device Context to manage the resources
 	D3D11DeviceContext->VSSetConstantBuffers(0, 1, pd3dConstantBuffer.GetAddressOf());
 	D3D11DeviceContext->PSSetConstantBuffers(0, 1, pd3dConstantBuffer.GetAddressOf());
-
-	bdesc = { 0 };
-	bdesc.ByteWidth = sizeof(CVertex) * bufferVertex.size();
-	bdesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-	// Resource sub data is just a structure friendly to set our pointer to the vertex data
-	D3D11_SUBRESOURCE_DATA subData = { bufferVertex.data(), 0, 0 };
-	hr = D3D11Device->CreateBuffer(&bdesc, &subData, &VB);
-	if (hr != S_OK) {
-		printf("Error Creating Vertex Buffer\n");
-		return;
-	}
-	for (int i = 0; i < list.size(); i++)
+	for (auto i = meshes.begin(); i != meshes.end(); i++)
 	{
 		bdesc = { 0 };
-		bdesc.ByteWidth = (*bufferIndexForText[i]).size() * sizeof(USHORT);
-		bdesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
-
-		subData = { &(*bufferIndexForText[i])[0], 0, 0 };
-
-		hr = D3D11Device->CreateBuffer(&bdesc, &subData, &IB[i]);
+		bdesc.ByteWidth = sizeof(CVertex) * (*i).bufferVertex.size();
+		bdesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+		// Resource sub data is just a structure friendly to set our pointer to the vertex data
+		D3D11_SUBRESOURCE_DATA subData = { (*i).bufferVertex.data(), 0, 0 };
+		hr = D3D11Device->CreateBuffer(&bdesc, &subData, &((*i).VB));
 		if (hr != S_OK) {
-			printf("Error Creating Index Buffer\n");
+			printf("Error Creating Vertex Buffer\n");
 			return;
 		}
-	}
-	// Same for the index buffer
+		for (int index = 0; index < (*i).bufferIndexForTextures.size(); index++)
+		{
+			bdesc = { 0 };
+			bdesc.ByteWidth = (*i).bufferIndexForTextures[index]->size() * sizeof(USHORT);
+			bdesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
 
-	int countertext = 0;
-	for (auto i = list.begin(); i != list.end(); i++) {
-		Texture	*tex = new TextureD3D;
-		char *tempChar;
-		tempChar = new char[((*i).size() + 1)];
-		memcpy(tempChar, (*i).c_str(), (*i).size() + 1);
-		TexId[countertext] = tex->LoadTexture(tempChar);
-		if (TexId[countertext] == -1) {
-			delete tex;
+			subData = { ((*i).bufferIndexForTextures[index]->data()), 0, 0 };
+
+			hr = D3D11Device->CreateBuffer(&bdesc, &subData, &((*i).IB[index]));
+			if (hr != S_OK) {
+				printf("Error Creating Index Buffer\n");
+				return;
+			}
 		}
-		Textures[countertext] = tex;
-		countertext++;
-		delete[]tempChar;
 	}
+
+	// Same for the index buffer
+	std::map<std::string, int> list;
+	int counterText = 0;
+	for (auto mesh = meshes.begin(); mesh != meshes.end(); mesh++)
+	{
+		for (auto textures = (*mesh).infoTexture.textures.begin(); textures != (*mesh).infoTexture.textures.end(); textures++) {
+
+			std::string tempString((*textures).diffuseName);
+			auto iteradorFind = list.find(tempString);
+			if (iteradorFind == list.end())
+			{
+				Texture	*tex = new TextureD3D;
+				if (tex->LoadTexture((*textures).diffuseName) == -1) {
+					delete tex;
+				}
+				Textures[counterText] = tex;
+				list[tempString] = counterText;
+				counterText++;
+			}
+			(*textures).idDiffuse = list[tempString];
+			if ((*textures).specular)
+			{
+				std::string tempString((*textures).specularName);
+				auto iteradorFind = list.find(tempString);
+				if (iteradorFind == list.end())
+				{
+					Texture	*tex = new TextureD3D;
+					if (tex->LoadTexture((*textures).specularName) == -1) {
+						delete tex;
+					}
+					Textures[counterText] = tex;
+					list[tempString] = counterText;
+					counterText++;
+				}
+				(*textures).idSpecular = list[tempString];
+			}
+			if ((*textures).gloss)
+			{
+				std::string tempString((*textures).glossName);
+				auto iteradorFind = list.find(tempString);
+				if (iteradorFind == list.end())
+				{
+					Texture	*tex = new TextureD3D;
+					if (tex->LoadTexture((*textures).glossName) == -1) {
+						delete tex;
+					}
+					Textures[counterText] = tex;
+					list[tempString] = counterText;
+					counterText++;
+				}
+				(*textures).idGloss = list[tempString];
+			}
+			if ((*textures).normal)
+			{
+				std::string tempString((*textures).normalName);
+				auto iteradorFind = list.find(tempString);
+				if (iteradorFind == list.end())
+				{
+					Texture	*tex = new TextureD3D;
+					if (tex->LoadTexture((*textures).normalName) == -1) {
+						delete tex;
+					}
+					Textures[counterText] = tex;
+					list[tempString] = counterText;
+					counterText++;
+				}
+				(*textures).idNormal = list[tempString];
+				counterText++;
+			}
+		}
+	}
+
 #endif
 	transform = Identity();
 	free(vsSourceP);
@@ -1054,6 +1074,18 @@ void CObject3D::Draw(float *t, float *vp) {
 	CnstBuffer.WVP = WVP;
 	CnstBuffer.World = transform;
 
+#ifdef	USE_DIFFUSE
+	CnstBuffer.PosCamera = (*lights->posCamera);
+#endif
+#ifdef USE_GLOBALLIGHT
+	CnstBuffer.DirectionGlobalLight = (lights->dirGlobal);
+	CnstBuffer.ColorGlobalLight = (lights->colorGlobal);
+#endif
+#ifdef	USE_POINTLIGHT
+	CnstBuffer.PositionPointLight = (lights->posPoint);
+	CnstBuffer.ColorPointLight = (lights->colorPoint);
+#endif
+
 	UINT stride = sizeof(CVertex);
 	UINT offset = 0;
 	// We bound to use the vertex and pixel shader of this primitive
@@ -1065,23 +1097,36 @@ void CObject3D::Draw(float *t, float *vp) {
 	D3D11DeviceContext->UpdateSubresource(pd3dConstantBuffer.Get(), 0, 0, &CnstBuffer, 0, 0);
 	// Once updated the constant buffer we send them to the shader programs
 	D3D11DeviceContext->VSSetConstantBuffers(0, 1, pd3dConstantBuffer.GetAddressOf());
-	D3D11DeviceContext->PSSetConstantBuffers(0, 1, pd3dConstantBuffer.GetAddressOf());
+	D3D11DeviceContext->PSSetConstantBuffers(0, 1, pd3dConstantBuffer.GetAddressOf());\
+	
+	//D3D11DeviceContext->IASetVertexBuffers(0, 1, meshes[0].VB.GetAddressOf(), &stride, &offset);
+	//
+	//TextureD3D *texd3d = dynamic_cast<TextureD3D*>(Textures[meshes[0].infoTexture.textures[0].idDiffuse]);
+	//D3D11DeviceContext->PSSetShaderResources(0, 1, texd3d->pSRVTex.GetAddressOf());
+	//D3D11DeviceContext->PSSetSamplers(0, 1, texd3d->pSampler.GetAddressOf());
+	//D3D11DeviceContext->IASetIndexBuffer(meshes[0].IB[0].Get(), DXGI_FORMAT_R16_UINT, 0);
+	//// Instruct to use triangle list
+	//D3D11DeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	//D3D11DeviceContext->DrawIndexed(meshes[0].bufferIndexForTextures[0]->size(), 0, 0);
+		
+	for (auto i = meshes.begin(); i != meshes.end(); i++)
+	{
 
 	// We let d3d that we are using our vertex and index buffers, they require the stride and offset
-	D3D11DeviceContext->IASetVertexBuffers(0, 1, VB.GetAddressOf(), &stride, &offset);
-	// Same for the index buffer
-	for (int i = 0; i < bufferIndexForText.size(); i++)
-	{
-		TextureD3D *texd3d = dynamic_cast<TextureD3D*>(Textures[i]);
-		D3D11DeviceContext->PSSetShaderResources(0, 1, texd3d->pSRVTex.GetAddressOf());
-		D3D11DeviceContext->PSSetSamplers(0, 1, texd3d->pSampler.GetAddressOf());
-
-		D3D11DeviceContext->IASetIndexBuffer(IB[i].Get(), DXGI_FORMAT_R16_UINT, 0);
-		// Instruct to use triangle list
-		D3D11DeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-		// Draw the primitive sending the number of indices
-		D3D11DeviceContext->DrawIndexed((*bufferIndexForText[i]).size(), 0, 0);
+	
+		D3D11DeviceContext->IASetVertexBuffers(0, 1, (*i).VB.GetAddressOf(), &stride, &offset);
+		for (int index = 0; index < (*i).bufferIndexForTextures.size(); index++)
+		{
+			TextureD3D *texd3d = dynamic_cast<TextureD3D*>(Textures[(*i).infoTexture.textures[index].idDiffuse]);
+			D3D11DeviceContext->PSSetShaderResources(0, 1, texd3d->pSRVTex.GetAddressOf());
+			D3D11DeviceContext->PSSetSamplers(0, 1, texd3d->pSampler.GetAddressOf());
+			D3D11DeviceContext->IASetIndexBuffer((*i).IB[index].Get(), DXGI_FORMAT_R16_UINT, 0);
+			// Instruct to use triangle list
+			D3D11DeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+			D3D11DeviceContext->DrawIndexed((*i).bufferIndexForTextures[index]->size(), 0, 0);
+		}
 	}
+
 #endif
 }
 

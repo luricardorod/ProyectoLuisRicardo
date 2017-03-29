@@ -18,8 +18,16 @@ e:\uad\5to\graficas\chemonky\example\example\cobject3d.cpp(222): warning C4018: 
 e:\uad\5to\graficas\chemonky\example\example\cobject3d.cpp(233): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
 e:\uad\5to\graficas\chemonky\example\example\cobject3d.cpp(244): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
 e:\uad\5to\graficas\chemonky\example\example\cobject3d.cpp(285): warning C4018: '<': signed/unsigned mismatch
-e:\uad\5to\graficas\chemonky\example\example\cobject3d.cpp(405): warning C4018: '<': signed/unsigned mismatch
-e:\uad\5to\graficas\chemonky\example\example\cobject3d.cpp(416): warning C4244: '=': conversion from 'double' to 'unsigned short', possible loss of data
-e:\uad\5to\graficas\chemonky\example\example\cobject3d.cpp(763): warning C4018: '<': signed/unsigned mismatch
-e:\uad\5to\graficas\chemonky\example\example\cobject3d.cpp(1023): warning C4018: '<': signed/unsigned mismatch
+e:\uad\5to\graficas\chemonky\example\example\cobject3d.cpp(408): warning C4018: '<': signed/unsigned mismatch
+e:\uad\5to\graficas\chemonky\example\example\cobject3d.cpp(419): warning C4244: '=': conversion from 'double' to 'unsigned short', possible loss of data
+e:\uad\5to\graficas\chemonky\example\example\cobject3d.cpp(895): warning C4018: '<': signed/unsigned mismatch
+e:\uad\5to\graficas\chemonky\example\example\cobject3d.cpp(1118): warning C4018: '<': signed/unsigned mismatch
+  Generating Code...
+  Compiling...
+  Win32Framework.cpp
+  TextureGL.cpp
+  TextureD3D.cpp
+  PrimitiveManager.cpp
+  D3DXDriver.cpp
+  Generating Code...
   Example.vcxproj -> E:\UAD\5to\graficas\chemonky\Example\Debug\Framework.lib

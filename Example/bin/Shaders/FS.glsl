@@ -36,8 +36,7 @@ void main(){
 	ejes[1] = binormal1;
 	ejes[2] = normal1;
 	lucas = texture2D(normalLoc,vecUVCoords).rgb;
-	lucas.y = -lucas.y;
-	lucas = binormal1;
+	lucas =ejes*lucas;
 	highp float lightIntensity;
 	lowp vec3 vector = vec3(0, 0, 0);
 	lowp vec3 globalLight = vec3(0, 0, 0);
@@ -74,9 +73,9 @@ void main(){
 	pointLight = lightIntensity*colorPoint;
 #endif
 #if defined(USE_TEXCOORD0) 
-	vector = texture2D(diffuse,vecUVCoords).rgb +texture2D(diffuse,vecUVCoords).rgb*pointLight + texture2D(diffuse,vecUVCoords).rgb*globalLight + texture2D(diffuse,vecUVCoords).rgb*diffuseLight;
+	vector = texture2D(diffuse,vecUVCoords).rgb*.1 +texture2D(diffuse,vecUVCoords).rgb*pointLight + texture2D(diffuse,vecUVCoords).rgb*globalLight + texture2D(diffuse,vecUVCoords).rgb*diffuseLight;
 
-	vector = (normalize(vec3(lucas)) *0.5 + 0.5);// +  (normalize(vec3(vecTransformed)) *0.5 + 0.5) * pointLight+(normalize(vec3(vecTransformed)))*globalLight;
+	//vector = (normalize(vec3(lucas)) *0.5 + 0.5);// +  (normalize(vec3(vecTransformed)) *0.5 + 0.5) * pointLight+(normalize(vec3(vecTransformed)))*globalLight;
 #endif
 	gl_FragColor = vec4(vector,1.0);
 }

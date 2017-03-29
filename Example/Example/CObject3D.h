@@ -59,7 +59,6 @@ public:
 		std::vector<std::vector<unsigned short>*> bufferIndexForTextures;
 	};
 
-	std::vector<mesh> meshes;
 	CObject3D() : shaderID(0) {}
 	GLuint	shaderID;
 	GLint	vertexAttribLoc;
@@ -84,10 +83,21 @@ public:
 	{
 		CMatrix4D WVP;
 		CMatrix4D World;
+		CVector4D DirectionGlobalLight;
+		CVector4D ColorGlobalLight;
+		CVector4D PositionPointLight;
+		CVector4D ColorPointLight;
+		CVector4D PosCamera;
+	};
+	struct mesh {
+		ComPtr<ID3D11Buffer>		VB;
+		ComPtr<ID3D11Buffer>		IB[20];
+		std::vector<CVertex> bufferVertex;
+		std::vector<unsigned short> bufferIndex;
+		infotex infoTexture;
+		std::vector<std::vector<unsigned short>*> bufferIndexForTextures;
 	};
 	CObject3D() {}
-	ComPtr<ID3D11Buffer>		IB[20];
-	ComPtr<ID3D11Buffer>		VB;
 	ComPtr<ID3D11VertexShader>  pVS;
 	ComPtr<ID3D11PixelShader>   pFS;
 	ComPtr<ID3DBlob>            VS_blob;
@@ -95,12 +105,12 @@ public:
 	ComPtr<ID3D11InputLayout>   Layout;
 	ComPtr<ID3D11Buffer>        pd3dConstantBuffer;
 
-	std::vector<D3D11_INPUT_ELEMENT_DESC>	VertexDecl;
-
 	CObject3D::CBuffer				CnstBuffer;
 	Texture *Textures[20];
 
 #endif
+	std::vector<mesh> meshes;
+
 };
 
 

@@ -19,9 +19,9 @@ void TestApp::InitVars() {
 	Scaling		= CVector4D(1.0f, 1.0f, 1.0f, 0);
 	rotationCam = 0;
 	worldLights.dirGlobal = CVector4D(1, 0, 0, 0);
-	worldLights.colorGlobal = CVector4D(.2, 0, 0, 0);
-	worldLights.colorPoint = CVector4D(.2, .2, .2, 0);
-	worldLights.posPoint = CVector4D(50, 100, 10, 0);
+	worldLights.colorGlobal = CVector4D(1, 0, 0, 0);
+	worldLights.colorPoint = CVector4D(.7, .7, .7, 0);
+	worldLights.posPoint = CVector4D(0, 0, 1, 0);
 	worldLights.posCamera = &PositionCamera;
 }
 
@@ -29,18 +29,18 @@ void TestApp::CreateAssets() {
 	PrimitiveMgr.SetVP(&VP);
 
 
-	int index = PrimitiveMgr.CreateObject3D("Models/Scene.X");
+	int index = PrimitiveMgr.CreateObject3D("Models/NuCroc.X");
 	primitiveFigs[0].CreateInstance(PrimitiveMgr.GetPrimitive(index), &VP);
 
 	index = PrimitiveMgr.CreateObject3D("Models/NuCroc.X");
 	primitiveFigs[1].CreateInstance(PrimitiveMgr.GetPrimitive(index), &VP);
 
-	index = PrimitiveMgr.CreateObject3D("Models/Link.X");
+	index = PrimitiveMgr.CreateObject3D("Models/NuBatman.X");
 	primitiveFigs[2].CreateInstance(PrimitiveMgr.GetPrimitive(index), &VP);
-	index = PrimitiveMgr.CreateObject3D("Models/House.X");
+	index = PrimitiveMgr.CreateObject3D("Models/CerdoNuevo.X");
 	primitiveFigs[3].CreateInstance(PrimitiveMgr.GetPrimitive(index), &VP);
+	index = PrimitiveMgr.CreateObject3D("Models/Scene.X");
 	primitiveFigs[4].CreateInstance(PrimitiveMgr.GetPrimitive(index), &VP);
-	index = PrimitiveMgr.CreateObject3D("Models/Drone.X");
 	primitiveFigs[5].CreateInstance(PrimitiveMgr.GetPrimitive(index), &VP);
 	index = PrimitiveMgr.CreateObject3D("Models/CerdoNuevo.X");
 	primitiveFigs[6].CreateInstance(PrimitiveMgr.GetPrimitive(index), &VP);
@@ -59,13 +59,21 @@ void TestApp::CreateAssets() {
 	CMatrix4D proj = PerspectiveFovRH(45*3.1416/180, 1280.0f / 720.0f, 0.1f, 10000.0f);
 	VP = View * proj;
 
+	primitiveFigs[0].TranslateAbsolute(-50.0f,0,0);
+	primitiveFigs[0].Update();
+	primitiveFigs[1].TranslateAbsolute(0.0f, 0, 0);
+	primitiveFigs[1].Update();
+	primitiveFigs[2].TranslateAbsolute(50.0f, 0, 0);
+	primitiveFigs[2].Update();
+	primitiveFigs[3].TranslateAbsolute(100.0f, 0, 0);
+	primitiveFigs[3].Update();
 
 	/*primitiveFigs[CROC].TranslateAbsolute(-43.871941f, 0.064795f, -58.153839f);
 	primitiveFigs[CROC].RotateXAbsolute(0.0f);
 	primitiveFigs[CROC].RotateYAbsolute(207.731613f);
 	primitiveFigs[CROC].RotateXAbsolute(0.0f);
 	primitiveFigs[CROC].ScaleAbsolute(0.151794f);*/
-	primitiveFigs[CROC].Update();
+	/*primitiveFigs[CROC].Update();
 
 	primitiveFigs[LINK].TranslateAbsolute(12.499269f, -0.079694f, -63.019135f);
 	primitiveFigs[LINK].RotateXAbsolute(0.0f);
@@ -90,7 +98,7 @@ void TestApp::CreateAssets() {
 	primitiveFigs[CERDO].RotateYAbsolute(0.0f);
 	primitiveFigs[CERDO].RotateZAbsolute(0.0f);
 	primitiveFigs[CERDO].ScaleAbsolute(27.208776f);
-	primitiveFigs[CERDO].Update();
+	primitiveFigs[CERDO].Update();*/
 	worldLights.posPoint = CVector4D(primitiveFigs[7].position.m30, primitiveFigs[7].position.m31, primitiveFigs[7].position.m32,0);
 	PositionLight = worldLights.posPoint;
 }
@@ -136,6 +144,7 @@ void TestApp::OnDraw() {
 	for (int i = 0; i < TOTAL_INSTANCES; i++) {
 		primitiveFigs[i].Draw();
 	}
+
 	pFramework->pVideoDriver->SwapBuffers();
 }
 

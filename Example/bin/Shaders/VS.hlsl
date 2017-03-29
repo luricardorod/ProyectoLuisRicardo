@@ -1,24 +1,37 @@
-cbuffer ConstantBuffer{
-    float4x4 WVP;
-	float4x4 World;    
+cbuffer ConstantBuffer {
+	float4x4 WVP;
+	float4x4 World;
+	float4 DirectionGlobalLight;
+	float4 ColorGlobalLight;
+	float4 PositionPointLight;
+	float4 ColorPointLight;
+	float4 PosCamera;
 }
 
-struct VS_INPUT{
-    float4 position : POSITION;
+struct VS_INPUT {
+	float4 position : POSITION;
 	float4 normal   : NORMAL;
-    float2 texture0 : TEXCOORD;
+	float2 texture0 : TEXCOORD;
+	float4 binormal : BINORMAL;
+	float4 tangente : TANGENTE;
 };
 
-struct VS_OUTPUT{
-    float4 hposition : SV_POSITION;
-	float4 hnormal   : NORMAL;
-    float2 texture0  : TEXCOORD;
+struct VS_OUTPUT {
+	float4 hposition : SV_POSITION;
+	float3 hnormal   : NORMAL;
+	float2 texture0  : TEXCOORD;
+	float4 vert      : VERTICE;
 };
 
-VS_OUTPUT VS( VS_INPUT input ){
-    VS_OUTPUT OUT;
-    OUT.hposition = mul( WVP , input.position );
-	OUT.hnormal = normalize( mul( World , input.normal ) );
-    OUT.texture0 = input.texture0;
-    return OUT;
+VS_OUTPUT VS(VS_INPUT input) {
+	float3x3 rotationTransform;
+	rotationTransform[0] = World[0].xyz;
+	rotationTransform[1] = World[1].xyz;
+	rotationTransform[2] = World[2].xyz;
+	VS_OUTPUT OUT;
+	OUT.vert = mul(World, input.position);
+	OUT.hposition = mul(WVP, input.position);
+	OUT.hnormal = normalize(mul(rotationTransform, input.normal.xyz));
+	OUT.texture0 = input.texture0;
+	return OUT;
 }

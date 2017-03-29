@@ -24,8 +24,8 @@ struct CVertex {
 	float x, y, z, w;
 	float nx, ny, nz, nw;
 	float s, t;
-	float bix, biy, biz;
-	float tanx, tany, tanz;
+	float bix, biy, biz, biw;
+	float tanx, tany, tanz, tanw;
 };
 
 #endif
