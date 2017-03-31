@@ -44,6 +44,9 @@ void main(){
 	lowp vec3 diffuseLight = vec3(0, 0, 0);
 	highp vec3 colorDiffuse = vec3(1, 1, 1);
 
+	//ESTAS HACIENDO MUCHAS VECES LAS MISMAS OPERACIONES, PositionCamera.xyz - vert.xyz  Y PositionPointLight.xyz - vert.xyz
+	// CADA OPERACION SON CICLOS DE RELOJ EN EL SHADER, MENOS FRAMES POR SEGUNDO, HAZ LA OPERACION UNA VEZ Y GUARDA EL VALOR, ESE VALOR USALO DESPUES,
+	// EVITA TANTAS OPERACIONES IGUALES
 #ifdef	USE_DIFFUSE
 	lightIntensity = pow(dot(normalize(PositionCamera.xyz - vert.xyz),normalize(reflect((vert.xyz - PositionPointLight.xyz), lucas.xyz)))*0.5+0.5,10.0);
 	//lightIntensity = pow(dot(normalize(PositionPointLight.xyz - vert.xyz + PositionCamera.xyz - vert.xyz),lucas.xyz)*0.5+0.5,10.0);
@@ -72,7 +75,7 @@ void main(){
 		lightIntensity = 0.0;
 	pointLight = lightIntensity*ColorPointLight;
 #endif
-#if defined(USE_TEXCOORD0) 
+#if defined(USE_TEXCOORD0) 	// ESTAS ACCESANDO MUCHAS VECES AL SAMPLER, ESO ES COSTOSO Y NO ES NECESARIO, HAZLO SOLO UNA VEZ
 	vector = texture2D(diffuse,vecUVCoords).rgb*.1 +texture2D(diffuse,vecUVCoords).rgb*pointLight + texture2D(diffuse,vecUVCoords).rgb*globalLight + texture2D(diffuse,vecUVCoords).rgb*diffuseLight;
 
 #endif
