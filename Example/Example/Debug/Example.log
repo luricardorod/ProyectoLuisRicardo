@@ -1,27 +1,27 @@
 ﻿  CObject3D.cpp
-e:\uad\5to\graficas\chemonky\example\example\cobject3d.cpp(54): warning C4244: 'argument': conversion from 'double' to 'unsigned int', possible loss of data
-e:\uad\5to\graficas\chemonky\example\example\cobject3d.cpp(55): warning C4018: '<': signed/unsigned mismatch
-e:\uad\5to\graficas\chemonky\example\example\cobject3d.cpp(66): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-e:\uad\5to\graficas\chemonky\example\example\cobject3d.cpp(77): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-e:\uad\5to\graficas\chemonky\example\example\cobject3d.cpp(89): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-e:\uad\5to\graficas\chemonky\example\example\cobject3d.cpp(110): warning C4244: '-=': conversion from 'double' to 'int', possible loss of data
-e:\uad\5to\graficas\chemonky\example\example\cobject3d.cpp(111): warning C4244: 'argument': conversion from 'double' to 'unsigned int', possible loss of data
-e:\uad\5to\graficas\chemonky\example\example\cobject3d.cpp(112): warning C4018: '<': signed/unsigned mismatch
-e:\uad\5to\graficas\chemonky\example\example\cobject3d.cpp(130): warning C4244: '=': conversion from 'double' to 'unsigned short', possible loss of data
-e:\uad\5to\graficas\chemonky\example\example\cobject3d.cpp(141): warning C4244: '=': conversion from 'double' to 'unsigned short', possible loss of data
-e:\uad\5to\graficas\chemonky\example\example\cobject3d.cpp(154): warning C4244: '=': conversion from 'double' to 'unsigned short', possible loss of data
-e:\uad\5to\graficas\chemonky\example\example\cobject3d.cpp(170): warning C4018: '<': signed/unsigned mismatch
-e:\uad\5to\graficas\chemonky\example\example\cobject3d.cpp(181): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-e:\uad\5to\graficas\chemonky\example\example\cobject3d.cpp(192): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-e:\uad\5to\graficas\chemonky\example\example\cobject3d.cpp(205): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-e:\uad\5to\graficas\chemonky\example\example\cobject3d.cpp(222): warning C4018: '<': signed/unsigned mismatch
-e:\uad\5to\graficas\chemonky\example\example\cobject3d.cpp(233): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-e:\uad\5to\graficas\chemonky\example\example\cobject3d.cpp(244): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-e:\uad\5to\graficas\chemonky\example\example\cobject3d.cpp(285): warning C4018: '<': signed/unsigned mismatch
-e:\uad\5to\graficas\chemonky\example\example\cobject3d.cpp(408): warning C4018: '<': signed/unsigned mismatch
-e:\uad\5to\graficas\chemonky\example\example\cobject3d.cpp(419): warning C4244: '=': conversion from 'double' to 'unsigned short', possible loss of data
-e:\uad\5to\graficas\chemonky\example\example\cobject3d.cpp(895): warning C4018: '<': signed/unsigned mismatch
-e:\uad\5to\graficas\chemonky\example\example\cobject3d.cpp(1118): warning C4018: '<': signed/unsigned mismatch
+e:\dev\class\alumnos\proyectoluisricardo\example\example\cobject3d.cpp(54): warning C4244: 'argument': conversion from 'double' to 'unsigned int', possible loss of data
+e:\dev\class\alumnos\proyectoluisricardo\example\example\cobject3d.cpp(55): warning C4018: '<': signed/unsigned mismatch
+e:\dev\class\alumnos\proyectoluisricardo\example\example\cobject3d.cpp(66): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+e:\dev\class\alumnos\proyectoluisricardo\example\example\cobject3d.cpp(77): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+e:\dev\class\alumnos\proyectoluisricardo\example\example\cobject3d.cpp(89): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+e:\dev\class\alumnos\proyectoluisricardo\example\example\cobject3d.cpp(110): warning C4244: '-=': conversion from 'double' to 'int', possible loss of data
+e:\dev\class\alumnos\proyectoluisricardo\example\example\cobject3d.cpp(111): warning C4244: 'argument': conversion from 'double' to 'unsigned int', possible loss of data
+e:\dev\class\alumnos\proyectoluisricardo\example\example\cobject3d.cpp(112): warning C4018: '<': signed/unsigned mismatch
+e:\dev\class\alumnos\proyectoluisricardo\example\example\cobject3d.cpp(130): warning C4244: '=': conversion from 'double' to 'unsigned short', possible loss of data
+e:\dev\class\alumnos\proyectoluisricardo\example\example\cobject3d.cpp(141): warning C4244: '=': conversion from 'double' to 'unsigned short', possible loss of data
+e:\dev\class\alumnos\proyectoluisricardo\example\example\cobject3d.cpp(154): warning C4244: '=': conversion from 'double' to 'unsigned short', possible loss of data
+e:\dev\class\alumnos\proyectoluisricardo\example\example\cobject3d.cpp(170): warning C4018: '<': signed/unsigned mismatch
+e:\dev\class\alumnos\proyectoluisricardo\example\example\cobject3d.cpp(181): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+e:\dev\class\alumnos\proyectoluisricardo\example\example\cobject3d.cpp(192): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+e:\dev\class\alumnos\proyectoluisricardo\example\example\cobject3d.cpp(205): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+e:\dev\class\alumnos\proyectoluisricardo\example\example\cobject3d.cpp(222): warning C4018: '<': signed/unsigned mismatch
+e:\dev\class\alumnos\proyectoluisricardo\example\example\cobject3d.cpp(233): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+e:\dev\class\alumnos\proyectoluisricardo\example\example\cobject3d.cpp(244): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+e:\dev\class\alumnos\proyectoluisricardo\example\example\cobject3d.cpp(285): warning C4018: '<': signed/unsigned mismatch
+e:\dev\class\alumnos\proyectoluisricardo\example\example\cobject3d.cpp(408): warning C4018: '<': signed/unsigned mismatch
+e:\dev\class\alumnos\proyectoluisricardo\example\example\cobject3d.cpp(419): warning C4244: '=': conversion from 'double' to 'unsigned short', possible loss of data
+e:\dev\class\alumnos\proyectoluisricardo\example\example\cobject3d.cpp(721): warning C4018: '<': signed/unsigned mismatch
+e:\dev\class\alumnos\proyectoluisricardo\example\example\cobject3d.cpp(1043): warning C4018: '<': signed/unsigned mismatch
   Generating Code...
   Compiling...
   Win32Framework.cpp
@@ -30,4 +30,4 @@ e:\uad\5to\graficas\chemonky\example\example\cobject3d.cpp(1118): warning C4018:
   PrimitiveManager.cpp
   D3DXDriver.cpp
   Generating Code...
-  Example.vcxproj -> E:\UAD\5to\graficas\chemonky\Example\Debug\Framework.lib
+  Example.vcxproj -> E:\Dev\CLASS\Alumnos\ProyectoLuisRicardo\Example\Debug\Framework.lib

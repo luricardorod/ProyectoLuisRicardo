@@ -27,16 +27,18 @@ varying highp vec3 tangente1;
 varying highp vec3 normal1;
 varying  highp mat3 world3all;
 highp vec3 lucas;
-highp mat3 ejes;
+
 
 
 void main(){
 
-	ejes[0] = tangente1;
-	ejes[1] = binormal1;
-	ejes[2] = normal1;
-	lucas = texture2D(normalLoc,vecUVCoords).rgb;
-	lucas =ejes*lucas;
+	highp mat3 ejes;
+	ejes[0] = normalize(tangente1);
+	ejes[1] = normalize(binormal1);
+	ejes[2] = normalize(normal1);
+	lucas = texture2D(normalLoc,vecUVCoords).rgb * 2.0 - 1.0;
+	lucas.g = -lucas.g;
+	lucas = normalize(ejes*lucas);
 	highp float lightIntensity;
 	lowp vec3 vector = vec3(0, 0, 0);
 	lowp vec3 globalLight = vec3(0, 0, 0);
