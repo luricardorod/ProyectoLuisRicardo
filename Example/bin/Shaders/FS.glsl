@@ -1,5 +1,8 @@
 uniform highp sampler2D diffuse;
 uniform highp sampler2D normalLoc;
+uniform highp sampler2D specularLoc;
+uniform highp sampler2D glossLoc;
+
 
 #ifdef USE_GLOBALLIGHT
 uniform highp vec3 DirectionGlobalLight;
@@ -38,6 +41,7 @@ void main(){
 	lucas.g = -lucas.g;
 	lucas = normalize(ejes*lucas);
 	highp float lightIntensity;
+
 	lowp vec3 vector = vec3(0, 0, 0);
 	lowp vec3 globalLight = vec3(0, 0, 0);
 	lowp vec3 pointLight = vec3(0, 0, 0);
@@ -47,9 +51,13 @@ void main(){
 	//ESTAS HACIENDO MUCHAS VECES LAS MISMAS OPERACIONES, PositionCamera.xyz - vert.xyz  Y PositionPointLight.xyz - vert.xyz
 	// CADA OPERACION SON CICLOS DE RELOJ EN EL SHADER, MENOS FRAMES POR SEGUNDO, HAZ LA OPERACION UNA VEZ Y GUARDA EL VALOR, ESE VALOR USALO DESPUES,
 	// EVITA TANTAS OPERACIONES IGUALES
+#if defined(USE_TEXCOORD0)
+	highp vec3 textureColor = texture2D(diffuse,vecUVCoords).rgb;
+#endif
+
 #ifdef	USE_DIFFUSE
 	lightIntensity = pow(dot(normalize(PositionCamera.xyz - vert.xyz),normalize(reflect((vert.xyz - PositionPointLight.xyz), lucas.xyz)))*0.5+0.5,10.0);
-	//lightIntensity = pow(dot(normalize(PositionPointLight.xyz - vert.xyz + PositionCamera.xyz - vert.xyz),lucas.xyz)*0.5+0.5,10.0);
+	//lightIntensity = pow(dot(normalize(PositionPointLight.xyz - vert.xyz + PositionCamera.xyz - vert.xyz),lucas.xyz)ss,10.0);
 	
 	clamp(lightIntensity, 0.0, 1.0);
 	diffuseLight = lightIntensity*colorDiffuse;
@@ -76,8 +84,11 @@ void main(){
 	pointLight = lightIntensity*ColorPointLight;
 #endif
 #if defined(USE_TEXCOORD0) 	// ESTAS ACCESANDO MUCHAS VECES AL SAMPLER, ESO ES COSTOSO Y NO ES NECESARIO, HAZLO SOLO UNA VEZ
-	vector = texture2D(diffuse,vecUVCoords).rgb*.1 +texture2D(diffuse,vecUVCoords).rgb*pointLight + texture2D(diffuse,vecUVCoords).rgb*globalLight + texture2D(diffuse,vecUVCoords).rgb*diffuseLight;
+	
+	vector = textureColor *.1 + textureColor * pointLight + textureColor*globalLight + textureColor*diffuseLight;
 
 #endif
 	gl_FragColor = vec4(vector,1.0);
+	//gl_FragColor =  texture2D(specularLoc,vecUVCoords);
+
 }

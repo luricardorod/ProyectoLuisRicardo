@@ -15,7 +15,7 @@ void TestApp::InitVars() {
 	DtTimer.Init();
 	Position	= CVector4D(0.0f, 0.0f, 0.0f, 0);
 	PositionLight = CVector4D(0.0f, 0.0f, 0.0f, 0);
-	Orientation = CVector4D(0.0f, 0.0f, 10.0f, 0);
+	Orientation = CVector4D(0.0f, 0.0f, 0.0f, 0);
 	Scaling		= CVector4D(1.0f, 1.0f, 1.0f, 0);
 	rotationCam = 0;
 	worldLights.dirGlobal = CVector4D(1, 0, 0, 0);
@@ -51,7 +51,7 @@ void TestApp::CreateAssets() {
 	}
 	
 	CMatrix4D View;
-	PositionCamera = CVector4D(0.0f, 10.0f, 100.0f, 0);
+	PositionCamera = CVector4D(0.0f, -10.0f, 100.0f, 0);
 	CVector4D Up = CVector4D(0.0f, 1.0f, 0.0f, 0);
 	CVector4D LookAt = PositionCamera - Normalize(Orientation) * 10;
 

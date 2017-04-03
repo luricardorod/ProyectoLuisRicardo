@@ -122,7 +122,7 @@ CMatrix4D LookAtRH(CVector4D &EyePos, CVector4D &Target, CVector4D &Up)
 	Result.m[0][0] = xaxis.x;	Result.m[0][1] = yaxis.x;	Result.m[0][2] = zaxis.x;	Result.m[0][3] = 0;
 	Result.m[1][0] = xaxis.y;	Result.m[1][1] = yaxis.y;	Result.m[1][2] = zaxis.y;	Result.m[1][3] = 0;
 	Result.m[2][0] = xaxis.z;	Result.m[2][1] = yaxis.z;	Result.m[2][2] = zaxis.z;	Result.m[2][3] = 0;
-	Result.m[3][0] = -Dot(xaxis, EyePos); Result.m[3][1] = -Dot(yaxis, EyePos); Result.m[3][2] = -Dot(zaxis, EyePos); Result.m[3][3] = 1;
+	Result.m[3][0] = Dot(xaxis, EyePos); Result.m[3][1] = Dot(yaxis, EyePos); Result.m[3][2] = Dot(zaxis, EyePos); Result.m[3][3] = 1;
 
 	return Result;
 }

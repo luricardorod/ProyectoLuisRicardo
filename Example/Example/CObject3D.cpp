@@ -109,6 +109,8 @@ void CObject3D::Create(char * path) {
 					buffer1[positionBuffer] = '\0';
 					dif -= std::atof(buffer1);
 					tempMesh.bufferIndex.resize(std::atof(buffer1) * 3);
+					tempMesh.meshbufferIndex.resize(std::atof(buffer1) * 3 * 2);
+					counterBufferIndex = 0;
 					for (int i = 0; i < tempMesh.bufferIndex.size(); i +=3)
 					{
 
@@ -154,8 +156,20 @@ void CObject3D::Create(char * path) {
 						tempMesh.bufferIndex[i] = std::atof(buffer1);
 
 						counter++;
-						counterBufferIndex += 3;
-						
+						tempMesh.meshbufferIndex[counterBufferIndex] = tempMesh.bufferIndex[i];
+						counterBufferIndex ++;
+						tempMesh.meshbufferIndex[counterBufferIndex] = tempMesh.bufferIndex[i + 1];
+						counterBufferIndex++;
+
+						tempMesh.meshbufferIndex[counterBufferIndex] = tempMesh.bufferIndex[i];
+						counterBufferIndex++;
+						tempMesh.meshbufferIndex[counterBufferIndex] = tempMesh.bufferIndex[i + 2];
+						counterBufferIndex++;
+
+						tempMesh.meshbufferIndex[counterBufferIndex] = tempMesh.bufferIndex[i + 1];
+						counterBufferIndex++;
+						tempMesh.meshbufferIndex[counterBufferIndex] = tempMesh.bufferIndex[i + 2];
+						counterBufferIndex++;
 					}
 					//endIndex
 
@@ -651,7 +665,6 @@ void CObject3D::Create(char * path) {
 	}
 	
 #ifdef USING_OPENGL_ES
-	shaderID = glCreateProgram();
 	char *vsSourceP = file2string("Shaders/VS.glsl");
 	char *fsSourceP = file2string("Shaders/FS.glsl");
 #elif defined(USING_D3D11)
@@ -679,7 +692,36 @@ void CObject3D::Create(char * path) {
 	fstr = Defines + fstr;
 
 #ifdef USING_OPENGL_ES
+	std::string wireframeShader = "attribute highp vec4 Vertex;\n\n";
+	wireframeShader += "uniform highp mat4 WVP;\n\n";
 
+	wireframeShader += "void main(){\n\n";
+	wireframeShader += "gl_Position = WVP*Vertex;\n\n";
+	wireframeShader += "}\n\n";
+
+	std::string vertex = wireframeShader;
+
+	wireframeShader = "";
+	wireframeShader = "void main() { gl_FragColor = vec4(1.0, 0.8, 0.2, 1.0);}";
+	std::string fragment = wireframeShader;
+
+	shaderWireFrame = glCreateProgram();
+	GLuint vshader_id0 = createShader(GL_VERTEX_SHADER, (char*)vertex.c_str());
+	GLuint fshader_id0 = createShader(GL_FRAGMENT_SHADER, (char*)fragment.c_str());
+
+
+	glAttachShader(shaderWireFrame, vshader_id0);
+	glAttachShader(shaderWireFrame, fshader_id0);
+
+	glLinkProgram(shaderWireFrame);
+	glUseProgram(shaderWireFrame);
+
+	vertexAttribLoc = glGetAttribLocation(shaderWireFrame, "Vertex");
+	matWorldViewProjUniformLoc = glGetUniformLocation(shaderWireFrame, "WVP");
+
+	glUseProgram(0);
+
+	shaderID = glCreateProgram();
 	GLuint vshader_id = createShader(GL_VERTEX_SHADER, (char*)vstr.c_str());
 	GLuint fshader_id = createShader(GL_FRAGMENT_SHADER, (char*)fstr.c_str());
 
@@ -698,6 +740,9 @@ void CObject3D::Create(char * path) {
 	matWorldViewProjUniformLoc = glGetUniformLocation(shaderID, "WVP");
 	matWorldUniformLoc = glGetUniformLocation(shaderID, "World");
 	diffuseLoc = glGetUniformLocation(shaderID, "diffuse");
+	specularLoc = glGetUniformLocation(shaderID, "specularLoc");
+	glossLoc = glGetUniformLocation(shaderID, "glossLoc");
+
 	normalLoc = glGetUniformLocation(shaderID, "normalLoc");
 
 #ifdef USE_GLOBALLIGHT
@@ -711,6 +756,7 @@ void CObject3D::Create(char * path) {
 #ifdef	USE_DIFFUSE
 	PosCamera = glGetUniformLocation(shaderID, "PositionCamera");
 #endif
+	glUseProgram(0);
 
 	for (auto i = meshes.begin(); i != meshes.end(); i++)
 	{
@@ -725,6 +771,11 @@ void CObject3D::Create(char * path) {
 			glBufferData(GL_ELEMENT_ARRAY_BUFFER, (*i).bufferIndexForTextures[index]->size() * sizeof(unsigned short), (*i).bufferIndexForTextures[index]->data(), GL_STATIC_DRAW);
 			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 		}
+
+		glGenBuffers(1, &((*i).IBMesh));
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ((*i).IBMesh));
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, (*i).meshbufferIndex.size() * sizeof(unsigned short), (*i).meshbufferIndex.data(), GL_STATIC_DRAW);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 	}
 
 	std::map<std::string, int> list;
@@ -740,8 +791,15 @@ void CObject3D::Create(char * path) {
 				if (list[tempString] == -1) {
 					delete tex;
 				}
+				else
+				{
+					(*textures).idDiffuse = list[tempString];
+				}
 			}
-			(*textures).idDiffuse = list[tempString];
+			else
+			{
+				(*textures).idDiffuse = list[tempString];
+			}
 			if ((*textures).specular)
 			{
 				std::string tempString((*textures).specularName);
@@ -752,9 +810,17 @@ void CObject3D::Create(char * path) {
 					list[tempString] = tex->LoadTexture((*textures).specularName);
 					if (list[tempString] == -1) {
 						delete tex;
+						textures->specular = false;
+					}
+					else
+					{
+						(*textures).idSpecular = list[tempString];
 					}
 				}
-				(*textures).idSpecular = list[tempString];
+				else
+				{
+					(*textures).idSpecular = list[tempString];
+				}
 			}
 			if ((*textures).gloss)
 			{
@@ -766,9 +832,17 @@ void CObject3D::Create(char * path) {
 					list[tempString] = tex->LoadTexture((*textures).glossName);
 					if (list[tempString] == -1) {
 						delete tex;
+						textures->gloss = false;
+					}
+					else
+					{
+						(*textures).idGloss = list[tempString];
 					}
 				}
-				(*textures).idGloss = list[tempString];
+				else
+				{
+					(*textures).idGloss = list[tempString];
+				}
 			}
 			if ((*textures).normal)
 			{
@@ -780,25 +854,21 @@ void CObject3D::Create(char * path) {
 					list[tempString] = tex->LoadTexture((*textures).normalName);
 					if (list[tempString] == -1) {
 						delete tex;
+						textures->normal = false;
+					}
+					else
+					{
+						(*textures).idNormal = list[tempString];
 					}
 				}
-				(*textures).idNormal = list[tempString];
+				else
+				{
+					(*textures).idNormal = list[tempString];
+				}
 			}
 		}
 	}
-	//int countertext = 0;
-	//for (auto i = list.begin(); i != list.end(); i++) {
-	//	Texture	*tex = new TextureGL;
-	//	char *tempChar;
-	//	tempChar = new char[((*i).size() + 1)];
-	//	memcpy(tempChar, (*i).c_str(), (*i).size() + 1);
-	//	TexId[countertext] = tex->LoadTexture(tempChar);
-	//	if (TexId[countertext] == -1) {
-	//		delete tex;
-	//	}
-	//	countertext++;
-	//	delete[]tempChar;
-	//}
+	
 #elif defined(USING_D3D11)
 	HRESULT hr;
 	{
@@ -922,12 +992,20 @@ void CObject3D::Create(char * path) {
 				Texture	*tex = new TextureD3D;
 				if (tex->LoadTexture((*textures).diffuseName) == -1) {
 					delete tex;
+					printf("error textura no encontrada %s", tempString);
 				}
-				Textures[counterText] = tex;
-				list[tempString] = counterText;
-				counterText++;
+				else
+				{
+					Textures[counterText] = tex;
+					list[tempString] = counterText;
+					counterText++;
+					(*textures).idDiffuse = list[tempString];
+				}
 			}
-			(*textures).idDiffuse = list[tempString];
+			else
+			{
+				(*textures).idDiffuse = list[tempString];
+			}
 			if ((*textures).specular)
 			{
 				std::string tempString((*textures).specularName);
@@ -937,12 +1015,21 @@ void CObject3D::Create(char * path) {
 					Texture	*tex = new TextureD3D;
 					if (tex->LoadTexture((*textures).specularName) == -1) {
 						delete tex;
+						printf("error textura no encontrada %s", tempString.c_str());
+						textures->specular = false;
 					}
-					Textures[counterText] = tex;
-					list[tempString] = counterText;
-					counterText++;
+					else
+					{
+						Textures[counterText] = tex;
+						list[tempString] = counterText;
+						counterText++;
+						(*textures).idSpecular = list[tempString];
+					}
 				}
-				(*textures).idSpecular = list[tempString];
+				else
+				{
+					(*textures).idSpecular = list[tempString];
+				}
 			}
 			if ((*textures).gloss)
 			{
@@ -953,12 +1040,21 @@ void CObject3D::Create(char * path) {
 					Texture	*tex = new TextureD3D;
 					if (tex->LoadTexture((*textures).glossName) == -1) {
 						delete tex;
+						printf("error textura no encontrada %s", tempString);
+						textures->gloss = false;
 					}
-					Textures[counterText] = tex;
-					list[tempString] = counterText;
-					counterText++;
+					else
+					{
+						Textures[counterText] = tex;
+						list[tempString] = counterText;
+						counterText++;
+						(*textures).idGloss = list[tempString];
+					}
 				}
-				(*textures).idGloss = list[tempString];
+				else
+				{
+					(*textures).idGloss = list[tempString];
+				}
 			}
 			if ((*textures).normal)
 			{
@@ -969,18 +1065,27 @@ void CObject3D::Create(char * path) {
 					Texture	*tex = new TextureD3D;
 					if (tex->LoadTexture((*textures).normalName) == -1) {
 						delete tex;
+						printf("error textura no encontrada %s", tempString);
+						textures->normal = false;
 					}
-					Textures[counterText] = tex;
-					list[tempString] = counterText;
-					counterText++;
+					else
+					{
+						Textures[counterText] = tex;
+						list[tempString] = counterText;
+						counterText++;
+						(*textures).idNormal = list[tempString];
+					}
 				}
-				(*textures).idNormal = list[tempString];
-				counterText++;
+				else
+				{
+					(*textures).idNormal = list[tempString];
+				}
 			}
 		}
 	}
 
 #endif
+
 	transform = Identity();
 	free(vsSourceP);
 	free(fsSourceP);
@@ -998,9 +1103,37 @@ void CObject3D::Draw(float *t, float *vp) {
 		transform = t;
 #ifdef USING_OPENGL_ES
 
-	glUseProgram(shaderID);
 	CMatrix4D VP = CMatrix4D(vp);
 	CMatrix4D WVP = transform*VP;
+
+	if (false)
+	{
+
+		glUseProgram(shaderWireFrame);
+		glUniformMatrix4fv(matWorldViewProjUniformLoc, 1, GL_FALSE, &WVP.m[0][0]);
+
+
+		for (auto i = meshes.begin(); i != meshes.end(); i++)
+		{
+			glBindBuffer(GL_ARRAY_BUFFER, (*i).VB);
+			glEnableVertexAttribArray(vertexAttribLoc);
+			glVertexAttribPointer(vertexAttribLoc, 4, GL_FLOAT, GL_FALSE, sizeof(CVertex), BUFFER_OFFSET(0));
+
+			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, (*i).IBMesh);
+			glDrawElements(GL_LINES, (*i).meshbufferIndex.size(), GL_UNSIGNED_SHORT, 0);
+		}
+
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
+		glDisableVertexAttribArray(vertexAttribLoc);
+		glUseProgram(0);
+
+		return;
+	}
+
+	glUseProgram(shaderID);
+
 #ifdef	USE_DIFFUSE
 	glUniform3f(PosCamera, lights->posCamera->x, lights->posCamera->y, lights->posCamera->z);
 #endif
@@ -1039,20 +1172,36 @@ void CObject3D::Draw(float *t, float *vp) {
 		glVertexAttribPointer(binormalAttribLoc, 4, GL_FLOAT, GL_FALSE, sizeof(CVertex), BUFFER_OFFSET(40));
 		glVertexAttribPointer(tangenteAttribLoc, 4, GL_FLOAT, GL_FALSE, sizeof(CVertex), BUFFER_OFFSET(56));
 
+		
+		if (true)
 
-		for (int index = 0; index < (*i).bufferIndexForTextures.size(); index++)
 		{
-			glActiveTexture(GL_TEXTURE0);
-			glBindTexture(GL_TEXTURE_2D, (*i).infoTexture.textures[index].idDiffuse);
-			glUniform1i(diffuseLoc, 0);
-			if ((*i).infoTexture.textures[index].normal)
+			for (int index = 0; index < (*i).bufferIndexForTextures.size(); index++)
 			{
-				glActiveTexture(GL_TEXTURE1);
-				glBindTexture(GL_TEXTURE_2D, (*i).infoTexture.textures[index].idNormal);
-				glUniform1i(normalLoc, 1);
+				glActiveTexture(GL_TEXTURE0);
+				glBindTexture(GL_TEXTURE_2D, (*i).infoTexture.textures[index].idDiffuse);
+				glUniform1i(diffuseLoc, 0);
+				if ((*i).infoTexture.textures[index].normal)
+				{
+					glActiveTexture(GL_TEXTURE1);
+					glBindTexture(GL_TEXTURE_2D, (*i).infoTexture.textures[index].idNormal);
+					glUniform1i(normalLoc, 1);
+				}
+				if ((*i).infoTexture.textures[index].specular)
+				{
+					glActiveTexture(GL_TEXTURE2);
+					glBindTexture(GL_TEXTURE_2D, (*i).infoTexture.textures[index].idSpecular);
+					glUniform1i(specularLoc, 2);
+				}
+				if ((*i).infoTexture.textures[index].gloss)
+				{
+					glActiveTexture(GL_TEXTURE3);
+					glBindTexture(GL_TEXTURE_2D, (*i).infoTexture.textures[index].idGloss);
+					glUniform1i(glossLoc, 3);
+				}
+				glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, (*i).IB[index]);
+				glDrawElements(GL_TRIANGLES, (*i).bufferIndexForTextures[index]->size(), GL_UNSIGNED_SHORT, 0);
 			}
-			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, (*i).IB[index]);
-			glDrawElements(GL_TRIANGLES, (*i).bufferIndexForTextures[index]->size(), GL_UNSIGNED_SHORT, 0);
 		}
 	}
 
@@ -1099,15 +1248,6 @@ void CObject3D::Draw(float *t, float *vp) {
 	D3D11DeviceContext->VSSetConstantBuffers(0, 1, pd3dConstantBuffer.GetAddressOf());
 	D3D11DeviceContext->PSSetConstantBuffers(0, 1, pd3dConstantBuffer.GetAddressOf());\
 	
-	//D3D11DeviceContext->IASetVertexBuffers(0, 1, meshes[0].VB.GetAddressOf(), &stride, &offset);
-	//
-	//TextureD3D *texd3d = dynamic_cast<TextureD3D*>(Textures[meshes[0].infoTexture.textures[0].idDiffuse]);
-	//D3D11DeviceContext->PSSetShaderResources(0, 1, texd3d->pSRVTex.GetAddressOf());
-	//D3D11DeviceContext->PSSetSamplers(0, 1, texd3d->pSampler.GetAddressOf());
-	//D3D11DeviceContext->IASetIndexBuffer(meshes[0].IB[0].Get(), DXGI_FORMAT_R16_UINT, 0);
-	//// Instruct to use triangle list
-	//D3D11DeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	//D3D11DeviceContext->DrawIndexed(meshes[0].bufferIndexForTextures[0]->size(), 0, 0);
 		
 	for (auto i = meshes.begin(); i != meshes.end(); i++)
 	{
@@ -1120,6 +1260,25 @@ void CObject3D::Draw(float *t, float *vp) {
 			TextureD3D *texd3d = dynamic_cast<TextureD3D*>(Textures[(*i).infoTexture.textures[index].idDiffuse]);
 			D3D11DeviceContext->PSSetShaderResources(0, 1, texd3d->pSRVTex.GetAddressOf());
 			D3D11DeviceContext->PSSetSamplers(0, 1, texd3d->pSampler.GetAddressOf());
+
+			if (i->infoTexture.textures[index].normal)
+			{
+				TextureD3D *texd3d2 = dynamic_cast<TextureD3D*>(Textures[(*i).infoTexture.textures[index].idNormal]);
+				D3D11DeviceContext->PSSetShaderResources(1, 1, texd3d2->pSRVTex.GetAddressOf());
+				D3D11DeviceContext->PSSetSamplers(1, 1, texd3d2->pSampler.GetAddressOf());
+			}
+			if (i->infoTexture.textures[index].gloss)
+			{
+				TextureD3D *texd3d3 = dynamic_cast<TextureD3D*>(Textures[(*i).infoTexture.textures[index].idGloss]);
+				D3D11DeviceContext->PSSetShaderResources(2, 1, texd3d3->pSRVTex.GetAddressOf());
+				D3D11DeviceContext->PSSetSamplers(2, 1, texd3d3->pSampler.GetAddressOf());
+			}
+			if (i->infoTexture.textures[index].specular)
+			{
+				TextureD3D *texd3d4 = dynamic_cast<TextureD3D*>(Textures[(*i).infoTexture.textures[index].idSpecular]);
+				D3D11DeviceContext->PSSetShaderResources(3, 1, texd3d4->pSRVTex.GetAddressOf());
+				D3D11DeviceContext->PSSetSamplers(3, 1, texd3d4->pSampler.GetAddressOf());
+			}
 			D3D11DeviceContext->IASetIndexBuffer((*i).IB[index].Get(), DXGI_FORMAT_R16_UINT, 0);
 			// Instruct to use triangle list
 			D3D11DeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
@@ -1135,45 +1294,3 @@ void CObject3D::Destroy() {
 	glDeleteProgram(shaderID);
 #endif
 }
-
-//#if defined(USE_GLOBALLIGHT) && defined(USE_TEXCOORD0) && defined(USE_POINTLIGHT)
-//highp float lightIntensity;
-//lightIntensity = dot(light.xyz, vecTransformed.xyz) / (length(light)*length(vecTransformed.xyz));
-//if (lightIntensity > 1.0)
-//lightIntensity = 1.0;
-//else if (lightIntensity < 0.0)
-//	lightIntensity = 0.0;
-//lowp vec3 vector = lightIntensity*color;
-//
-//lightIntensity = dot((vecTransformed.xyz - posPoint.xyz), vecTransformed.xyz) / (length(vecTransformed.xyz - posPoint.xyz)*length(vecTransformed.xyz));
-//if (lightIntensity > 1.0)
-//lightIntensity = 1.0;
-//else if (lightIntensity < 0.0)
-//	lightIntensity = 0.0;
-//vector = texture2D(diffuse, vecUVCoords).rgb*.3 + texture2D(diffuse, vecUVCoords).rgb*lightIntensity*colorPoint + texture2D(diffuse, vecUVCoords).rgb*vector;
-//
-//#elif defined(USE_GLOBALLIGHT) && defined(USE_TEXCOORD0)
-//highp float lightIntensity;
-//lightIntensity = dot(light.xyz, vecTransformed.xyz) / (length(light)*length(vecTransformed.xyz));
-//if (lightIntensity > 1.0)
-//lightIntensity = 1.0;
-//else if (lightIntensity < 0.0)
-//	lightIntensity = 0.0;
-//lowp vec3 vector = texture2D(diffuse, vecUVCoords).rgb*.3 + texture2D(diffuse, vecUVCoords).rgb*lightIntensity*color;
-//#elif defined(USE_POINTLIGHT) && defined(USE_TEXCOORD0)
-//highp float lightIntensity;
-//lightIntensity = 0.0;
-//if (length(posPoint.xyz - vert.xyz) < 10.0) {
-//	lightIntensity = dot(normalize(posPoint.xyz - vert.xyz), normalize(vecTransformed.xyz));
-//}
-//
-//if (lightIntensity > 1.0)
-//lightIntensity = 1.0;
-//else if (lightIntensity < 0.0)
-//	lightIntensity = 0.0;
-//lowp vec3 vector = texture2D(diffuse, vecUVCoords).rgb*.3 + lightIntensity*colorPoint*texture2D(diffuse, vecUVCoords).rgb;
-//#elif defined(USE_TEXCOORD0) 
-//lowp vec3 vector = texture2D(diffuse, vecUVCoords).rgb;
-//#else
-//highp vec3 vector = normalize(vecTransformed*0.5 + 0.5);
-//#endif

@@ -20,6 +20,8 @@ struct VS_OUTPUT {
 	float4 hposition : SV_POSITION;
 	float3 hnormal   : NORMAL;
 	float2 texture0  : TEXCOORD;
+	float3 hbinormal   : BINORMAL;
+	float3 htangente   : TANGENTE;
 	float4 vert      : VERTICE;
 };
 
@@ -28,10 +30,15 @@ VS_OUTPUT VS(VS_INPUT input) {
 	rotationTransform[0] = World[0].xyz;
 	rotationTransform[1] = World[1].xyz;
 	rotationTransform[2] = World[2].xyz;
+	
 	VS_OUTPUT OUT;
 	OUT.vert = mul(World, input.position);
 	OUT.hposition = mul(WVP, input.position);
+	
 	OUT.hnormal = normalize(mul(rotationTransform, input.normal.xyz));
+	OUT.hbinormal = normalize(mul(rotationTransform, input.binormal.xyz));
+	OUT.htangente = normalize(mul(rotationTransform, input.tangente.xyz));
+
 	OUT.texture0 = input.texture0;
 	return OUT;
 }

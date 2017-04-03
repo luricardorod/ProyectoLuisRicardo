@@ -48,19 +48,25 @@ public:
 	void Transform(float *t);
 	void Draw(float *t, float *vp);
 	void Destroy();
-
+	bool viewWareFrame = true;
 #ifdef USING_OPENGL_ES
 	struct mesh {
 		GLuint			VB;
+		GLuint			IBMesh;
+
 		GLuint			IB[20];
 		std::vector<CVertex> bufferVertex;
+		std::vector<unsigned short> meshbufferIndex;
 		std::vector<unsigned short> bufferIndex;
 		infotex infoTexture;
 		std::vector<std::vector<unsigned short>*> bufferIndexForTextures;
 	};
 
-	CObject3D() : shaderID(0) {}
+	CObject3D() : shaderID(0), shaderWireFrame(0) {}
+
 	GLuint	shaderID;
+	GLuint	shaderWireFrame;
+
 	GLint	vertexAttribLoc;
 	GLint	normalAttribLoc;
 	GLint	binormalAttribLoc;
@@ -68,6 +74,9 @@ public:
 	GLint	uvAttribLoc;
 	GLint	normalLoc;
 	GLint	diffuseLoc;
+	GLint	specularLoc;
+	GLint	glossLoc;
+
 	GLint  matWorldViewProjUniformLoc;
 	GLint  matWorldUniformLoc;
 
@@ -93,6 +102,8 @@ public:
 		ComPtr<ID3D11Buffer>		VB;
 		ComPtr<ID3D11Buffer>		IB[20];
 		std::vector<CVertex> bufferVertex;
+		std::vector<unsigned short> meshbufferIndex;
+
 		std::vector<unsigned short> bufferIndex;
 		infotex infoTexture;
 		std::vector<std::vector<unsigned short>*> bufferIndexForTextures;
