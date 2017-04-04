@@ -66,6 +66,8 @@ public:
 
 	GLuint	shaderID;
 	GLuint	shaderWireFrame;
+	GLint	vertexAttribLocSimple;
+	GLint   matWorldViewProjUniformLocSimple;
 
 	GLint	vertexAttribLoc;
 	GLint	normalAttribLoc;

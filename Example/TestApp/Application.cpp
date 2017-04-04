@@ -18,11 +18,12 @@ void TestApp::InitVars() {
 	Orientation = CVector4D(0.0f, 0.0f, 0.0f, 0);
 	Scaling		= CVector4D(1.0f, 1.0f, 1.0f, 0);
 	rotationCam = 0;
-	worldLights.dirGlobal = CVector4D(1, 0, 0, 0);
-	worldLights.colorGlobal = CVector4D(1, 0, 0, 0);
+	worldLights.dirGlobal = CVector4D(0, 0, -1, 0);
+	worldLights.colorGlobal = CVector4D(1, 1, 1, 0);
 	worldLights.colorPoint = CVector4D(.7, .7, .7, 0);
 	worldLights.posPoint = CVector4D(0, 0, 1, 0);
 	worldLights.posCamera = &PositionCamera;
+	worldLights.flagWireFrame = false;
 }
 
 void TestApp::CreateAssets() {	
@@ -59,13 +60,13 @@ void TestApp::CreateAssets() {
 	CMatrix4D proj = PerspectiveFovRH(45*3.1416/180, 1280.0f / 720.0f, 0.1f, 10000.0f);
 	VP = View * proj;
 
-	primitiveFigs[0].TranslateAbsolute(-50.0f,0,0);
+	primitiveFigs[0].TranslateAbsolute(-50.0f,0,-10);
 	primitiveFigs[0].Update();
-	primitiveFigs[1].TranslateAbsolute(0.0f, 0, 0);
+	primitiveFigs[1].TranslateAbsolute(0.0f, 0, 10);
 	primitiveFigs[1].Update();
-	primitiveFigs[2].TranslateAbsolute(50.0f, 0, 0);
+	primitiveFigs[2].TranslateAbsolute(50.0f, 0, 5);
 	primitiveFigs[2].Update();
-	primitiveFigs[3].TranslateAbsolute(100.0f, 0, 0);
+	primitiveFigs[3].TranslateAbsolute(100.0f, 0, -20);
 	primitiveFigs[3].Update();
 
 	/*primitiveFigs[CROC].TranslateAbsolute(-43.871941f, 0.064795f, -58.153839f);
@@ -198,6 +199,16 @@ void TestApp::OnInput() {
 
 	if (IManager.PressedKey(SDLK_x)) {
 		PositionLight.y -= 20.0f*DtTimer.GetDTSecs();
+	}
+
+	if (IManager.PressedKey(SDLK_x)) {
+		PositionLight.y -= 20.0f*DtTimer.GetDTSecs();
+	}
+	if (IManager.PressedKey(SDLK_m)) {
+		worldLights.flagWireFrame = true;
+	}
+	if (IManager.PressedKey(SDLK_n)) {
+		worldLights.flagWireFrame = false;
 	}
 }
 

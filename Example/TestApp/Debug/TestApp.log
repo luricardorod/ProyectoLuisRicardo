@@ -1,6 +1,2 @@
-﻿  Application.cpp
-e:\uad\5to\graficas\chemonky\example\testapp\application.cpp(23): warning C4305: 'argument': truncation from 'double' to 'const float'
-e:\uad\5to\graficas\chemonky\example\testapp\application.cpp(59): warning C4305: 'argument': truncation from 'double' to 'float'
-e:\uad\5to\graficas\chemonky\example\testapp\application.cpp(128): warning C4305: 'argument': truncation from 'double' to 'float'
-  TestApp.vcxproj -> E:\UAD\5to\graficas\chemonky\Example\bin\TestApp.exe
-  TestApp.vcxproj -> E:\UAD\5to\graficas\chemonky\Example\bin\TestApp.pdb (Full PDB)
+﻿  TestApp.vcxproj -> C:\Users\blueMonkey\Desktop\CLASS\ProyectoLuisRicardo\Example\bin\TestApp.exe
+  TestApp.vcxproj -> C:\Users\blueMonkey\Desktop\CLASS\ProyectoLuisRicardo\Example\bin\TestApp.pdb (Full PDB)

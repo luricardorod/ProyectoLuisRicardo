@@ -8,6 +8,7 @@ struct Lights
 	CVector4D posPoint;
 	CVector4D colorPoint;
 	CVector4D *posCamera;
+	bool flagWireFrame;
 };
 class PrimitiveBase {
 public:

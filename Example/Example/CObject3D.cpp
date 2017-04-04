@@ -716,8 +716,8 @@ void CObject3D::Create(char * path) {
 	glLinkProgram(shaderWireFrame);
 	glUseProgram(shaderWireFrame);
 
-	vertexAttribLoc = glGetAttribLocation(shaderWireFrame, "Vertex");
-	matWorldViewProjUniformLoc = glGetUniformLocation(shaderWireFrame, "WVP");
+	vertexAttribLocSimple = glGetAttribLocation(shaderWireFrame, "Vertex");
+	matWorldViewProjUniformLocSimple = glGetUniformLocation(shaderWireFrame, "WVP");
 
 	glUseProgram(0);
 
@@ -1106,18 +1106,18 @@ void CObject3D::Draw(float *t, float *vp) {
 	CMatrix4D VP = CMatrix4D(vp);
 	CMatrix4D WVP = transform*VP;
 
-	if (false)
+	if (lights->flagWireFrame)
 	{
 
 		glUseProgram(shaderWireFrame);
-		glUniformMatrix4fv(matWorldViewProjUniformLoc, 1, GL_FALSE, &WVP.m[0][0]);
+		glUniformMatrix4fv(matWorldViewProjUniformLocSimple, 1, GL_FALSE, &WVP.m[0][0]);
 
 
 		for (auto i = meshes.begin(); i != meshes.end(); i++)
 		{
 			glBindBuffer(GL_ARRAY_BUFFER, (*i).VB);
-			glEnableVertexAttribArray(vertexAttribLoc);
-			glVertexAttribPointer(vertexAttribLoc, 4, GL_FLOAT, GL_FALSE, sizeof(CVertex), BUFFER_OFFSET(0));
+			glEnableVertexAttribArray(vertexAttribLocSimple);
+			glVertexAttribPointer(vertexAttribLocSimple, 4, GL_FLOAT, GL_FALSE, sizeof(CVertex), BUFFER_OFFSET(0));
 
 			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, (*i).IBMesh);
 			glDrawElements(GL_LINES, (*i).meshbufferIndex.size(), GL_UNSIGNED_SHORT, 0);
@@ -1126,7 +1126,7 @@ void CObject3D::Draw(float *t, float *vp) {
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
-		glDisableVertexAttribArray(vertexAttribLoc);
+		glDisableVertexAttribArray(vertexAttribLocSimple);
 		glUseProgram(0);
 
 		return;
