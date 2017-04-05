@@ -29,8 +29,6 @@ varying highp vec3 binormal1;
 varying highp vec3 tangente1;
 varying highp vec3 normal1;
 
-
-
 void main(){
 
 	highp mat3 ejes;

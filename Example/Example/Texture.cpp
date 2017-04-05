@@ -8,7 +8,7 @@
 int		Texture::LoadTexture(char *fn) {
 	std::string path = "Textures/";
 	path += std::string(fn);
-	int x = 0, y = 0, channels = 0;
+	int channels = 0;
 	unsigned char *buffer = stbi_load(path.c_str(), &x, &y, &channels, 0);
 
 	if (!buffer)

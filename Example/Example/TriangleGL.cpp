@@ -5,8 +5,8 @@
 void TrangleGL::Create(char *path) {
 	shaderID = glCreateProgram();
 
-	char *vsSourceP = file2string("VS_tri.glsl");
-	char *fsSourceP = file2string("FS_tri.glsl");
+	char *vsSourceP = file2string("Shaders/VS_tri.glsl");
+	char *fsSourceP = file2string("Shaders/FS_tri.glsl");
 
 	GLuint vshader_id = createShader(GL_VERTEX_SHADER, vsSourceP);
 	GLuint fshader_id = createShader(GL_FRAGMENT_SHADER, fsSourceP);

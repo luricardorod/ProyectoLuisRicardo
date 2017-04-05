@@ -3,7 +3,7 @@
 #include "TriangleGL.h"
 #include "CubeGL.h"
 #include "CObject3D.h"
-
+#include "Sprite.h"
 PrimitiveBase*	PrimitiveManager::GetPrimitive(unsigned int index) {
 	if (index >= primitives.size())
 		return 0;
@@ -16,6 +16,14 @@ int  PrimitiveManager::CreateTriangle() {
 	primitive->Create("NULL");
 	primitives.push_back(primitive);
 	return (int)(primitives.size()-1);
+}
+
+int  PrimitiveManager::CreateSprite(char * path, float width, float height, float positionX, float positionY, float numberFrames, float uvWidth, float uvHeight) {
+	PrimitiveBase *primitive = new Sprite();
+	dynamic_cast<Sprite&>(*primitive).Init(width, height, positionX, positionY, numberFrames, uvWidth,  uvHeight);
+	primitive->Create(path);
+	primitives.push_back(primitive);
+	return (int)(primitives.size() - 1);
 }
 
 int	 PrimitiveManager::CreateCube(){

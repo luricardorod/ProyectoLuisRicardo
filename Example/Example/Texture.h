@@ -45,7 +45,7 @@ public:
 	unsigned int	size;
 	unsigned int	props;
 	unsigned int	params;
-	unsigned short	x, y;
+	int	x, y;
 	unsigned short	id;
 	unsigned char	bounded;
 	unsigned char	mipmaps;

@@ -1,5 +1,6 @@
 #include "Application.h"
 #include <SDL\SDL_mouse.h>
+#include "Sprite.h"
 enum {
 	SCENE = 0,
 	CROC,
@@ -30,13 +31,13 @@ void TestApp::CreateAssets() {
 	PrimitiveMgr.SetVP(&VP);
 
 
-	int index = PrimitiveMgr.CreateObject3D("Models/NuCroc.X");
+	int index = PrimitiveMgr.CreateSprite("riu.png", 24, 40, 600, 720, 4, 70, 80);
 	primitiveFigs[0].CreateInstance(PrimitiveMgr.GetPrimitive(index), &VP);
 
-	index = PrimitiveMgr.CreateObject3D("Models/NuCroc.X");
+	index = PrimitiveMgr.CreateSprite("lol.png", 20, 20, 10, 705, 0, 256, 256);
 	primitiveFigs[1].CreateInstance(PrimitiveMgr.GetPrimitive(index), &VP);
 
-	index = PrimitiveMgr.CreateObject3D("Models/NuBatman.X");
+	index = PrimitiveMgr.CreateSprite("radar.png", 294, 298, 0, 720, 0, 294, 298);
 	primitiveFigs[2].CreateInstance(PrimitiveMgr.GetPrimitive(index), &VP);
 	index = PrimitiveMgr.CreateObject3D("Models/CerdoNuevo.X");
 	primitiveFigs[3].CreateInstance(PrimitiveMgr.GetPrimitive(index), &VP);
@@ -60,12 +61,12 @@ void TestApp::CreateAssets() {
 	CMatrix4D proj = PerspectiveFovRH(45*3.1416/180, 1280.0f / 720.0f, 0.1f, 10000.0f);
 	VP = View * proj;
 
-	primitiveFigs[0].TranslateAbsolute(-50.0f,0,-10);
+	//primitiveFigs[0].TranslateAbsolute(-50.0f,0,-10);
 	primitiveFigs[0].Update();
-	primitiveFigs[1].TranslateAbsolute(0.0f, 0, 10);
+	primitiveFigs[1].TranslateAbsolute(0, 0, 0);
 	primitiveFigs[1].Update();
-	primitiveFigs[2].TranslateAbsolute(50.0f, 0, 5);
-	primitiveFigs[2].Update();
+	//primitiveFigs[2].TranslateAbsolute(0, -0.5, 0);
+	//primitiveFigs[2].Update();
 	primitiveFigs[3].TranslateAbsolute(100.0f, 0, -20);
 	primitiveFigs[3].Update();
 
@@ -110,7 +111,6 @@ void TestApp::DestroyAssets() {
 
 void TestApp::OnUpdate() {
 	DtTimer.Update();
-
 	OnInput();
 	Orientation = RotationY(rotationCam) * Orientation;
 	PositionCamera = PositionCamera + Position.z * Normalize(Orientation)*30;
@@ -134,6 +134,13 @@ void TestApp::OnUpdate() {
 	primitiveFigs[7].TranslateAbsolute(PositionLight.x, PositionLight.y, PositionLight.z);
 	primitiveFigs[7].Update();
 	worldLights.posPoint = CVector4D(primitiveFigs[7].position.m30, primitiveFigs[7].position.m31, primitiveFigs[7].position.m32,0);
+
+	float posx = (400 + PositionCamera.x)*0.4f / 800.0f;
+	float posz = (400 + PositionCamera.z)*-0.7f / 800.0f;
+
+	primitiveFigs[1].TranslateAbsolute(posx, posz, 0);
+	primitiveFigs[1].Update();
+
 	OnDraw();
 	Orientation = CVector4D(0.0f, 0.0f, 10.0f, 0);
 	Position = CVector4D(0.0f, 0.0f, 0.0f, 0);
@@ -209,6 +216,12 @@ void TestApp::OnInput() {
 	}
 	if (IManager.PressedKey(SDLK_n)) {
 		worldLights.flagWireFrame = false;
+	}
+	if (IManager.PressedKey(SDLK_p)) {
+		printf("posx:%f\n", PositionCamera.x);
+		printf("posy:%f\n", PositionCamera.y);
+		printf("posz:%f\n", PositionCamera.z);
+
 	}
 }
 

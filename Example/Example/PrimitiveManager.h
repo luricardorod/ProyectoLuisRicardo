@@ -13,7 +13,7 @@ public:
 	int  CreateTriangle();
 	int	 CreateCube();
 	int  CreateObject3D(char * path);
-
+	int	 CreateSprite(char * path, float width, float height, float positionX, float positionY, float numberFrames, float uvWidth, float uvHeight);
 	void DrawPrimitives();
 	void DestroyPrimitives();
 	PrimitiveBase*	GetPrimitive(unsigned int);
