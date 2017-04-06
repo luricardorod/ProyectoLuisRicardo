@@ -64,7 +64,11 @@ float4 FS( VS_OUTPUT input ) : SV_TARGET  {
 	pointIntensity = lightIntensity*ColorPointLight.xyz;
 #endif
     float4 color = TextureRGB.Sample(SS, input.texture0);
+	float4 original = ColorGlobalLight;
+	original *= float4(globalIntensity, 0);
+	original *= color;
+	float4 final = original + color;
 	//color = color * float4(globalIntensity, 0) + color * float4(pointIntensity, 0) + color *float4(specularIntensity, 0) + color *0.1;
-	color = color + color * float4(globalIntensity, 0) +color*.1;
-	return  color;
+	//color = color * float4(globalIntensity, 0);
+	return  final;
 }

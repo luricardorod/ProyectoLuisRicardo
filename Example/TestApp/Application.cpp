@@ -10,6 +10,8 @@ enum {
 	DRONE,
 	CERDO,
 	CERDOLIGHT,
+	HOL,
+	veno,
 	TOTAL_INSTANCES
 };
 void TestApp::InitVars() {
@@ -20,7 +22,7 @@ void TestApp::InitVars() {
 	Scaling		= CVector4D(1.0f, 1.0f, 1.0f, 0);
 	rotationCam = 0;
 	worldLights.dirGlobal = CVector4D(0, 0, -1, 0);
-	worldLights.colorGlobal = CVector4D(1, 1, 1, 0);
+	worldLights.colorGlobal = CVector4D(1, 0, 0, 0);
 	worldLights.colorPoint = CVector4D(.7, .7, .7, 0);
 	worldLights.posPoint = CVector4D(0, 0, 1, 0);
 	worldLights.posCamera = &PositionCamera;
@@ -31,22 +33,32 @@ void TestApp::CreateAssets() {
 	PrimitiveMgr.SetVP(&VP);
 
 
-	int index = PrimitiveMgr.CreateSprite("riu.png", 24, 40, 600, 720, 4, 70, 80);
+	int index = PrimitiveMgr.CreateSprite("riu.png", 48, 80, 600, 720, 4, 70, 80);
+
 	primitiveFigs[0].CreateInstance(PrimitiveMgr.GetPrimitive(index), &VP);
 
 	index = PrimitiveMgr.CreateSprite("lol.png", 20, 20, 10, 705, 0, 256, 256);
+
 	primitiveFigs[1].CreateInstance(PrimitiveMgr.GetPrimitive(index), &VP);
 
 	index = PrimitiveMgr.CreateSprite("radar.png", 294, 298, 0, 720, 0, 294, 298);
+
 	primitiveFigs[2].CreateInstance(PrimitiveMgr.GetPrimitive(index), &VP);
 	index = PrimitiveMgr.CreateObject3D("Models/CerdoNuevo.X");
 	primitiveFigs[3].CreateInstance(PrimitiveMgr.GetPrimitive(index), &VP);
 	index = PrimitiveMgr.CreateObject3D("Models/Scene.X");
 	primitiveFigs[4].CreateInstance(PrimitiveMgr.GetPrimitive(index), &VP);
+	
+	index = PrimitiveMgr.CreateObject3D("Models/NuBatman.X");
+
 	primitiveFigs[5].CreateInstance(PrimitiveMgr.GetPrimitive(index), &VP);
 	index = PrimitiveMgr.CreateObject3D("Models/CerdoNuevo.X");
 	primitiveFigs[6].CreateInstance(PrimitiveMgr.GetPrimitive(index), &VP);
 	primitiveFigs[7].CreateInstance(PrimitiveMgr.GetPrimitive(index), &VP);
+	index = PrimitiveMgr.CreateObject3D("Models/NuCroc.X");
+	primitiveFigs[8].CreateInstance(PrimitiveMgr.GetPrimitive(index), &VP);
+	index = PrimitiveMgr.CreateObject3D("Models/NuCroc.X");
+	primitiveFigs[9].CreateInstance(PrimitiveMgr.GetPrimitive(index), &VP);
 	
 	for (int i = 0; i < TOTAL_INSTANCES; i++) {
 		primitiveFigs[i].lights = &worldLights;
@@ -69,7 +81,11 @@ void TestApp::CreateAssets() {
 	//primitiveFigs[2].Update();
 	primitiveFigs[3].TranslateAbsolute(100.0f, 0, -20);
 	primitiveFigs[3].Update();
+	primitiveFigs[8].TranslateAbsolute(100.0f, 0, -20);
+	primitiveFigs[8].Update();
 
+	primitiveFigs[9].TranslateAbsolute(-100.0f, 0, 20);
+	primitiveFigs[9].Update();
 	/*primitiveFigs[CROC].TranslateAbsolute(-43.871941f, 0.064795f, -58.153839f);
 	primitiveFigs[CROC].RotateXAbsolute(0.0f);
 	primitiveFigs[CROC].RotateYAbsolute(207.731613f);

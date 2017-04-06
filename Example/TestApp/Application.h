@@ -22,7 +22,7 @@ public:
 	void OnReset();
 
 	PrimitiveManager PrimitiveMgr;
-	PrimitiveInst	primitiveFigs[10];
+	PrimitiveInst	primitiveFigs[15];
 
 	CVector4D		Position;
 	CVector4D		PositionLight;

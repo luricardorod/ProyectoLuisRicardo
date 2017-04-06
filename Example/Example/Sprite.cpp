@@ -216,7 +216,6 @@ void Sprite::Draw(float *t, float *vp) {
 
 	glEnableVertexAttribArray(vertexAttribLoc);
 	glEnableVertexAttribArray(uvAttribLoc);
-
 	glVertexAttribPointer(vertexAttribLoc, 3, GL_FLOAT, GL_FALSE, sizeof(spriteVertex), (void*)0);
 	glVertexAttribPointer(uvAttribLoc, 2, GL_FLOAT, GL_FALSE, sizeof(spriteVertex), (void*)12);
 
@@ -227,18 +226,17 @@ void Sprite::Draw(float *t, float *vp) {
 	glUniformMatrix4fv(matTransform, 1, GL_FALSE, &transform.m[0][0]);
 	
 	glActiveTexture(GL_TEXTURE0);
-	glEnable(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D, idTexture);
+
 	glUniform1i(diffuseLoc, 0);
 	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);
 
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-
 	glDisableVertexAttribArray(vertexAttribLoc);
 	glDisableVertexAttribArray(uvAttribLoc);
-
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 	glUseProgram(0);
+
 #elif defined(USING_D3D11)
 	
 	CnstBuffer.matTransform = transform;
