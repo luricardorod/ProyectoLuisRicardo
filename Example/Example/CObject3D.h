@@ -100,8 +100,14 @@ public:
 		CVector4D ColorPointLight;
 		CVector4D PosCamera;
 	};
+
+	struct CBufferRes
+	{
+		CMatrix4D WVP;
+	};
 	struct mesh {
 		ComPtr<ID3D11Buffer>		VB;
+		ComPtr<ID3D11Buffer>		IBMesh;
 		ComPtr<ID3D11Buffer>		IB[20];
 		std::vector<CVertex> bufferVertex;
 		std::vector<unsigned short> meshbufferIndex;
@@ -110,6 +116,7 @@ public:
 		infotex infoTexture;
 		std::vector<std::vector<unsigned short>*> bufferIndexForTextures;
 	};
+	bool flagShader = true;
 	CObject3D() {}
 	ComPtr<ID3D11VertexShader>  pVS;
 	ComPtr<ID3D11PixelShader>   pFS;
@@ -118,6 +125,14 @@ public:
 	ComPtr<ID3D11InputLayout>   Layout;
 	ComPtr<ID3D11Buffer>        pd3dConstantBuffer;
 
+	ComPtr<ID3D11VertexShader>  pVSRes;
+	ComPtr<ID3D11PixelShader>   pFSRes;
+	ComPtr<ID3DBlob>            VS_blobRes;
+	ComPtr<ID3DBlob>            FS_blobRes;
+	ComPtr<ID3D11InputLayout>   LayoutRes;
+	ComPtr<ID3D11Buffer>        pd3dConstantBufferRes;
+
+	CObject3D::CBufferRes			CnstBufferRes;
 	CObject3D::CBuffer				CnstBuffer;
 	Texture *Textures[20];
 

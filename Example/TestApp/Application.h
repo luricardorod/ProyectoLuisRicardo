@@ -4,6 +4,8 @@
 #include "CMatrix4D.h"
 #include "CVector4D.h"
 #include <Timer.h>
+#include "btBulletDynamicsCommon.h"
+#include <stdio.h>
 
 class TestApp : public AppBase {
 public:
@@ -11,6 +13,10 @@ public:
 	void InitVars();
 	void CreateAssets();
 	void DestroyAssets();
+	void InitWorldBullet();
+	void DestroyWorldBullet();
+	void UpdateWorldBullet();
+
 
 	void OnUpdate();
 	void OnDraw();
@@ -36,4 +42,11 @@ public:
 	CMatrix4D		VP;
 	Lights			worldLights;
 	Timer			DtTimer;
+
+	btDefaultCollisionConfiguration* collisionConfiguration;
+	btCollisionDispatcher* dispatcher;
+	btBroadphaseInterface* overlappingPairCache;
+	btSequentialImpulseConstraintSolver* solver;
+	btDiscreteDynamicsWorld* dynamicsWorld;
+	btAlignedObjectArray<btCollisionShape*> collisionShapes;
 };

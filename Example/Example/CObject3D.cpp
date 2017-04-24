@@ -688,6 +688,12 @@ void CObject3D::Create(char * path) {
 #ifdef	USE_DIFFUSE
 	Defines += "#define USE_DIFFUSE\n\n";
 #endif
+
+	if (meshes[0].infoTexture.textures[0].normal)
+	{
+		Defines += "#define USE_NORMAL_TEXTURE\n\n";
+	}
+
 	vstr = Defines + vstr;
 	fstr = Defines + fstr;
 
@@ -725,38 +731,45 @@ void CObject3D::Create(char * path) {
 	GLuint vshader_id = createShader(GL_VERTEX_SHADER, (char*)vstr.c_str());
 	GLuint fshader_id = createShader(GL_FRAGMENT_SHADER, (char*)fstr.c_str());
 
-	glAttachShader(shaderID, vshader_id);
-	glAttachShader(shaderID, fshader_id);
+	if (vshader_id && fshader_id)
+	{
+		glAttachShader(shaderID, vshader_id);
+		glAttachShader(shaderID, fshader_id);
 
-	glLinkProgram(shaderID);
-	glUseProgram(shaderID);
+		glLinkProgram(shaderID);
+		glUseProgram(shaderID);
 
-	vertexAttribLoc = glGetAttribLocation(shaderID, "Vertex");
-	normalAttribLoc = glGetAttribLocation(shaderID, "Normal");
-	binormalAttribLoc = glGetAttribLocation(shaderID, "Binormal");
-	tangenteAttribLoc = glGetAttribLocation(shaderID, "Tangente");
-	uvAttribLoc = glGetAttribLocation(shaderID, "UV");
+		vertexAttribLoc = glGetAttribLocation(shaderID, "Vertex");
+		normalAttribLoc = glGetAttribLocation(shaderID, "Normal");
+		binormalAttribLoc = glGetAttribLocation(shaderID, "Binormal");
+		tangenteAttribLoc = glGetAttribLocation(shaderID, "Tangente");
+		uvAttribLoc = glGetAttribLocation(shaderID, "UV");
 
-	matWorldViewProjUniformLoc = glGetUniformLocation(shaderID, "WVP");
-	matWorldUniformLoc = glGetUniformLocation(shaderID, "World");
-	diffuseLoc = glGetUniformLocation(shaderID, "diffuse");
-	specularLoc = glGetUniformLocation(shaderID, "specularLoc");
-	glossLoc = glGetUniformLocation(shaderID, "glossLoc");
+		matWorldViewProjUniformLoc = glGetUniformLocation(shaderID, "WVP");
+		matWorldUniformLoc = glGetUniformLocation(shaderID, "World");
+		diffuseLoc = glGetUniformLocation(shaderID, "diffuse");
+		specularLoc = glGetUniformLocation(shaderID, "specularLoc");
+		glossLoc = glGetUniformLocation(shaderID, "glossLoc");
 
-	normalLoc = glGetUniformLocation(shaderID, "normalLoc");
+		normalLoc = glGetUniformLocation(shaderID, "normalLoc");
 
-#ifdef USE_GLOBALLIGHT
-	DirectionGlobalLight = glGetUniformLocation(shaderID, "DirectionGlobalLight");
-	ColorGlobalLight = glGetUniformLocation(shaderID, "ColorGlobalLight");
-#endif
-#ifdef	USE_POINTLIGHT
-	PositionPointLight = glGetUniformLocation(shaderID, "PositionPointLight");
-	ColorPointLight = glGetUniformLocation(shaderID, "ColorPointLight");
-#endif
-#ifdef	USE_DIFFUSE
-	PosCamera = glGetUniformLocation(shaderID, "PositionCamera");
-#endif
-	glUseProgram(0);
+	#ifdef USE_GLOBALLIGHT
+		DirectionGlobalLight = glGetUniformLocation(shaderID, "DirectionGlobalLight");
+		ColorGlobalLight = glGetUniformLocation(shaderID, "ColorGlobalLight");
+	#endif
+	#ifdef	USE_POINTLIGHT
+		PositionPointLight = glGetUniformLocation(shaderID, "PositionPointLight");
+		ColorPointLight = glGetUniformLocation(shaderID, "ColorPointLight");
+	#endif
+	#ifdef	USE_DIFFUSE
+		PosCamera = glGetUniformLocation(shaderID, "PositionCamera");
+	#endif
+		glUseProgram(0);
+	}
+	else
+	{
+		shaderID = shaderWireFrame;
+	}
 
 	for (auto i = meshes.begin(); i != meshes.end(); i++)
 	{
@@ -789,12 +802,11 @@ void CObject3D::Create(char * path) {
 				Texture	*tex = new TextureGL;
 				list[tempString] = tex->LoadTexture((*textures).diffuseName);
 				if (list[tempString] == -1) {
-					delete tex;
+					list[tempString] = tex->LoadTexture("cheker.tga");
 				}
-				else
-				{
-					(*textures).idDiffuse = list[tempString];
-				}
+
+				(*textures).idDiffuse = list[tempString];
+
 			}
 			else
 			{
@@ -871,11 +883,50 @@ void CObject3D::Create(char * path) {
 	
 #elif defined(USING_D3D11)
 	HRESULT hr;
+
+	std::string wireframeShader = "cbuffer ConstantBuffer {\n\n";
+	wireframeShader += "	float4x4 WVP;";
+	wireframeShader += "}";
+	wireframeShader += "struct VS_INPUT {";
+	wireframeShader += "	float4 position : POSITION;";
+	wireframeShader += "};";
+	wireframeShader += "struct VS_OUTPUT {";
+	wireframeShader += "	float4 hposition : SV_POSITION;";
+	wireframeShader += "};";
+	wireframeShader += "VS_OUTPUT VS(VS_INPUT input) {";
+	wireframeShader += "	VS_OUTPUT OUT;";
+	wireframeShader += "	OUT.hposition = mul(WVP, input.position);";
+	wireframeShader += "	return OUT;\n\n";
+	wireframeShader += "}";
+
+	std::string vertex = wireframeShader;
+
+	wireframeShader = "";
+	wireframeShader += "cbuffer ConstantBuffer {";
+	wireframeShader += "	float4x4 WVP;";
+	wireframeShader += "}";
+	wireframeShader += "";
+	wireframeShader += "struct VS_OUTPUT {";
+	wireframeShader += "float4 hposition : SV_POSITION;";
+	wireframeShader += "};";
+	wireframeShader += "";
+	wireframeShader += "float4 FS(VS_OUTPUT input) : SV_TARGET{";
+	wireframeShader += "return float4(0, 1, 0, 0);";
+	wireframeShader += "}";
+
+
+	std::string fragment = wireframeShader;
+
+	////////////*
+
+	std::string vstr2 = vertex;
+
+	std::string fstr2 = fragment;
 	{
-		VS_blob = nullptr; // VS_blob would contain the binary compiled vertex shader program
+		VS_blobRes = nullptr; // VS_blob would contain the binary compiled vertex shader program
 		ComPtr<ID3DBlob> errorBlob = nullptr; // In case of error, this blob would contain the compilation errors
 											  // We compile the source, the entry point is VS in our vertex shader, and we are using shader model 5 (d3d11)
-		hr = D3DCompile((char*)vstr.c_str(), (UINT)strlen((char*)vstr.c_str()), 0, 0, 0, "VS", "vs_5_0", 0, 0, &VS_blob, &errorBlob);
+		hr = D3DCompile((char*)vstr2.c_str(), (UINT)strlen((char*)vstr2.c_str()), 0, 0, 0, "VS", "vs_5_0", 0, 0, &VS_blobRes, &errorBlob);
 		if (hr != S_OK) { // some error
 
 			if (errorBlob) { // print the error if the blob is valid
@@ -883,12 +934,12 @@ void CObject3D::Create(char * path) {
 				return;
 			}
 			// No binary data, return.
-			if (VS_blob) {
+			if (VS_blobRes) {
 				return;
 			}
 		}
 		// With the binary blob now we create the Vertex Shader Object
-		hr = D3D11Device->CreateVertexShader(VS_blob->GetBufferPointer(), VS_blob->GetBufferSize(), 0, &pVS);
+		hr = D3D11Device->CreateVertexShader(VS_blobRes->GetBufferPointer(), VS_blobRes->GetBufferSize(), 0, &pVSRes);
 		if (hr != S_OK) {
 			printf("Error Creating Vertex Shader\n");
 			return;
@@ -896,60 +947,58 @@ void CObject3D::Create(char * path) {
 	}
 	// Same for the Pixel Shader, just change the entry point, blob, etc, same exact method
 	{
-		FS_blob = nullptr;
+		FS_blobRes = nullptr;
 		ComPtr<ID3DBlob> errorBlob = nullptr;
-		hr = D3DCompile((char*)fstr.c_str(), (UINT)strlen((char*)fstr.c_str()), 0, 0, 0, "FS", "ps_5_0", 0, 0, &FS_blob, &errorBlob);
+		hr = D3DCompile((char*)fstr2.c_str(), (UINT)strlen((char*)fstr2.c_str()), 0, 0, 0, "FS", "ps_5_0", 0, 0, &FS_blobRes, &errorBlob);
 		if (hr != S_OK) {
 			if (errorBlob) {
 				printf("errorBlob shader1[%s]", (char*)errorBlob->GetBufferPointer());
 				return;
 			}
 
-			if (FS_blob) {
+			if (FS_blobRes) {
 				return;
 			}
 		}
 
-		hr = D3D11Device->CreatePixelShader(FS_blob->GetBufferPointer(), FS_blob->GetBufferSize(), 0, &pFS);
+		hr = D3D11Device->CreatePixelShader(FS_blobRes->GetBufferPointer(), FS_blobRes->GetBufferSize(), 0, &pFSRes);
 		if (hr != S_OK) {
 			printf("Error Creating Pixel Shader\n");
 			return;
 		}
 	}
 
-	D3D11DeviceContext->VSSetShader(pVS.Get(), 0, 0);
-	D3D11DeviceContext->PSSetShader(pFS.Get(), 0, 0);
+	D3D11DeviceContext->VSSetShader(pVSRes.Get(), 0, 0);
+	D3D11DeviceContext->PSSetShader(pFSRes.Get(), 0, 0);
 
-	D3D11_INPUT_ELEMENT_DESC vertexDeclaration[] = {
+	D3D11_INPUT_ELEMENT_DESC vertexDeclaration2[] = {
 		{ "POSITION" , 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 0,  D3D11_INPUT_PER_VERTEX_DATA, 0 },
 		{ "NORMAL"   , 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 16, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 		{ "TEXCOORD"   , 0, DXGI_FORMAT_R32G32_FLOAT, 0, 32, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 		{ "BINORMAL"   , 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 40, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 		{ "TANGENTE"   , 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 56, D3D11_INPUT_PER_VERTEX_DATA, 0 }
 	};
-	hr = D3D11Device->CreateInputLayout(vertexDeclaration, ARRAYSIZE(vertexDeclaration), VS_blob->GetBufferPointer(), VS_blob->GetBufferSize(), &Layout);
+	hr = D3D11Device->CreateInputLayout(vertexDeclaration2, ARRAYSIZE(vertexDeclaration2), VS_blobRes->GetBufferPointer(), VS_blobRes->GetBufferSize(), &LayoutRes);
 	if (hr != S_OK) {
 		printf("Error Creating Input Layout\n");
 		return;
 	}
-
-	// We Bound the input layout
-	D3D11DeviceContext->IASetInputLayout(Layout.Get());
-
-
+	D3D11DeviceContext->IASetInputLayout(LayoutRes.Get());
 	D3D11_BUFFER_DESC bdesc = { 0 };
+
 	bdesc.Usage = D3D11_USAGE_DEFAULT;
-	bdesc.ByteWidth = sizeof(CObject3D::CBuffer);
+	bdesc.ByteWidth = sizeof(CObject3D::CBufferRes);
 	bdesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
 
-	hr = D3D11Device->CreateBuffer(&bdesc, 0, pd3dConstantBuffer.GetAddressOf());
+	hr = D3D11Device->CreateBuffer(&bdesc, 0, pd3dConstantBufferRes.GetAddressOf());
 	if (hr != S_OK) {
 		printf("Error Creating Buffer Layout\n");
 		return;
 	}
 	// Set the constant buffer to the shader programs: Note that we use the Device Context to manage the resources
-	D3D11DeviceContext->VSSetConstantBuffers(0, 1, pd3dConstantBuffer.GetAddressOf());
-	D3D11DeviceContext->PSSetConstantBuffers(0, 1, pd3dConstantBuffer.GetAddressOf());
+	D3D11DeviceContext->VSSetConstantBuffers(0, 1, pd3dConstantBufferRes.GetAddressOf());
+	D3D11DeviceContext->PSSetConstantBuffers(0, 1, pd3dConstantBufferRes.GetAddressOf());
+	// We Bound the input layout
 	for (auto i = meshes.begin(); i != meshes.end(); i++)
 	{
 		bdesc = { 0 };
@@ -976,109 +1025,212 @@ void CObject3D::Create(char * path) {
 				return;
 			}
 		}
+
+		bdesc = { 0 };
+		bdesc.ByteWidth = (*i).meshbufferIndex.size() * sizeof(USHORT);
+		bdesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
+
+		subData = { (*i).meshbufferIndex.data(), 0, 0 };
+
+		hr = D3D11Device->CreateBuffer(&bdesc, &subData, &((*i).IBMesh));
+		if (hr != S_OK) {
+			printf("Error Creating Index Buffer\n");
+			return;
+		}
+	}
+	{
+		VS_blob = nullptr; // VS_blob would contain the binary compiled vertex shader program
+		ComPtr<ID3DBlob> errorBlob = nullptr; // In case of error, this blob would contain the compilation errors
+											  // We compile the source, the entry point is VS in our vertex shader, and we are using shader model 5 (d3d11)
+		hr = D3DCompile((char*)vstr.c_str(), (UINT)strlen((char*)vstr.c_str()), 0, 0, 0, "VS", "vs_5_0", 0, 0, &VS_blob, &errorBlob);
+		if (hr != S_OK) { // some error
+
+			if (errorBlob) { // print the error if the blob is valid
+				printf("errorBlob shader[%s]", (char*)errorBlob->GetBufferPointer());
+				flagShader = false;
+				return;
+			}
+			// No binary data, return.
+			if (VS_blob) {
+				return;
+			}
+		}
+		// With the binary blob now we create the Vertex Shader Object
+		hr = D3D11Device->CreateVertexShader(VS_blob->GetBufferPointer(), VS_blob->GetBufferSize(), 0, &pVS);
+		if (hr != S_OK) {
+			printf("Error Creating Vertex Shader\n");
+			return;
+		}
+	}
+	// Same for the Pixel Shader, just change the entry point, blob, etc, same exact method
+	{
+		FS_blob = nullptr;
+		ComPtr<ID3DBlob> errorBlob = nullptr;
+		hr = D3DCompile((char*)fstr.c_str(), (UINT)strlen((char*)fstr.c_str()), 0, 0, 0, "FS", "ps_5_0", 0, 0, &FS_blob, &errorBlob);
+		if (hr != S_OK) {
+			if (errorBlob) {
+				printf("errorBlob shader1[%s]", (char*)errorBlob->GetBufferPointer());
+				flagShader = false;
+				return;
+			}
+
+			if (FS_blob) {
+				return;
+			}
+		}
+
+		hr = D3D11Device->CreatePixelShader(FS_blob->GetBufferPointer(), FS_blob->GetBufferSize(), 0, &pFS);
+		if (hr != S_OK) {
+			printf("Error Creating Pixel Shader\n");
+			return;
+		}
 	}
 
-	// Same for the index buffer
-	std::map<std::string, int> list;
-	int counterText = 0;
-	for (auto mesh = meshes.begin(); mesh != meshes.end(); mesh++)
+	if (flagShader)
 	{
-		for (auto textures = (*mesh).infoTexture.textures.begin(); textures != (*mesh).infoTexture.textures.end(); textures++) {
 
-			std::string tempString((*textures).diffuseName);
-			auto iteradorFind = list.find(tempString);
-			if (iteradorFind == list.end())
-			{
-				Texture	*tex = new TextureD3D;
-				if (tex->LoadTexture((*textures).diffuseName) == -1) {
-					delete tex;
-					printf("error textura no encontrada %s", tempString);
-				}
-				else
-				{
-					Textures[counterText] = tex;
-					list[tempString] = counterText;
-					counterText++;
-					(*textures).idDiffuse = list[tempString];
-				}
-			}
-			else
-			{
-				(*textures).idDiffuse = list[tempString];
-			}
-			if ((*textures).specular)
-			{
-				std::string tempString((*textures).specularName);
+		D3D11DeviceContext->VSSetShader(pVS.Get(), 0, 0);
+		D3D11DeviceContext->PSSetShader(pFS.Get(), 0, 0);
+
+		D3D11_INPUT_ELEMENT_DESC vertexDeclaration[] = {
+			{ "POSITION" , 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 0,  D3D11_INPUT_PER_VERTEX_DATA, 0 },
+			{ "NORMAL"   , 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 16, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+			{ "TEXCOORD"   , 0, DXGI_FORMAT_R32G32_FLOAT, 0, 32, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+			{ "BINORMAL"   , 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 40, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+			{ "TANGENTE"   , 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 56, D3D11_INPUT_PER_VERTEX_DATA, 0 }
+		};
+		hr = D3D11Device->CreateInputLayout(vertexDeclaration, ARRAYSIZE(vertexDeclaration), VS_blob->GetBufferPointer(), VS_blob->GetBufferSize(), &Layout);
+		if (hr != S_OK) {
+			printf("Error Creating Input Layout\n");
+			return;
+		}
+
+		// We Bound the input layout
+		D3D11DeviceContext->IASetInputLayout(Layout.Get());
+		bdesc.Usage = D3D11_USAGE_DEFAULT;
+		bdesc.ByteWidth = sizeof(CObject3D::CBuffer);
+		bdesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+
+		hr = D3D11Device->CreateBuffer(&bdesc, 0, pd3dConstantBuffer.GetAddressOf());
+		if (hr != S_OK) {
+			printf("Error Creating Buffer Layout\n");
+			return;
+		}
+		// Set the constant buffer to the shader programs: Note that we use the Device Context to manage the resources
+		D3D11DeviceContext->VSSetConstantBuffers(0, 1, pd3dConstantBuffer.GetAddressOf());
+		D3D11DeviceContext->PSSetConstantBuffers(0, 1, pd3dConstantBuffer.GetAddressOf());
+
+		std::map<std::string, int> list;
+		int counterText = 0;
+		for (auto mesh = meshes.begin(); mesh != meshes.end(); mesh++)
+		{
+			for (auto textures = (*mesh).infoTexture.textures.begin(); textures != (*mesh).infoTexture.textures.end(); textures++) {
+
+				std::string tempString((*textures).diffuseName);
 				auto iteradorFind = list.find(tempString);
 				if (iteradorFind == list.end())
 				{
 					Texture	*tex = new TextureD3D;
-					if (tex->LoadTexture((*textures).specularName) == -1) {
-						delete tex;
-						printf("error textura no encontrada %s", tempString.c_str());
-						textures->specular = false;
+					if (tex->LoadTexture((*textures).diffuseName) == -1) {
+						printf("error textura no encontrada %s", tempString);
+						if (tex->LoadTexture("cheker.tga") == -1) {
+							delete tex;
+							printf("error cheker no encotrada");
+						}
+						else
+						{
+							Textures[counterText] = tex;
+							list[tempString] = counterText;
+							counterText++;
+							(*textures).idDiffuse = list[tempString];
+						}
 					}
 					else
 					{
 						Textures[counterText] = tex;
 						list[tempString] = counterText;
 						counterText++;
+						(*textures).idDiffuse = list[tempString];
+					}
+				}
+				else
+				{
+					(*textures).idDiffuse = list[tempString];
+				}
+				if ((*textures).specular)
+				{
+					std::string tempString((*textures).specularName);
+					auto iteradorFind = list.find(tempString);
+					if (iteradorFind == list.end())
+					{
+						Texture	*tex = new TextureD3D;
+						if (tex->LoadTexture((*textures).specularName) == -1) {
+							delete tex;
+							printf("error textura no encontrada %s", tempString.c_str());
+							textures->specular = false;
+						}
+						else
+						{
+							Textures[counterText] = tex;
+							list[tempString] = counterText;
+							counterText++;
+							(*textures).idSpecular = list[tempString];
+						}
+					}
+					else
+					{
 						(*textures).idSpecular = list[tempString];
 					}
 				}
-				else
+				if ((*textures).gloss)
 				{
-					(*textures).idSpecular = list[tempString];
-				}
-			}
-			if ((*textures).gloss)
-			{
-				std::string tempString((*textures).glossName);
-				auto iteradorFind = list.find(tempString);
-				if (iteradorFind == list.end())
-				{
-					Texture	*tex = new TextureD3D;
-					if (tex->LoadTexture((*textures).glossName) == -1) {
-						delete tex;
-						printf("error textura no encontrada %s", tempString);
-						textures->gloss = false;
+					std::string tempString((*textures).glossName);
+					auto iteradorFind = list.find(tempString);
+					if (iteradorFind == list.end())
+					{
+						Texture	*tex = new TextureD3D;
+						if (tex->LoadTexture((*textures).glossName) == -1) {
+							delete tex;
+							printf("error textura no encontrada %s", tempString);
+							textures->gloss = false;
+						}
+						else
+						{
+							Textures[counterText] = tex;
+							list[tempString] = counterText;
+							counterText++;
+							(*textures).idGloss = list[tempString];
+						}
 					}
 					else
 					{
-						Textures[counterText] = tex;
-						list[tempString] = counterText;
-						counterText++;
 						(*textures).idGloss = list[tempString];
 					}
 				}
-				else
+				if ((*textures).normal)
 				{
-					(*textures).idGloss = list[tempString];
-				}
-			}
-			if ((*textures).normal)
-			{
-				std::string tempString((*textures).normalName);
-				auto iteradorFind = list.find(tempString);
-				if (iteradorFind == list.end())
-				{
-					Texture	*tex = new TextureD3D;
-					if (tex->LoadTexture((*textures).normalName) == -1) {
-						delete tex;
-						printf("error textura no encontrada %s", tempString);
-						textures->normal = false;
+					std::string tempString((*textures).normalName);
+					auto iteradorFind = list.find(tempString);
+					if (iteradorFind == list.end())
+					{
+						Texture	*tex = new TextureD3D;
+						if (tex->LoadTexture((*textures).normalName) == -1) {
+							delete tex;
+							printf("error textura no encontrada %s", tempString);
+							textures->normal = false;
+						}
+						else
+						{
+							Textures[counterText] = tex;
+							list[tempString] = counterText;
+							counterText++;
+							(*textures).idNormal = list[tempString];
+						}
 					}
 					else
 					{
-						Textures[counterText] = tex;
-						list[tempString] = counterText;
-						counterText++;
 						(*textures).idNormal = list[tempString];
 					}
-				}
-				else
-				{
-					(*textures).idNormal = list[tempString];
 				}
 			}
 		}
@@ -1106,7 +1258,7 @@ void CObject3D::Draw(float *t, float *vp) {
 	CMatrix4D VP = CMatrix4D(vp);
 	CMatrix4D WVP = transform*VP;
 
-	if (lights->flagWireFrame)
+	if (lights->flagWireFrame || shaderWireFrame == shaderID)
 	{
 
 		glUseProgram(shaderWireFrame);
@@ -1173,36 +1325,34 @@ void CObject3D::Draw(float *t, float *vp) {
 		glVertexAttribPointer(tangenteAttribLoc, 4, GL_FLOAT, GL_FALSE, sizeof(CVertex), BUFFER_OFFSET(56));
 
 		
-		if (true)
 
+		for (int index = 0; index < (*i).bufferIndexForTextures.size(); index++)
 		{
-			for (int index = 0; index < (*i).bufferIndexForTextures.size(); index++)
+			glActiveTexture(GL_TEXTURE0);
+			glBindTexture(GL_TEXTURE_2D, (*i).infoTexture.textures[index].idDiffuse);
+			glUniform1i(diffuseLoc, 0);
+			if ((*i).infoTexture.textures[index].normal)
 			{
-				glActiveTexture(GL_TEXTURE0);
-				glBindTexture(GL_TEXTURE_2D, (*i).infoTexture.textures[index].idDiffuse);
-				glUniform1i(diffuseLoc, 0);
-				if ((*i).infoTexture.textures[index].normal)
-				{
-					glActiveTexture(GL_TEXTURE1);
-					glBindTexture(GL_TEXTURE_2D, (*i).infoTexture.textures[index].idNormal);
-					glUniform1i(normalLoc, 1);
-				}
-				if ((*i).infoTexture.textures[index].specular)
-				{
-					glActiveTexture(GL_TEXTURE2);
-					glBindTexture(GL_TEXTURE_2D, (*i).infoTexture.textures[index].idSpecular);
-					glUniform1i(specularLoc, 2);
-				}
-				if ((*i).infoTexture.textures[index].gloss)
-				{
-					glActiveTexture(GL_TEXTURE3);
-					glBindTexture(GL_TEXTURE_2D, (*i).infoTexture.textures[index].idGloss);
-					glUniform1i(glossLoc, 3);
-				}
-				glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, (*i).IB[index]);
-				glDrawElements(GL_TRIANGLES, (*i).bufferIndexForTextures[index]->size(), GL_UNSIGNED_SHORT, 0);
+				glActiveTexture(GL_TEXTURE1);
+				glBindTexture(GL_TEXTURE_2D, (*i).infoTexture.textures[index].idNormal);
+				glUniform1i(normalLoc, 1);
 			}
+			if ((*i).infoTexture.textures[index].specular)
+			{
+				glActiveTexture(GL_TEXTURE2);
+				glBindTexture(GL_TEXTURE_2D, (*i).infoTexture.textures[index].idSpecular);
+				glUniform1i(specularLoc, 2);
+			}
+			if ((*i).infoTexture.textures[index].gloss)
+			{
+				glActiveTexture(GL_TEXTURE3);
+				glBindTexture(GL_TEXTURE_2D, (*i).infoTexture.textures[index].idGloss);
+				glUniform1i(glossLoc, 3);
+			}
+			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, (*i).IB[index]);
+			glDrawElements(GL_TRIANGLES, (*i).bufferIndexForTextures[index]->size(), GL_UNSIGNED_SHORT, 0);
 		}
+		
 	}
 
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -1220,6 +1370,7 @@ void CObject3D::Draw(float *t, float *vp) {
 #elif defined(USING_D3D11)
 	CMatrix4D VP = CMatrix4D(vp);
 	CMatrix4D WVP = transform*VP;
+	CnstBufferRes.WVP = WVP;
 	CnstBuffer.WVP = WVP;
 	CnstBuffer.World = transform;
 
@@ -1238,53 +1389,87 @@ void CObject3D::Draw(float *t, float *vp) {
 	UINT stride = sizeof(CVertex);
 	UINT offset = 0;
 	// We bound to use the vertex and pixel shader of this primitive
-	D3D11DeviceContext->VSSetShader(pVS.Get(), 0, 0);
-	D3D11DeviceContext->PSSetShader(pFS.Get(), 0, 0);
-	// Set the input layout to let the shader program know what kind of vertex data we have
-	D3D11DeviceContext->IASetInputLayout(Layout.Get());
-	// We update the constant buffer with the current matrices
-	D3D11DeviceContext->UpdateSubresource(pd3dConstantBuffer.Get(), 0, 0, &CnstBuffer, 0, 0);
-	// Once updated the constant buffer we send them to the shader programs
-	D3D11DeviceContext->VSSetConstantBuffers(0, 1, pd3dConstantBuffer.GetAddressOf());
-	D3D11DeviceContext->PSSetConstantBuffers(0, 1, pd3dConstantBuffer.GetAddressOf());\
-	
-		
-	for (auto i = meshes.begin(); i != meshes.end(); i++)
+
+	if (lights->flagWireFrame || !flagShader)
 	{
+		D3D11DeviceContext->VSSetShader(pVSRes.Get(), 0, 0);
+		D3D11DeviceContext->PSSetShader(pFSRes.Get(), 0, 0);
+		// Set the input layout to let the shader program know what kind of vertex data we have
+		D3D11DeviceContext->IASetInputLayout(LayoutRes.Get());
+		// We update the constant buffer with the current matrices
+		D3D11DeviceContext->UpdateSubresource(pd3dConstantBufferRes.Get(), 0, 0, &CnstBufferRes, 0, 0);
+		// Once updated the constant buffer we send them to the shader programs
+		D3D11DeviceContext->VSSetConstantBuffers(0, 1, pd3dConstantBufferRes.GetAddressOf());
+		D3D11DeviceContext->PSSetConstantBuffers(0, 1, pd3dConstantBufferRes.GetAddressOf());
 
-	// We let d3d that we are using our vertex and index buffers, they require the stride and offset
-	
-		D3D11DeviceContext->IASetVertexBuffers(0, 1, (*i).VB.GetAddressOf(), &stride, &offset);
-		for (int index = 0; index < (*i).bufferIndexForTextures.size(); index++)
+
+		for (auto i = meshes.begin(); i != meshes.end(); i++)
 		{
-			TextureD3D *texd3d = dynamic_cast<TextureD3D*>(Textures[(*i).infoTexture.textures[index].idDiffuse]);
-			D3D11DeviceContext->PSSetShaderResources(0, 1, texd3d->pSRVTex.GetAddressOf());
-			D3D11DeviceContext->PSSetSamplers(0, 1, texd3d->pSampler.GetAddressOf());
 
-			if (i->infoTexture.textures[index].normal)
-			{
-				TextureD3D *texd3d2 = dynamic_cast<TextureD3D*>(Textures[(*i).infoTexture.textures[index].idNormal]);
-				D3D11DeviceContext->PSSetShaderResources(1, 1, texd3d2->pSRVTex.GetAddressOf());
-				D3D11DeviceContext->PSSetSamplers(1, 1, texd3d2->pSampler.GetAddressOf());
-			}
-			if (i->infoTexture.textures[index].gloss)
-			{
-				TextureD3D *texd3d3 = dynamic_cast<TextureD3D*>(Textures[(*i).infoTexture.textures[index].idGloss]);
-				D3D11DeviceContext->PSSetShaderResources(2, 1, texd3d3->pSRVTex.GetAddressOf());
-				D3D11DeviceContext->PSSetSamplers(2, 1, texd3d3->pSampler.GetAddressOf());
-			}
-			if (i->infoTexture.textures[index].specular)
-			{
-				TextureD3D *texd3d4 = dynamic_cast<TextureD3D*>(Textures[(*i).infoTexture.textures[index].idSpecular]);
-				D3D11DeviceContext->PSSetShaderResources(3, 1, texd3d4->pSRVTex.GetAddressOf());
-				D3D11DeviceContext->PSSetSamplers(3, 1, texd3d4->pSampler.GetAddressOf());
-			}
-			D3D11DeviceContext->IASetIndexBuffer((*i).IB[index].Get(), DXGI_FORMAT_R16_UINT, 0);
+			// We let d3d that we are using our vertex and index buffers, they require the stride and offset
+
+			D3D11DeviceContext->IASetVertexBuffers(0, 1, (*i).VB.GetAddressOf(), &stride, &offset);
+			D3D11DeviceContext->IASetIndexBuffer((*i).IBMesh.Get(), DXGI_FORMAT_R16_UINT, 0);
 			// Instruct to use triangle list
-			D3D11DeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-			D3D11DeviceContext->DrawIndexed((*i).bufferIndexForTextures[index]->size(), 0, 0);
+			D3D11DeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_LINELIST);
+			D3D11DeviceContext->DrawIndexed((*i).meshbufferIndex.size(), 0, 0);
 		}
 	}
+	else
+	{
+		D3D11DeviceContext->VSSetShader(pVS.Get(), 0, 0);
+		D3D11DeviceContext->PSSetShader(pFS.Get(), 0, 0);
+		// Set the input layout to let the shader program know what kind of vertex data we have
+		D3D11DeviceContext->IASetInputLayout(Layout.Get());
+		// We update the constant buffer with the current matrices
+		D3D11DeviceContext->UpdateSubresource(pd3dConstantBuffer.Get(), 0, 0, &CnstBuffer, 0, 0);
+		// Once updated the constant buffer we send them to the shader programs
+		D3D11DeviceContext->VSSetConstantBuffers(0, 1, pd3dConstantBuffer.GetAddressOf());
+		D3D11DeviceContext->PSSetConstantBuffers(0, 1, pd3dConstantBuffer.GetAddressOf());
+		for (auto i = meshes.begin(); i != meshes.end(); i++)
+		{
+
+		// We let d3d that we are using our vertex and index buffers, they require the stride and offset
+	
+			D3D11DeviceContext->IASetVertexBuffers(0, 1, (*i).VB.GetAddressOf(), &stride, &offset);
+		
+
+				for (int index = 0; index < (*i).bufferIndexForTextures.size(); index++)
+				{
+					TextureD3D *texd3d = dynamic_cast<TextureD3D*>(Textures[(*i).infoTexture.textures[index].idDiffuse]);
+					D3D11DeviceContext->PSSetShaderResources(0, 1, texd3d->pSRVTex.GetAddressOf());
+					D3D11DeviceContext->PSSetSamplers(0, 1, texd3d->pSampler.GetAddressOf());
+
+					if (i->infoTexture.textures[index].normal)
+					{
+						TextureD3D *texd3d2 = dynamic_cast<TextureD3D*>(Textures[(*i).infoTexture.textures[index].idNormal]);
+						D3D11DeviceContext->PSSetShaderResources(1, 1, texd3d2->pSRVTex.GetAddressOf());
+						D3D11DeviceContext->PSSetSamplers(1, 1, texd3d2->pSampler.GetAddressOf());
+					}
+					if (i->infoTexture.textures[index].gloss)
+					{
+						TextureD3D *texd3d3 = dynamic_cast<TextureD3D*>(Textures[(*i).infoTexture.textures[index].idGloss]);
+						D3D11DeviceContext->PSSetShaderResources(2, 1, texd3d3->pSRVTex.GetAddressOf());
+						D3D11DeviceContext->PSSetSamplers(2, 1, texd3d3->pSampler.GetAddressOf());
+					}
+					if (i->infoTexture.textures[index].specular)
+					{
+						TextureD3D *texd3d4 = dynamic_cast<TextureD3D*>(Textures[(*i).infoTexture.textures[index].idSpecular]);
+						D3D11DeviceContext->PSSetShaderResources(3, 1, texd3d4->pSRVTex.GetAddressOf());
+						D3D11DeviceContext->PSSetSamplers(3, 1, texd3d4->pSampler.GetAddressOf());
+					}
+					D3D11DeviceContext->IASetIndexBuffer((*i).IB[index].Get(), DXGI_FORMAT_R16_UINT, 0);
+					// Instruct to use triangle list
+					D3D11DeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+					D3D11DeviceContext->DrawIndexed((*i).bufferIndexForTextures[index]->size(), 0, 0);
+				}	
+		}
+	}
+
+
+	
+		
 
 #endif
 }

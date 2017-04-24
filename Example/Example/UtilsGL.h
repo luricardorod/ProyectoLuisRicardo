@@ -6,7 +6,7 @@
 #include "PrimitiveBase.h"
 #include <stdio.h>
 
-void checkcompilederrors(GLuint shader, GLenum type);
+bool checkcompilederrors(GLuint shader, GLenum type);
 GLuint createShader(GLenum type, char* pSource);
 char *file2string(const char *path, long* size);
 char *file2string(const char *path);

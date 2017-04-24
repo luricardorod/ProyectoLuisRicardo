@@ -52,7 +52,7 @@ public:
 	float fuvHeight;
 	float uvx, uvy;
 	int   numberFrameX = 0;
-	int   numberFrameY = 0;
+	int   numberFrameY = 8;
 
 	spriteVertex	vertices[4];
 	unsigned short	indices[6];

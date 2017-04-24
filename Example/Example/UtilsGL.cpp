@@ -3,7 +3,8 @@
 #include <stdlib.h>
 #include <string>
 
-void checkcompilederrors(GLuint shader, GLenum type) {
+bool checkcompilederrors(GLuint shader, GLenum type) {
+	bool flag = true;
 	GLint bShaderCompiled;
 	glGetShaderiv(shader, GL_COMPILE_STATUS, &bShaderCompiled);
 	if (!bShaderCompiled) {
@@ -15,24 +16,31 @@ void checkcompilederrors(GLuint shader, GLenum type) {
 		char* pszMsg = new char[i32InfoLogLength + 256];
 		if (type == GL_FRAGMENT_SHADER) {
 			sprintf(pszMsg, "Failed to compile pixel shader: %s", pszInfoLog);
+			flag = false;
 		}
 		else if (type == GL_VERTEX_SHADER) {
 			sprintf(pszMsg, "Failed to compile vertex shader: %s", pszInfoLog);
+			flag = false;
 		}
 		else {
 			sprintf(pszMsg, "Failed to compile wtf shader: %s", pszInfoLog);
+			flag = false;
 		}
 		printf("%s", pszMsg);
 		delete[] pszMsg;
 		delete[] pszInfoLog;
 	}
+	return flag;
 }
 
 GLuint createShader(GLenum type, char* pSource) {
 	GLuint shader = glCreateShader(type);
 	glShaderSource(shader, 1, (const char**)&pSource, NULL);
 	glCompileShader(shader);
-	checkcompilederrors(shader, type);
+	if (!checkcompilederrors(shader, type))
+	{
+		shader = NULL;
+	}
 	return shader;
 }
 

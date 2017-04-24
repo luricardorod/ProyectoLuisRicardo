@@ -31,7 +31,7 @@ float4 FS( VS_OUTPUT input ) : SV_TARGET  {
 	float3 pointIntensity = { 0,0,0 };
 	float3 specularIntensity = { 0,0,0 };
 
-
+#ifdef USE_NORMAL_TEXTURE
 	float3x3 ejes;
 	ejes[0] = normalize(input.htangente);
 	ejes[1] = normalize(input.hbinormal);
@@ -40,6 +40,9 @@ float4 FS( VS_OUTPUT input ) : SV_TARGET  {
 	float3 newNormal = norRGB.rgb  *2.0 -1.0;
 	newNormal.g = -newNormal.g;
 	newNormal = normalize(mul(ejes, newNormal));
+#else
+	float3 newNormal = input.hnormal;
+#endif
 
 #ifdef	USE_DIFFUSE
 	lightIntensity = pow(dot(normalize(PosCamera.xyz - input.vert.xyz), normalize(reflect((input.vert.xyz - PositionPointLight.xyz), newNormal.xyz)))*0.5 + 0.5, 10.0);
@@ -68,7 +71,7 @@ float4 FS( VS_OUTPUT input ) : SV_TARGET  {
 	original *= float4(globalIntensity, 0);
 	original *= color;
 	float4 final = original + color;
-	//color = color * float4(globalIntensity, 0) + color * float4(pointIntensity, 0) + color *float4(specularIntensity, 0) + color *0.1;
+	color = color * float4(globalIntensity, 0) + color * float4(pointIntensity, 0) + color *float4(specularIntensity, 0) + color *0.1;
 	//color = color * float4(globalIntensity, 0);
-	return  final;
+	return  color;
 }

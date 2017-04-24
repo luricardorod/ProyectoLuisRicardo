@@ -1,13 +1,15 @@
 attribute highp vec4 Vertex;
 attribute highp vec4 Normal;
+
+
 #ifdef USE_TEXCOORD0
 attribute highp vec2 UV;
 #endif
+
+#ifdef USE_NORMAL_TEXTURE
 attribute highp vec4 Binormal;
 attribute highp vec4 Tangente;
-
-
-varying highp vec4 vert;
+#endif
 
 #ifdef USE_TEXCOORD0
 varying highp vec2 vecUVCoords;
@@ -16,14 +18,19 @@ varying highp vec2 vecUVCoords;
 uniform highp mat4 WVP;
 uniform highp mat4 World;
 
+varying highp vec4 vert;
 
 
+#ifdef USE_NORMAL_TEXTURE
 varying highp vec3 binormal1;
 varying highp vec3 tangente1;
+#endif
+
 varying highp vec3 normal1;
-varying  highp mat3 world3all;
 
 void main(){
+
+#ifdef USE_NORMAL_TEXTURE
 
 highp mat3 World3;
 
@@ -35,6 +42,9 @@ binormal1 = normalize(World3 *Binormal.xyz);
 tangente1 = normalize(World3 *Tangente.xyz);
 normal1 = normalize(World3 *Normal.xyz);
 
+#else
+normal1 = Normal.xyz;
+#endif
 
 #ifdef USE_TEXCOORD0
 	vecUVCoords = UV;

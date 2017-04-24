@@ -1,8 +1,10 @@
 uniform highp sampler2D diffuse;
-uniform highp sampler2D normalLoc;
 uniform highp sampler2D specularLoc;
 uniform highp sampler2D glossLoc;
 
+#ifdef USE_NORMAL_TEXTURE
+uniform highp sampler2D normalLoc;
+#endif
 
 #ifdef USE_GLOBALLIGHT
 uniform highp vec3 DirectionGlobalLight;
@@ -25,19 +27,27 @@ varying highp vec4 vert;
 varying highp vec2 vecUVCoords;
 #endif
 
+#ifdef USE_NORMAL_TEXTURE
 varying highp vec3 binormal1;
 varying highp vec3 tangente1;
+#endif
 varying highp vec3 normal1;
 
 void main(){
+
+#ifdef USE_NORMAL_TEXTURE
 
 	highp mat3 ejes;
 	ejes[0] = normalize(tangente1);
 	ejes[1] = normalize(binormal1);
 	ejes[2] = normalize(normal1);
-	highp vec3 lucas = texture2D(normalLoc,vecUVCoords).rgb * 2.0 - 1.0;
-	lucas.g = -lucas.g;
-	lucas = normalize(ejes*lucas);
+	highp vec3 normalInWorld = texture2D(normalLoc,vecUVCoords).rgb * 2.0 - 1.0;
+	normalInWorld.g = -normalInWorld.g;
+	normalInWorld = normalize(ejes*normalInWorld);
+#else
+	highp vec3 normalInWorld = normalize(normal1);
+#endif
+
 	highp float lightIntensity;
 
 	lowp vec3 vector = vec3(0, 0, 0);
@@ -46,16 +56,14 @@ void main(){
 	lowp vec3 diffuseLight = vec3(0, 0, 0);
 	highp vec3 colorDiffuse = vec3(1, 1, 1);
 
-	//ESTAS HACIENDO MUCHAS VECES LAS MISMAS OPERACIONES, PositionCamera.xyz - vert.xyz  Y PositionPointLight.xyz - vert.xyz
-	// CADA OPERACION SON CICLOS DE RELOJ EN EL SHADER, MENOS FRAMES POR SEGUNDO, HAZ LA OPERACION UNA VEZ Y GUARDA EL VALOR, ESE VALOR USALO DESPUES,
-	// EVITA TANTAS OPERACIONES IGUALES
+
 #if defined(USE_TEXCOORD0)
 	highp vec3 textureColor = texture2D(diffuse,vecUVCoords).rgb;
 #endif
 
 #ifdef	USE_DIFFUSE
-	lightIntensity = pow(dot(normalize(PositionCamera.xyz - vert.xyz),normalize(reflect((vert.xyz - PositionPointLight.xyz), lucas.xyz)))*0.5+0.5,10.0);
-	//lightIntensity = pow(dot(normalize(PositionPointLight.xyz - vert.xyz + PositionCamera.xyz - vert.xyz),lucas.xyz)ss,10.0);
+	lightIntensity = pow(dot(normalize(-PositionCamera.xyz - vert.xyz),normalize(reflect((vert.xyz - PositionPointLight.xyz), normalInWorld.xyz)))*0.5+0.5,1.0);
+	//lightIntensity = pow(dot(normalize(PositionPointLight.xyz - vert.xyz + PositionCamera.xyz - vert.xyz),normalInWorld.xyz),10.0);
 	
 	clamp(lightIntensity, 0.0, 1.0);
 	diffuseLight = lightIntensity*colorDiffuse;
@@ -63,7 +71,7 @@ void main(){
 #endif
 
 #if defined(USE_GLOBALLIGHT)
-	lightIntensity = dot(normalize(DirectionGlobalLight.xyz), normalize(lucas.xyz));
+	lightIntensity = dot(normalize(DirectionGlobalLight.xyz), normalize(normalInWorld.xyz));
 	if (lightIntensity > 1.0)
 		lightIntensity = 1.0;
 	else if (lightIntensity < 0.0)
@@ -73,7 +81,7 @@ void main(){
 
 #if defined(USE_POINTLIGHT)
 	lightIntensity = 0.0;
-	lightIntensity = dot( normalize(PositionPointLight.xyz - vert.xyz ), normalize(lucas.xyz));
+	lightIntensity = dot( normalize(PositionPointLight.xyz - vert.xyz ), normalize(normalInWorld.xyz));
 	lightIntensity = lightIntensity*(100.0 / length(PositionPointLight.xyz - vert.xyz));
 	if (lightIntensity > 1.0)
 		lightIntensity = 1.0;
@@ -87,6 +95,6 @@ void main(){
 
 #endif
 	gl_FragColor = vec4(vector,1.0);
-	//gl_FragColor =  texture2D(specularLoc,vecUVCoords);
+	//gl_FragColor =  texture2D(glossLoc,vecUVCoords);
 
 }
