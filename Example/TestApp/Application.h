@@ -29,6 +29,8 @@ public:
 
 	PrimitiveManager PrimitiveMgr;
 	PrimitiveInst	primitiveFigs[15];
+	PrimitiveInst	figsFisics[31];
+	bool runBullet = false;
 
 	CVector4D		Position;
 	CVector4D		PositionLight;

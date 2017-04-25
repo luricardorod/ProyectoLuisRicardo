@@ -22,7 +22,7 @@ void TestApp::InitVars() {
 	PositionLight = CVector4D(0.0f, 0.0f, 0.0f, 0);
 	Orientation = CVector4D(0.0f, 0.0f, 0.0f, 0);
 	Scaling		= CVector4D(1.0f, 1.0f, 1.0f, 0);
-	rotationCam = 0;
+	rotationCam = -3.11;
 	worldLights.dirGlobal = CVector4D(0, 0, -1, 0);
 	worldLights.colorGlobal = CVector4D(.2, 0.2, 0.2, 0);
 	worldLights.colorPoint = CVector4D(.7, .7, .7, 0);
@@ -64,7 +64,43 @@ void TestApp::CreateAssets() {
 	for (int i = 0; i < TOTAL_INSTANCES; i++) {
 		primitiveFigs[i].lights = &worldLights;
 	}
-	
+	int countertemp = 0;
+	index = PrimitiveMgr.CreateObject3D("Models/cube2.X");
+	for (int z = 0; z < 3; z++)
+	{
+		for (int  j = 0; j < 3; j++)
+		{
+			for (int i = 0; i < 3; i++)
+			{
+				figsFisics[countertemp].CreateInstance(PrimitiveMgr.GetPrimitive(index), &VP);
+				figsFisics[countertemp].TranslateAbsolute(i*2, j*2+20, z*2 - 50);
+				figsFisics[countertemp].Update();
+				figsFisics[countertemp].lights = &worldLights;
+				countertemp++;
+			}
+		}
+	}
+
+	figsFisics[countertemp].CreateInstance(PrimitiveMgr.GetPrimitive(index), &VP);
+	figsFisics[countertemp].TranslateAbsolute(.5, 0, .5 - 50);
+	figsFisics[countertemp].Update();
+	figsFisics[countertemp].lights = &worldLights;
+	countertemp++;
+	figsFisics[countertemp].CreateInstance(PrimitiveMgr.GetPrimitive(index), &VP);
+	figsFisics[countertemp].TranslateAbsolute(3.5, 0, .5 - 50);
+	figsFisics[countertemp].Update();
+	figsFisics[countertemp].lights = &worldLights;
+	countertemp++;
+	figsFisics[countertemp].CreateInstance(PrimitiveMgr.GetPrimitive(index), &VP);
+	figsFisics[countertemp].TranslateAbsolute(.5, 0, 3 - 50);
+	figsFisics[countertemp].Update();
+	figsFisics[countertemp].lights = &worldLights;
+	countertemp++;
+	figsFisics[countertemp].CreateInstance(PrimitiveMgr.GetPrimitive(index), &VP);
+	figsFisics[countertemp].TranslateAbsolute(3.5, 0, 3 - 50);
+	figsFisics[countertemp].Update();
+	figsFisics[countertemp].lights = &worldLights;
+	countertemp++;
 	CMatrix4D View;
 	PositionCamera = CVector4D(0.0f, -10.0f, 100.0f, 0);
 	CVector4D Up = CVector4D(0.0f, 1.0f, 0.0f, 0);
@@ -160,13 +196,13 @@ void TestApp::InitWorldBullet()
 	//the ground is a cube of side 100 at position y = -56.
 	//the sphere will hit it at y = -6, with center at -5
 	{
-		btCollisionShape* groundShape = new btBoxShape(btVector3(btScalar(50.), btScalar(50.), btScalar(50.)));
+		btCollisionShape* groundShape = new btBoxShape(btVector3(btScalar(500.), btScalar(50.), btScalar(500.)));
 
 		collisionShapes.push_back(groundShape);
 
 		btTransform groundTransform;
 		groundTransform.setIdentity();
-		groundTransform.setOrigin(btVector3(0, -56, 0));
+		groundTransform.setOrigin(btVector3(0, -49.8, 0));
 
 		btScalar mass(0.);
 
@@ -188,15 +224,15 @@ void TestApp::InitWorldBullet()
 	{
 		//create a dynamic rigidbody
 
-		//btCollisionShape* colShape = new btBoxShape(btVector3(1,1,1));
-		btCollisionShape* colShape = new btSphereShape(btScalar(1.));
+		btCollisionShape* colShape = new btBoxShape(btVector3(1,1,1));
+		//btCollisionShape* colShape = new btSphereShape(btScalar(1.));
 		collisionShapes.push_back(colShape);
 
 		/// Create Dynamic Objects
 		btTransform startTransform;
 		startTransform.setIdentity();
 
-		btScalar	mass(1.f);
+		btScalar	mass(10.f);
 
 		//rigidbody is dynamic if and only if mass is non zero, otherwise static
 		bool isDynamic = (mass != 0.f);
@@ -205,7 +241,24 @@ void TestApp::InitWorldBullet()
 		if (isDynamic)
 			colShape->calculateLocalInertia(mass, localInertia);
 
-		startTransform.setOrigin(btVector3(2, 10, 0));
+		for (int z = 0; z < 3; z++)
+		{
+			for (int j = 0; j < 3; j++)
+			{
+				for (int i = 0; i < 3; i++)
+				{
+					startTransform.setOrigin(btVector3(i * 2, j * 2 + 20, z * 2 - 50));
+
+					//using motionstate is recommended, it provides interpolation capabilities, and only synchronizes 'active' objects
+					btDefaultMotionState* myMotionState = new btDefaultMotionState(startTransform);
+					btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, myMotionState, colShape, localInertia);
+					btRigidBody* body = new btRigidBody(rbInfo);
+
+					dynamicsWorld->addRigidBody(body);
+				}
+			}
+		}
+		startTransform.setOrigin(btVector3(.5, 10, .5 - 50));
 
 		//using motionstate is recommended, it provides interpolation capabilities, and only synchronizes 'active' objects
 		btDefaultMotionState* myMotionState = new btDefaultMotionState(startTransform);
@@ -213,6 +266,30 @@ void TestApp::InitWorldBullet()
 		btRigidBody* body = new btRigidBody(rbInfo);
 
 		dynamicsWorld->addRigidBody(body);
+		startTransform.setOrigin(btVector3(3.5, 10, .5 - 50));
+
+		//using motionstate is recommended, it provides interpolation capabilities, and only synchronizes 'active' objects
+		myMotionState = new btDefaultMotionState(startTransform);
+		btRigidBody::btRigidBodyConstructionInfo rbInfo1(mass, myMotionState, colShape, localInertia);
+		body = new btRigidBody(rbInfo1);
+
+		dynamicsWorld->addRigidBody(body);
+		startTransform.setOrigin(btVector3(.5, 10, 3 - 50));
+
+		//using motionstate is recommended, it provides interpolation capabilities, and only synchronizes 'active' objects
+		myMotionState = new btDefaultMotionState(startTransform);
+		btRigidBody::btRigidBodyConstructionInfo rbInfo2(mass, myMotionState, colShape, localInertia);
+		body = new btRigidBody(rbInfo2);
+
+		dynamicsWorld->addRigidBody(body);
+		startTransform.setOrigin(btVector3(3.5, 10, 3 - 50));
+
+		//using motionstate is recommended, it provides interpolation capabilities, and only synchronizes 'active' objects
+		myMotionState = new btDefaultMotionState(startTransform);
+		btRigidBody::btRigidBodyConstructionInfo rbInfo3(mass, myMotionState, colShape, localInertia);
+		body = new btRigidBody(rbInfo3);
+		dynamicsWorld->addRigidBody(body);
+
 	}
 }
 
@@ -265,6 +342,30 @@ void TestApp::UpdateWorldBullet()
 	{
 		btCollisionObject* obj = dynamicsWorld->getCollisionObjectArray()[j];
 		btRigidBody* body = btRigidBody::upcast(obj);
+		btQuaternion qua = body->getOrientation();
+		CMatrix4D pMatrix;
+		CVector4D Q;
+		Q.x = qua.getX();
+		Q.y = qua.getY();
+		Q.z = qua.getZ();
+		Q.w = qua.getW();
+
+		pMatrix.m00 = 1.0f - 2.0f*Q.y*Q.y - 2.0f*Q.z*Q.z;
+		pMatrix.m01 = 2.0f*Q.x*Q.y - 2.0f * Q.z*Q.w;
+		pMatrix.m02 = 2.0f*Q.x*Q.z + 2.0f * Q.w*Q.y;
+		pMatrix.m03 = 0.0f;
+
+		pMatrix.m10 = 2.0f*Q.x*Q.y + 2.0f*Q.z*Q.w;
+		pMatrix.m11 = 1.0f - 2.0f*Q.x*Q.x - 2.0f*Q.z*Q.z;
+		pMatrix.m12 = 2.0f*Q.y*Q.z - 2.0f*Q.x*Q.w;
+		pMatrix.m13 = 0.0f;
+
+		pMatrix.m20 = 2.0f*Q.x*Q.z - 2.0f*Q.y*Q.w;
+		pMatrix.m21 = 2.0f*Q.y*Q.z + 2.0f*Q.x*Q.w;
+		pMatrix.m22 = 1.0f - 2 * Q.x*Q.x - 2 * Q.y*Q.y;
+		pMatrix.m23 = pMatrix.m30 = pMatrix.m31 = pMatrix.m32 = 0.0f;
+
+		pMatrix.m33 = 1.0f;
 		btTransform trans;
 		if (body && body->getMotionState())
 		{
@@ -277,11 +378,20 @@ void TestApp::UpdateWorldBullet()
 		}
 		printf("world pos object %d = %f,%f,%f\n", j, float(trans.getOrigin().getX()), float(trans.getOrigin().getY()), float(trans.getOrigin().getZ()));
 		
+		if (j != 0)
+		{
+			figsFisics[j-1].TranslateAbsolute(trans.getOrigin().getX(), trans.getOrigin().getY(), trans.getOrigin().getZ());
+			figsFisics[j-1].final = pMatrix *figsFisics[j - 1].position;
+			//figsFisics[j - 1].Update();
+		}
 	}
 }
 
 void TestApp::OnUpdate() {
-	UpdateWorldBullet();
+	if (runBullet)
+	{
+		UpdateWorldBullet();
+	}
 	DtTimer.Update();
 	OnInput();
 	Orientation = RotationY(rotationCam) * Orientation;
@@ -324,7 +434,10 @@ void TestApp::OnDraw() {
 	for (int i = 0; i < TOTAL_INSTANCES; i++) {
 		primitiveFigs[i].Draw();
 	}
-
+	for (int i = 0; i < 31; i++)
+	{
+		figsFisics[i].Draw();
+	}
 	pFramework->pVideoDriver->SwapBuffers();
 }
 
@@ -393,7 +506,13 @@ void TestApp::OnInput() {
 		printf("posx:%f\n", PositionCamera.x);
 		printf("posy:%f\n", PositionCamera.y);
 		printf("posz:%f\n", PositionCamera.z);
-
+		printf("rot:%f\n", rotationCam);
+	}
+	if (IManager.PressedKey(SDLK_k)) {
+		runBullet = true;
+	}
+	if (IManager.PressedKey(SDLK_l)) {
+		runBullet = false;
 	}
 }
 

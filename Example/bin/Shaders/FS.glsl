@@ -64,7 +64,7 @@ void main(){
 #ifdef	USE_DIFFUSE
 	lightIntensity = pow(dot(normalize(-PositionCamera.xyz - vert.xyz),normalize(reflect((vert.xyz - PositionPointLight.xyz), normalInWorld.xyz)))*0.5+0.5,1.0);
 	//lightIntensity = pow(dot(normalize(PositionPointLight.xyz - vert.xyz + PositionCamera.xyz - vert.xyz),normalInWorld.xyz),10.0);
-	
+
 	clamp(lightIntensity, 0.0, 1.0);
 	diffuseLight = lightIntensity*colorDiffuse;
 
@@ -90,7 +90,7 @@ void main(){
 	pointLight = lightIntensity*ColorPointLight;
 #endif
 #if defined(USE_TEXCOORD0) 	// ESTAS ACCESANDO MUCHAS VECES AL SAMPLER, ESO ES COSTOSO Y NO ES NECESARIO, HAZLO SOLO UNA VEZ
-	
+
 	vector = textureColor *.1 + textureColor * pointLight + textureColor*globalLight + textureColor*diffuseLight;
 
 #endif
