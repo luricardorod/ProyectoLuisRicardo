@@ -26,19 +26,23 @@ struct VS_OUTPUT {
 };
 
 VS_OUTPUT VS(VS_INPUT input) {
+#ifdef USE_NORMAL_TEXTURE
 	float3x3 rotationTransform;
 	rotationTransform[0] = World[0].xyz;
 	rotationTransform[1] = World[1].xyz;
 	rotationTransform[2] = World[2].xyz;
+#endif
 	
 	VS_OUTPUT OUT;
 	OUT.vert = mul(World, input.position);
 	OUT.hposition = mul(WVP, input.position);
-	
+#ifdef USE_NORMAL_TEXTURE
 	OUT.hnormal = normalize(mul(rotationTransform, input.normal.xyz));
 	OUT.hbinormal = normalize(mul(rotationTransform, input.binormal.xyz));
 	OUT.htangente = normalize(mul(rotationTransform, input.tangente.xyz));
-
+#else
+	OUT.hnormal = normalize(input.normal.xyz);
+#endif
 	OUT.texture0 = input.texture0;
 	return OUT;
 }

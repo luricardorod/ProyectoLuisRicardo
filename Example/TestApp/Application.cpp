@@ -342,30 +342,9 @@ void TestApp::UpdateWorldBullet()
 	{
 		btCollisionObject* obj = dynamicsWorld->getCollisionObjectArray()[j];
 		btRigidBody* body = btRigidBody::upcast(obj);
-		btQuaternion qua = body->getOrientation();
 		CMatrix4D pMatrix;
 		CVector4D Q;
-		Q.x = qua.getX();
-		Q.y = qua.getY();
-		Q.z = qua.getZ();
-		Q.w = qua.getW();
-
-		pMatrix.m00 = 1.0f - 2.0f*Q.y*Q.y - 2.0f*Q.z*Q.z;
-		pMatrix.m01 = 2.0f*Q.x*Q.y - 2.0f * Q.z*Q.w;
-		pMatrix.m02 = 2.0f*Q.x*Q.z + 2.0f * Q.w*Q.y;
-		pMatrix.m03 = 0.0f;
-
-		pMatrix.m10 = 2.0f*Q.x*Q.y + 2.0f*Q.z*Q.w;
-		pMatrix.m11 = 1.0f - 2.0f*Q.x*Q.x - 2.0f*Q.z*Q.z;
-		pMatrix.m12 = 2.0f*Q.y*Q.z - 2.0f*Q.x*Q.w;
-		pMatrix.m13 = 0.0f;
-
-		pMatrix.m20 = 2.0f*Q.x*Q.z - 2.0f*Q.y*Q.w;
-		pMatrix.m21 = 2.0f*Q.y*Q.z + 2.0f*Q.x*Q.w;
-		pMatrix.m22 = 1.0f - 2 * Q.x*Q.x - 2 * Q.y*Q.y;
-		pMatrix.m23 = pMatrix.m30 = pMatrix.m31 = pMatrix.m32 = 0.0f;
-
-		pMatrix.m33 = 1.0f;
+		
 		btTransform trans;
 		if (body && body->getMotionState())
 		{
@@ -376,12 +355,37 @@ void TestApp::UpdateWorldBullet()
 		{
 			trans = obj->getWorldTransform();
 		}
-		printf("world pos object %d = %f,%f,%f\n", j, float(trans.getOrigin().getX()), float(trans.getOrigin().getY()), float(trans.getOrigin().getZ()));
+		//printf("world pos object %d = %f,%f,%f\n", j, float(trans.getOrigin().getX()), float(trans.getOrigin().getY()), float(trans.getOrigin().getZ()));
 		
 		if (j != 0)
 		{
+			btQuaternion qua = trans.getRotation();
+
+			Q.x = qua.getX();
+			Q.y = qua.getY();
+			Q.z = qua.getZ();
+			Q.w = qua.getW();
+
+			pMatrix.m00 = 1.0f - 2.0f*Q.y*Q.y - 2.0f*Q.z*Q.z;
+			pMatrix.m01 = 2.0f*Q.x*Q.y - 2.0f * Q.z*Q.w;
+			pMatrix.m02 = 2.0f*Q.x*Q.z + 2.0f * Q.w*Q.y;
+			pMatrix.m03 = 0.0f;
+
+			pMatrix.m10 = 2.0f*Q.x*Q.y + 2.0f*Q.z*Q.w;
+			pMatrix.m11 = 1.0f - 2.0f*Q.x*Q.x - 2.0f*Q.z*Q.z;
+			pMatrix.m12 = 2.0f*Q.y*Q.z - 2.0f*Q.x*Q.w;
+			pMatrix.m13 = 0.0f;
+
+			pMatrix.m20 = 2.0f*Q.x*Q.z - 2.0f*Q.y*Q.w;
+			pMatrix.m21 = 2.0f*Q.y*Q.z + 2.0f*Q.x*Q.w;
+			pMatrix.m22 = 1.0f - 2.0f * Q.x*Q.x - 2.0f * Q.y*Q.y;
+			pMatrix.m23 = pMatrix.m30 = pMatrix.m31 = pMatrix.m32 = 0.0f;
+
+			pMatrix.m33 = 1.0f;
+
+
 			figsFisics[j-1].TranslateAbsolute(trans.getOrigin().getX(), trans.getOrigin().getY(), trans.getOrigin().getZ());
-			figsFisics[j-1].final = pMatrix *figsFisics[j - 1].position;
+			figsFisics[j - 1].final = pMatrix * figsFisics[j - 1].position;
 			//figsFisics[j - 1].Update();
 		}
 	}

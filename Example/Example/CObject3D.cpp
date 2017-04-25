@@ -1312,17 +1312,20 @@ void CObject3D::Draw(float *t, float *vp) {
 
 		if (uvAttribLoc != -1)
 			glEnableVertexAttribArray(uvAttribLoc);
-		glEnableVertexAttribArray(binormalAttribLoc);
-		glEnableVertexAttribArray(tangenteAttribLoc);
+		if (binormalAttribLoc != -1)
+			glEnableVertexAttribArray(binormalAttribLoc);
+		if (tangenteAttribLoc != -1)
+			glEnableVertexAttribArray(tangenteAttribLoc);
 
 		glVertexAttribPointer(vertexAttribLoc, 4, GL_FLOAT, GL_FALSE, sizeof(CVertex), BUFFER_OFFSET(0));
 		glVertexAttribPointer(normalAttribLoc, 4, GL_FLOAT, GL_FALSE, sizeof(CVertex), BUFFER_OFFSET(16));
 
 		if (uvAttribLoc != -1)
 			glVertexAttribPointer(uvAttribLoc, 2, GL_FLOAT, GL_FALSE, sizeof(CVertex), BUFFER_OFFSET(32));
-
-		glVertexAttribPointer(binormalAttribLoc, 4, GL_FLOAT, GL_FALSE, sizeof(CVertex), BUFFER_OFFSET(40));
-		glVertexAttribPointer(tangenteAttribLoc, 4, GL_FLOAT, GL_FALSE, sizeof(CVertex), BUFFER_OFFSET(56));
+		if (binormalAttribLoc != -1)
+			glVertexAttribPointer(binormalAttribLoc, 4, GL_FLOAT, GL_FALSE, sizeof(CVertex), BUFFER_OFFSET(40));
+		if (tangenteAttribLoc != -1)
+			glVertexAttribPointer(tangenteAttribLoc, 4, GL_FLOAT, GL_FALSE, sizeof(CVertex), BUFFER_OFFSET(56));
 
 		
 
