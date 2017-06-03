@@ -32,6 +32,10 @@ void TestApp::InitVars() {
 }
 
 void TestApp::CreateAssets() {	
+
+	GBufferPass = pFramework->pVideoDriver->CreateRT(4, BaseRT::RGBA8, BaseRT::F32, 0, 0);
+	DeferredPass = pFramework->pVideoDriver->CreateRT(1, BaseRT::RGBA8, BaseRT::F32, 0, 0);
+
 	PrimitiveMgr.SetVP(&VP);
 
 
@@ -47,6 +51,7 @@ void TestApp::CreateAssets() {
 
 	primitiveFigs[2].CreateInstance(PrimitiveMgr.GetPrimitive(index), &VP);
 	index = PrimitiveMgr.CreateObject3D("Models/CerdoNuevo.X");
+
 	primitiveFigs[3].CreateInstance(PrimitiveMgr.GetPrimitive(index), &VP);
 	index = PrimitiveMgr.CreateObject3D("Models/Scene.X");
 	primitiveFigs[4].CreateInstance(PrimitiveMgr.GetPrimitive(index), &VP);
@@ -60,7 +65,7 @@ void TestApp::CreateAssets() {
 	primitiveFigs[8].CreateInstance(PrimitiveMgr.GetPrimitive(index), &VP);
 	index = PrimitiveMgr.CreateObject3D("Models/NuCroc.X");
 	primitiveFigs[9].CreateInstance(PrimitiveMgr.GetPrimitive(index), &VP);
-	
+
 	for (int i = 0; i < TOTAL_INSTANCES; i++) {
 		primitiveFigs[i].lights = &worldLights;
 	}
@@ -114,6 +119,8 @@ void TestApp::CreateAssets() {
 	primitiveFigs[0].Update();
 	primitiveFigs[1].TranslateAbsolute(0, 0, 0);
 	primitiveFigs[1].Update();
+	primitiveFigs[5].ScaleAbsolute(.5);
+	primitiveFigs[5].Update();
 	//primitiveFigs[2].TranslateAbsolute(0, -0.5, 0);
 	//primitiveFigs[2].Update();
 	primitiveFigs[3].TranslateAbsolute(100.0f, 0, -20);
@@ -157,6 +164,51 @@ void TestApp::CreateAssets() {
 	worldLights.posPoint = CVector4D(primitiveFigs[7].position.m30, primitiveFigs[7].position.m31, primitiveFigs[7].position.m32,0);
 	PositionLight = worldLights.posPoint;
 	InitWorldBullet();
+
+
+	QuadIndex = PrimitiveMgr.CreateQuad();
+	rendertargets[0].CreateInstance(PrimitiveMgr.GetPrimitive(QuadIndex), &VP);
+	PrimitiveMgr.GetPrimitive(QuadIndex)->SetTexture(pFramework->pVideoDriver->RTs[0]->vColorTextures[0], 0);
+	PrimitiveMgr.GetPrimitive(QuadIndex)->SetTexture(pFramework->pVideoDriver->RTs[0]->vColorTextures[1], 1);
+	PrimitiveMgr.GetPrimitive(QuadIndex)->SetTexture(pFramework->pVideoDriver->RTs[0]->vColorTextures[2], 2);
+	PrimitiveMgr.GetPrimitive(QuadIndex)->SetTexture(pFramework->pVideoDriver->RTs[0]->vColorTextures[3], 3);
+	PrimitiveMgr.GetPrimitive(QuadIndex)->SetTexture(pFramework->pVideoDriver->RTs[0]->pDepthTexture, 4);
+
+	rendertargets[1].CreateInstance(PrimitiveMgr.GetPrimitive(QuadIndex), &VP);
+	rendertargets[2].CreateInstance(PrimitiveMgr.GetPrimitive(QuadIndex), &VP);
+	rendertargets[3].CreateInstance(PrimitiveMgr.GetPrimitive(QuadIndex), &VP);
+	rendertargets[4].CreateInstance(PrimitiveMgr.GetPrimitive(QuadIndex), &VP);
+	rendertargets[5].CreateInstance(PrimitiveMgr.GetPrimitive(QuadIndex), &VP);
+	rendertargets[6].CreateInstance(PrimitiveMgr.GetPrimitive(QuadIndex), &VP);
+	
+	rendertargets[1].ScaleAbsolute(.2);
+	rendertargets[1].TranslateAbsolute(-.8, .8, 0);
+	rendertargets[1].Update();
+
+	rendertargets[2].ScaleAbsolute(.2);
+	rendertargets[2].TranslateAbsolute(-.8, 0, 0);
+	rendertargets[2].Update();
+
+	rendertargets[3].ScaleAbsolute(.2);
+	rendertargets[3].TranslateAbsolute(-.8, -.8, 0);
+	rendertargets[3].Update();
+
+	rendertargets[4].ScaleAbsolute(.2);
+	rendertargets[4].TranslateAbsolute(.8, .8, 0);
+	rendertargets[4].Update();
+
+	rendertargets[5].ScaleAbsolute(.2);
+	rendertargets[5].TranslateAbsolute(.8, 0, 0);
+	rendertargets[5].Update();
+
+	rendertargets[6].ScaleAbsolute(.2);
+	rendertargets[6].TranslateAbsolute(.8, -.8, 0);
+	rendertargets[6].Update();
+
+	rendertargets[0].ScaleAbsolute(.2);
+	//rendertargets[6].TranslateAbsolute(-1, 1, 0);
+	rendertargets[0].Update();
+
 }
 
 void TestApp::DestroyAssets() {
@@ -434,7 +486,8 @@ void TestApp::OnUpdate() {
 
 void TestApp::OnDraw() {
 	pFramework->pVideoDriver->Clear();
-	
+	//pFramework->pVideoDriver->PushRT(GBufferPass);
+
 	for (int i = 0; i < TOTAL_INSTANCES; i++) {
 		primitiveFigs[i].Draw();
 	}
@@ -442,6 +495,20 @@ void TestApp::OnDraw() {
 	{
 		figsFisics[i].Draw();
 	}
+	for (int i = 0; i < 7; i++)
+	{
+		rendertargets[i].Draw();
+	}
+	//pFramework->pVideoDriver->PopRT();
+
+	//pFramework->pVideoDriver->PushRT(DeferredPass);
+	PrimitiveMgr.GetPrimitive(QuadIndex)->SetTexture(pFramework->pVideoDriver->RTs[0]->vColorTextures[0], 0);
+	PrimitiveMgr.GetPrimitive(QuadIndex)->SetTexture(pFramework->pVideoDriver->RTs[0]->vColorTextures[1], 1);
+	PrimitiveMgr.GetPrimitive(QuadIndex)->SetTexture(pFramework->pVideoDriver->RTs[0]->vColorTextures[2], 2);
+	PrimitiveMgr.GetPrimitive(QuadIndex)->SetTexture(pFramework->pVideoDriver->RTs[0]->vColorTextures[3], 3);
+	PrimitiveMgr.GetPrimitive(QuadIndex)->SetTexture(pFramework->pVideoDriver->RTs[0]->pDepthTexture, 4);
+
+
 	pFramework->pVideoDriver->SwapBuffers();
 }
 

@@ -80,6 +80,15 @@
     <ClInclude Include="Config.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="GLRT.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CQuad.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="D3DXRT.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Core.cpp">
@@ -140,6 +149,15 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Sprite.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GLRT.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CQuad.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D3DXRT.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -664,7 +664,7 @@ void CObject3D::Create(char * path) {
 		}
 	}
 	
-#ifdef USING_OPENGL_ES
+#ifdef USING_GL_COMMON
 	char *vsSourceP = file2string("Shaders/VS.glsl");
 	char *fsSourceP = file2string("Shaders/FS.glsl");
 #elif defined(USING_D3D11)
@@ -697,7 +697,7 @@ void CObject3D::Create(char * path) {
 	vstr = Defines + vstr;
 	fstr = Defines + fstr;
 
-#ifdef USING_OPENGL_ES
+#ifdef USING_GL_COMMON
 	std::string wireframeShader = "attribute highp vec4 Vertex;\n\n";
 	wireframeShader += "uniform highp mat4 WVP;\n\n";
 
@@ -1253,7 +1253,7 @@ void CObject3D::Draw(float *t, float *vp) {
 
 	if (t)
 		transform = t;
-#ifdef USING_OPENGL_ES
+#ifdef USING_GL_COMMON
 
 	CMatrix4D VP = CMatrix4D(vp);
 	CMatrix4D WVP = transform*VP;
@@ -1478,7 +1478,7 @@ void CObject3D::Draw(float *t, float *vp) {
 }
 
 void CObject3D::Destroy() {
-#ifdef USING_OPENGL_ES
+#ifdef USING_GL_COMMON
 	glDeleteProgram(shaderID);
 #endif
 }

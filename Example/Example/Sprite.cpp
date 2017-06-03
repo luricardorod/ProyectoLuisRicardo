@@ -7,7 +7,7 @@ extern ComPtr<ID3D11DeviceContext>     D3D11DeviceContext;
 #endif
 
 void Sprite::Create(char *path) {
-#ifdef USING_OPENGL_ES
+#ifdef USING_GL_COMMON
 
 	Texture	*tex = new TextureGL;
 	tex->props = 4;
@@ -46,7 +46,7 @@ void Sprite::Create(char *path) {
 	indices[3] = 3;
 	indices[4] = 2;
 	indices[5] = 0;
-#ifdef USING_OPENGL_ES
+#ifdef USING_GL_COMMON
 
 	shaderID = glCreateProgram();
 
@@ -208,7 +208,7 @@ void Sprite::Draw(float *t, float *vp) {
 
 	if (t)
 		transform = t;
-#ifdef USING_OPENGL_ES
+#ifdef USING_GL_COMMON
 
 	glUseProgram(shaderID);
 	glBindBuffer(GL_ARRAY_BUFFER, VB);
@@ -272,7 +272,7 @@ void Sprite::Draw(float *t, float *vp) {
 }
 
 void Sprite::Destroy() {
-#ifdef USING_OPENGL_ES
+#ifdef USING_GL_COMMON
 	glDeleteProgram(shaderID);
 #endif
 }

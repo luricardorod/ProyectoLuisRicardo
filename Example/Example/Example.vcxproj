@@ -25,10 +25,13 @@
     <ClInclude Include="CObject3D.h" />
     <ClInclude Include="Config.h" />
     <ClInclude Include="Core.h" />
+    <ClInclude Include="CQuad.h" />
     <ClInclude Include="CubeGL.h" />
     <ClInclude Include="CVector4D.h" />
     <ClInclude Include="D3DXDriver.h" />
+    <ClInclude Include="D3DXRT.h" />
     <ClInclude Include="GLDriver.h" />
+    <ClInclude Include="GLRT.h" />
     <ClInclude Include="InputManager.h" />
     <ClInclude Include="CMatrix4D.h" />
     <ClInclude Include="PrimitiveBase.h" />
@@ -48,10 +51,13 @@
     <ClCompile Include="CerdoGL.cpp" />
     <ClCompile Include="CObject3D.cpp" />
     <ClCompile Include="Core.cpp" />
+    <ClCompile Include="CQuad.cpp" />
     <ClCompile Include="CubeGL.cpp" />
     <ClCompile Include="CVector4D.cpp" />
     <ClCompile Include="D3DXDriver.cpp" />
+    <ClCompile Include="D3DXRT.cpp" />
     <ClCompile Include="GLDriver.cpp" />
+    <ClCompile Include="GLRT.cpp" />
     <ClCompile Include="InputManager.cpp" />
     <ClCompile Include="CMatrix4D.cpp" />
     <ClCompile Include="PrimitiveInstance.cpp" />
@@ -125,7 +131,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_CRT_SECURE_NO_WARNINGS;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SolutionDir)Librerias\SDL-1.2.14\include;$(SolutionDir)Librerias\OGLES2\pvr\include;$(SolutionDir)Librerias\DXMath\include;$(SolutionDir)Librerias\stb\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Librerias\SDL-1.2.14\include;$(SolutionDir)Librerias\OGLES2\pvr\include;$(SolutionDir)Librerias\DXMath\include;$(SolutionDir)Librerias\stb\include;$(SolutionDir)Librerias\glew-2.0.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <Link>

@@ -1,5 +1,5 @@
 #include "Win32Framework.h"
-#ifdef USING_OPENGL_ES
+#ifdef USING_GL_COMMON
 #include "GLDriver.h"
 #elif defined(USING_D3D11)
 #include "D3DXDriver.h"
@@ -21,11 +21,15 @@ void Win32Framework::OnCreateApplication(){
 	int flags = SDL_HWSURFACE;
 	//flags |= SDL_FULLSCREEN;
 	//flags |= SDL_RESIZABLE;
+#if defined(USING_OPENGL)
+	flags = flags | SDL_OPENGL;
+	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
+#endif
 	int width = 1280;
 	int height = 720;
 	SDL_SetVideoMode(width, height, 32, flags);
 
-#ifdef USING_OPENGL_ES
+#ifdef USING_GL_COMMON
 	pVideoDriver = new GLDriver;
 #elif defined(USING_D3D11)
 	pVideoDriver = new D3DXDriver;

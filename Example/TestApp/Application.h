@@ -30,6 +30,8 @@ public:
 	PrimitiveManager PrimitiveMgr;
 	PrimitiveInst	primitiveFigs[15];
 	PrimitiveInst	figsFisics[31];
+	PrimitiveInst	rendertargets[7];
+
 	bool runBullet = false;
 
 	CVector4D		Position;
@@ -51,4 +53,8 @@ public:
 	btSequentialImpulseConstraintSolver* solver;
 	btDiscreteDynamicsWorld* dynamicsWorld;
 	btAlignedObjectArray<btCollisionShape*> collisionShapes;
+
+	int				GBufferPass;
+	int				DeferredPass;
+	int				QuadIndex;
 };

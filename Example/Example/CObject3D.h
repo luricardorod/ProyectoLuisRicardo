@@ -2,7 +2,7 @@
 #define UAD_COBJECT3D_GL_H
 
 #include "Config.h"
-#ifdef USING_OPENGL_ES
+#ifdef USING_GL_COMMON
 #include <GLES2/gl2.h>
 #include <GLES2/gl2ext.h>
 #include "TextureGL.h"
@@ -49,7 +49,7 @@ public:
 	void Draw(float *t, float *vp);
 	void Destroy();
 	bool viewWareFrame = true;
-#ifdef USING_OPENGL_ES
+#ifdef USING_GL_COMMON
 	struct mesh {
 		GLuint			VB;
 		GLuint			IBMesh;

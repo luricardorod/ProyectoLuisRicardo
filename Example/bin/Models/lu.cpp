@@ -415,7 +415,7 @@ void CObject3D::Create(char * path) {
 			counterIndexBuffer++;
 		}
 	}
-#ifdef USING_OPENGL_ES
+#ifdef USING_GL_COMMON
 	shaderID = glCreateProgram();
 	char *vsSourceP = file2string("Shaders/VS.glsl");
 	char *fsSourceP = file2string("Shaders/FS.glsl");
@@ -443,7 +443,7 @@ void CObject3D::Create(char * path) {
 	vstr = Defines + vstr;
 	fstr = Defines + fstr;
 
-#ifdef USING_OPENGL_ES
+#ifdef USING_GL_COMMON
 
 	GLuint vshader_id = createShader(GL_VERTEX_SHADER, (char*)vstr.c_str());
 	GLuint fshader_id = createShader(GL_FRAGMENT_SHADER, (char*)fstr.c_str());
@@ -633,7 +633,7 @@ void CObject3D::Draw(float *t, float *vp) {
 
 	if (t)
 		transform = t;
-#ifdef USING_OPENGL_ES
+#ifdef USING_GL_COMMON
 
 	glUseProgram(shaderID);
 	CMatrix4D VP = CMatrix4D(vp);
@@ -725,7 +725,7 @@ void CObject3D::Draw(float *t, float *vp) {
 }
 
 void CObject3D::Destroy() {
-#ifdef USING_OPENGL_ES
+#ifdef USING_GL_COMMON
 	glDeleteProgram(shaderID);
 #endif
 }

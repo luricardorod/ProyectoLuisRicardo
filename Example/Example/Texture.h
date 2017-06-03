@@ -46,9 +46,9 @@ public:
 	unsigned int	props;
 	unsigned int	params;
 	int	x, y;
-	unsigned short	id;
 	unsigned char	bounded;
 	unsigned char	mipmaps;
+	unsigned int	id;
 
 };
 

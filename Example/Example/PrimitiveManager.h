@@ -10,6 +10,7 @@ public:
 	void SetVP(CMatrix4D *vp) {
 		pVP = vp;
 	}
+	int CreateQuad();
 	int  CreateTriangle();
 	int	 CreateCube();
 	int  CreateObject3D(char * path);

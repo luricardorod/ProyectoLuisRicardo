@@ -30,6 +30,12 @@ public:
 	int		Width;
 	int		Height;
 	HWND	hwnd;
+
+	int 	CreateRT(int nrt, int cf, int df, int w, int h);
+	void	PushRT(int id);
+	void	PopRT();
+	void    DestroyRT(int id);
+	void	DestroyRTs();
 };
 
 #endif

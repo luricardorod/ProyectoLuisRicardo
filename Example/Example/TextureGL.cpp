@@ -73,3 +73,7 @@ void TextureGL::LoadAPITexture(unsigned char* buffer) {
 void TextureGL::LoadAPITextureCompressed(unsigned char* buffer) {
 
 }
+
+void TextureGL::DestroyAPITexture() {
+	glDeleteTextures(1, &id);
+}

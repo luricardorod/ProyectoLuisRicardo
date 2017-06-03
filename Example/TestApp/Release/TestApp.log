@@ -1,0 +1,4 @@
+﻿  Application.cpp
+e:\uad\6to\graficas\proyectoluisricardo\example\testapp\Application.h(7): fatal error C1083: Cannot open include file: 'btBulletDynamicsCommon.h': No such file or directory
+  TestApp.cpp
+e:\uad\6to\graficas\proyectoluisricardo\example\testapp\Application.h(7): fatal error C1083: Cannot open include file: 'btBulletDynamicsCommon.h': No such file or directory

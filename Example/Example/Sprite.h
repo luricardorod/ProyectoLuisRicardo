@@ -2,7 +2,7 @@
 #define UAD_SPRITE
 
 #include "Config.h"
-#ifdef USING_OPENGL_ES
+#ifdef USING_GL_COMMON
 #include <GLES2/gl2.h>
 #include <GLES2/gl2ext.h>
 #include "TextureGL.h"
@@ -58,7 +58,7 @@ public:
 	unsigned short	indices[6];
 	CMatrix4D	transform;
 	~Sprite();
-#ifdef USING_OPENGL_ES
+#ifdef USING_GL_COMMON
 	Sprite() : shaderID(0) {}
 	GLuint	shaderID;
 	GLuint	vertexAttribLoc;
