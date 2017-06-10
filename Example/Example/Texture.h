@@ -29,23 +29,25 @@ public:
 	}
 
 
-	~Texture() {
+	virtual ~Texture() {
 
 	}
 
 	int				LoadTexture(char *fn);
+	void			DestroyTex();
 
 	virtual void	LoadAPITexture(unsigned char* buffer) = 0;
 	virtual void	LoadAPITextureCompressed(unsigned char* buffer) = 0;
+	virtual void	DestroyAPITexture() = 0;
 
-	virtual void	SetTextureParams(unsigned int &target) = 0;
+	virtual void	SetTextureParams() = 0;
 	virtual void	GetFormatBpp(unsigned int &props, unsigned int &format, unsigned int &bpp) = 0;
 
 	char			optname[128];
 	unsigned int	size;
 	unsigned int	props;
 	unsigned int	params;
-	int	x, y;
+	unsigned int	x, y;
 	unsigned char	bounded;
 	unsigned char	mipmaps;
 	unsigned int	id;

@@ -7,8 +7,22 @@ struct VS_OUTPUT {
 	float2 texture0  : TEXCOORD;
 };
 
+SamplerState SS;
+#ifdef DEFERRED_PASS
+Texture2D tex0 : register(t0);
+Texture2D tex1 : register(t1);
+Texture2D tex2 : register(t2);
+Texture2D tex3 : register(t3);
+Texture2D tex4 : register(t4);
 float4 FS(VS_OUTPUT input) : SV_TARGET{
-float4 color = float4(input.texture0.x, input.texture0.y, .2, .2);
-
-return  color;
+	//return tex0.Sample(SS, input.texture0);
+	return float4(0,1,0,0);
 }
+#else
+Texture2D tex0 : register(t0);
+float4 FS(VS_OUTPUT input) : SV_TARGET{
+	//return float4(0,1,1,0);
+
+	return tex0.Sample(SS, input.texture0);
+}
+#endif

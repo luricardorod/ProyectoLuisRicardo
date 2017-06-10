@@ -26,6 +26,7 @@
     <ClInclude Include="Config.h" />
     <ClInclude Include="Core.h" />
     <ClInclude Include="CQuad.h" />
+    <ClInclude Include="CShaderD3DX.h" />
     <ClInclude Include="CubeGL.h" />
     <ClInclude Include="CVector4D.h" />
     <ClInclude Include="D3DXDriver.h" />
@@ -47,11 +48,13 @@
     <ClInclude Include="Win32Framework.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="BaseDriver.cpp" />
     <ClCompile Include="CBMPCharge.cpp" />
     <ClCompile Include="CerdoGL.cpp" />
     <ClCompile Include="CObject3D.cpp" />
     <ClCompile Include="Core.cpp" />
     <ClCompile Include="CQuad.cpp" />
+    <ClCompile Include="CShaderD3DX.cpp" />
     <ClCompile Include="CubeGL.cpp" />
     <ClCompile Include="CVector4D.cpp" />
     <ClCompile Include="D3DXDriver.cpp" />

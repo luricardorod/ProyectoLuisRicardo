@@ -58,3 +58,11 @@ void PrimitiveInst::Draw(){
 	pBase->lights = lights;
 	pBase->Draw(&final.m[0][0],&(*pViewProj).m[0][0]);
 }
+
+void PrimitiveInst::SetSignature(unsigned int f) {
+	pBase->SetGlobalSignature(f);
+}
+
+void PrimitiveInst::SetTexture(Texture* tex, int index) {
+	pBase->SetTexture(tex, index);
+}

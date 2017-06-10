@@ -2,7 +2,8 @@
 #define BUFFER_OFFSET(i) ((char *)NULL + (i))
 #include <string>
 #include <map>
-
+#include "BaseDriver.h"
+#include "CShaderD3DX.h"
 #ifdef USING_D3D11
 extern ComPtr<ID3D11Device>            D3D11Device;
 extern ComPtr<ID3D11DeviceContext>     D3D11DeviceContext;
@@ -672,30 +673,7 @@ void CObject3D::Create(char * path) {
 	char *fsSourceP = file2string("Shaders/FS.hlsl");
 #endif
 
-	std::string vstr = std::string(vsSourceP);
-	std::string fstr = std::string(fsSourceP);
-	std::string Defines = "";
-
-#ifdef USE_TEXCOORD0
-	Defines += "#define USE_TEXCOORD0\n\n";
-#endif
-#ifdef USE_GLOBALLIGHT
-	Defines += "#define USE_GLOBALLIGHT\n\n";
-#endif
-#ifdef	USE_POINTLIGHT
-	Defines += "#define USE_POINTLIGHT\n\n";
-#endif
-#ifdef	USE_DIFFUSE
-	Defines += "#define USE_DIFFUSE\n\n";
-#endif
-
-	if (meshes[0].infoTexture.textures[0].normal)
-	{
-		Defines += "#define USE_NORMAL_TEXTURE\n\n";
-	}
-
-	vstr = Defines + vstr;
-	fstr = Defines + fstr;
+	
 
 #ifdef USING_GL_COMMON
 	std::string wireframeShader = "attribute highp vec4 Vertex;\n\n";
@@ -968,8 +946,8 @@ void CObject3D::Create(char * path) {
 		}
 	}
 
-	D3D11DeviceContext->VSSetShader(pVSRes.Get(), 0, 0);
-	D3D11DeviceContext->PSSetShader(pFSRes.Get(), 0, 0);
+	//D3D11DeviceContext->VSSetShader(pVSRes.Get(), 0, 0);
+	//D3D11DeviceContext->PSSetShader(pFSRes.Get(), 0, 0);
 
 	D3D11_INPUT_ELEMENT_DESC vertexDeclaration2[] = {
 		{ "POSITION" , 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 0,  D3D11_INPUT_PER_VERTEX_DATA, 0 },
@@ -1038,75 +1016,46 @@ void CObject3D::Create(char * path) {
 			return;
 		}
 	}
-	{
-		VS_blob = nullptr; // VS_blob would contain the binary compiled vertex shader program
-		ComPtr<ID3DBlob> errorBlob = nullptr; // In case of error, this blob would contain the compilation errors
-											  // We compile the source, the entry point is VS in our vertex shader, and we are using shader model 5 (d3d11)
-		hr = D3DCompile((char*)vstr.c_str(), (UINT)strlen((char*)vstr.c_str()), 0, 0, 0, "VS", "vs_5_0", 0, 0, &VS_blob, &errorBlob);
-		if (hr != S_OK) { // some error
+	
+	////////////////////////////////////////////////////////
+	//SIGANTURE
 
-			if (errorBlob) { // print the error if the blob is valid
-				printf("errorBlob shader[%s]", (char*)errorBlob->GetBufferPointer());
-				flagShader = false;
-				return;
-			}
-			// No binary data, return.
-			if (VS_blob) {
-				return;
-			}
-		}
-		// With the binary blob now we create the Vertex Shader Object
-		hr = D3D11Device->CreateVertexShader(VS_blob->GetBufferPointer(), VS_blob->GetBufferSize(), 0, &pVS);
-		if (hr != S_OK) {
-			printf("Error Creating Vertex Shader\n");
-			return;
-		}
+	int Sig = 0;
+
+	Sig |= Signature::HAS_NORMALS;
+	Sig |= Signature::HAS_TEXCOORDS0;
+	Sig |= Signature::HAS_TANGENTS;
+	Sig |= Signature::HAS_BINORMALS;
+	std::string vstr = std::string(vsSourceP);
+	std::string fstr = std::string(fsSourceP);
+	
+
+	if (meshes[0].infoTexture.textures[0].normal)
+	{
+		Sig |= Signature::NORMAL_MAP;
 	}
-	// Same for the Pixel Shader, just change the entry point, blob, etc, same exact method
+	signature = Sig;
+	flagShader = true;
+	if (g_pBaseDriver->CreateShader(vstr, fstr, Sig) == -1)
 	{
-		FS_blob = nullptr;
-		ComPtr<ID3DBlob> errorBlob = nullptr;
-		hr = D3DCompile((char*)fstr.c_str(), (UINT)strlen((char*)fstr.c_str()), 0, 0, 0, "FS", "ps_5_0", 0, 0, &FS_blob, &errorBlob);
-		if (hr != S_OK) {
-			if (errorBlob) {
-				printf("errorBlob shader1[%s]", (char*)errorBlob->GetBufferPointer());
-				flagShader = false;
-				return;
-			}
-
-			if (FS_blob) {
-				return;
-			}
-		}
-
-		hr = D3D11Device->CreatePixelShader(FS_blob->GetBufferPointer(), FS_blob->GetBufferSize(), 0, &pFS);
-		if (hr != S_OK) {
-			printf("Error Creating Pixel Shader\n");
-			return;
-		}
+		flagShader = false;
+	}
+	else
+	{
+		Sig |= Signature::GBUFF_PASS;
+		g_pBaseDriver->CreateShader(vstr, fstr, Sig);
+		Sig |= Signature::SHADOW_MAP_PASS;
+		g_pBaseDriver->CreateShader(vstr, fstr, Sig);
 	}
 
 	if (flagShader)
 	{
 
-		D3D11DeviceContext->VSSetShader(pVS.Get(), 0, 0);
-		D3D11DeviceContext->PSSetShader(pFS.Get(), 0, 0);
-
-		D3D11_INPUT_ELEMENT_DESC vertexDeclaration[] = {
-			{ "POSITION" , 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 0,  D3D11_INPUT_PER_VERTEX_DATA, 0 },
-			{ "NORMAL"   , 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 16, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-			{ "TEXCOORD"   , 0, DXGI_FORMAT_R32G32_FLOAT, 0, 32, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-			{ "BINORMAL"   , 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 40, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-			{ "TANGENTE"   , 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 56, D3D11_INPUT_PER_VERTEX_DATA, 0 }
-		};
-		hr = D3D11Device->CreateInputLayout(vertexDeclaration, ARRAYSIZE(vertexDeclaration), VS_blob->GetBufferPointer(), VS_blob->GetBufferSize(), &Layout);
-		if (hr != S_OK) {
-			printf("Error Creating Input Layout\n");
-			return;
-		}
+		CShaderD3DX *s = dynamic_cast<CShaderD3DX*>(g_pBaseDriver->GetShaderSig(signature));
 
 		// We Bound the input layout
-		D3D11DeviceContext->IASetInputLayout(Layout.Get());
+		D3D11DeviceContext->IASetInputLayout(s->Layout.Get());
+
 		bdesc.Usage = D3D11_USAGE_DEFAULT;
 		bdesc.ByteWidth = sizeof(CObject3D::CBuffer);
 		bdesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
@@ -1117,8 +1066,6 @@ void CObject3D::Create(char * path) {
 			return;
 		}
 		// Set the constant buffer to the shader programs: Note that we use the Device Context to manage the resources
-		D3D11DeviceContext->VSSetConstantBuffers(0, 1, pd3dConstantBuffer.GetAddressOf());
-		D3D11DeviceContext->PSSetConstantBuffers(0, 1, pd3dConstantBuffer.GetAddressOf());
 
 		std::map<std::string, int> list;
 		int counterText = 0;
@@ -1394,6 +1341,8 @@ void CObject3D::Draw(float *t, float *vp) {
 	// We bound to use the vertex and pixel shader of this primitive
 
 	if (lights->flagWireFrame || !flagShader)
+	//if (true)
+
 	{
 		D3D11DeviceContext->VSSetShader(pVSRes.Get(), 0, 0);
 		D3D11DeviceContext->PSSetShader(pFSRes.Get(), 0, 0);
@@ -1420,10 +1369,14 @@ void CObject3D::Draw(float *t, float *vp) {
 	}
 	else
 	{
-		D3D11DeviceContext->VSSetShader(pVS.Get(), 0, 0);
-		D3D11DeviceContext->PSSetShader(pFS.Get(), 0, 0);
-		// Set the input layout to let the shader program know what kind of vertex data we have
-		D3D11DeviceContext->IASetInputLayout(Layout.Get());
+		CShaderD3DX *s = 0;
+		unsigned int sig = signature;
+		sig |= gSig;
+		s = dynamic_cast<CShaderD3DX*>(g_pBaseDriver->GetShaderSig(sig));
+		
+		D3D11DeviceContext->VSSetShader(s->pVS.Get(), 0, 0);
+		D3D11DeviceContext->PSSetShader(s->pFS.Get(), 0, 0);
+		D3D11DeviceContext->IASetInputLayout(s->Layout.Get());
 		// We update the constant buffer with the current matrices
 		D3D11DeviceContext->UpdateSubresource(pd3dConstantBuffer.Get(), 0, 0, &CnstBuffer, 0, 0);
 		// Once updated the constant buffer we send them to the shader programs

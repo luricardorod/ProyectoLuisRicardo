@@ -15,7 +15,6 @@ Texture2D SpecularRGB : register(t3);
 
 
 SamplerState SS;
-
 struct VS_OUTPUT {
 	float4 hposition : SV_POSITION;
 	float3 hnormal   : NORMAL;
@@ -23,7 +22,71 @@ struct VS_OUTPUT {
 	float3 hbinormal   : BINORMAL;
 	float3 htangente   : TANGENTE;
 	float4 vert      : VERTICE;
+  float4 Pos		: TEXCOORD1;
 };
+#if defined(G_BUFFER_PASS)
+
+struct FS_OUT {
+	float4 color0 : SV_TARGET0;
+	float4 color1 : SV_TARGET1;
+	float4 color2 : SV_TARGET2;
+	float4 color3 : SV_TARGET3;
+	float  depth : SV_Depth;
+};
+
+FS_OUT FS(VS_OUTPUT input) {
+	float4  color = float4(0.5, 0.5, 0.5, 1.0);
+	float4  normal = float4(0.5, 0.5, 0.5, 1.0);
+	float4  specular = float4(0.5, 0.5, 0.5, 1.0);
+	float4  reflect = float4(0.5, 0.5, 0.5, 1.0);
+
+	float specIntesivity = 0.8;
+	float shinness = 2.0;
+
+	color = TextureRGB.Sample(SS, input.texture0);
+
+	normal.xyz = normalize(input.hnormal).xyz;
+	float3 normalTex = NormalRGB.Sample(SS, input.texture0).xyz;
+	normalTex = normalTex*float3(2.0, 2.0, 2.0) - float3(1.0, 1.0, 1.0);
+	normalTex = normalize(normalTex);
+	normalTex.g = -normalTex.g;
+	float3 tangent = normalize(input.htangente).xyz;
+	float3 binormal = normalize(input.hbinormal).xyz;
+	float3x3	TBN = float3x3(tangent, binormal, normal.xyz);
+	normal.xyz = mul(normalTex, TBN);
+	normal.xyz = normalize(normal.xyz)*0.5 + 0.5;
+	normal.xyz = normal.xyz*0.5 + 0.5;
+
+	specular.rgb = SpecularRGB.Sample(SS, input.texture0).rgb;
+
+	shinness = GlossRGB.Sample(SS, input.texture0).r + shinness;
+
+	FS_OUT fout;
+	fout.color0.rgb = color.rgb;
+	fout.color0.a = specIntesivity;
+
+	fout.color1.rgb = normal.rgb;
+	fout.color1.a = shinness;
+
+	fout.color2.rgb = specular.rgb;
+	fout.color2.a = shinness;
+
+	fout.color3 = float4(1.0, 0.0, 1.0, 1.0);
+	fout.color3 = float4(0.0, 0.0, 0.0, 1.0);
+	fout.color3 = float4(0.0, 0.0, 1.0, 1.0);
+
+	fout.depth = input.Pos.z / PosCamera.y;
+  fout.color0 = TextureRGB.Sample(SS, input.texture0);
+  #if defined(NORMAL_MAP)
+    fout.color1 = NormalRGB.Sample(SS, input.texture0);
+  #endif
+  fout.color2 = GlossRGB.Sample(SS, input.texture0);
+  //fout.color3 = SpecularRGB.Sample(SS, input.texture0);
+  fout.color3 = input.Pos;
+
+	return fout;
+}
+#else
 
 float4 FS( VS_OUTPUT input ) : SV_TARGET  {
 	float lightIntensity;
@@ -66,12 +129,14 @@ float4 FS( VS_OUTPUT input ) : SV_TARGET  {
 		lightIntensity = 0.0;
 	pointIntensity = lightIntensity*ColorPointLight.xyz;
 #endif
-    float4 color = TextureRGB.Sample(SS, input.texture0);
+  float4 color = TextureRGB.Sample(SS, input.texture0);
 	float4 original = ColorGlobalLight;
 	original *= float4(globalIntensity, 0);
 	original *= color;
 	float4 final = original + color;
-	color = color * float4(globalIntensity, 0) + color * float4(pointIntensity, 0) + color *float4(specularIntensity, 0) + color *0.1;
+	color = color * float4(globalIntensity, 0) + color * float4(pointIntensity, 0) + color *float4(specularIntensity, 0) + color *0.5;
 	//color = color * float4(globalIntensity, 0);
+  //color = float4(newNormal, 0);
 	return  color;
 }
+#endif

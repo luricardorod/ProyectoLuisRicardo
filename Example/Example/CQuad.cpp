@@ -1,4 +1,5 @@
 #include "CQuad.h"
+#include "CShaderD3DX.h"
 #include <string>
 
 #ifdef USING_D3D11
@@ -51,93 +52,35 @@ void CQuad::Create(char * path)
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, 6 * sizeof(unsigned short), indices, GL_STATIC_DRAW);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 #elif defined(USING_D3D11)
+	SigBase = Signature::HAS_TEXCOORDS0;
+
 	char *vsSourceP = file2string("Shaders/VS_quad.hlsl");
 	char *fsSourceP = file2string("Shaders/FS_quad.hlsl");
 	std::string vstr = std::string(vsSourceP);
 	std::string fstr = std::string(fsSourceP);
-	std::string Defines = "";
+	int shaderID = g_pBaseDriver->CreateShader(vstr, fstr, SigBase);
+	unsigned int Dest;
 
+	Dest = SigBase | Signature::DEFERRED_PASS;
+	g_pBaseDriver->CreateShader(vstr, fstr, Dest);
 
-	vstr = Defines + vstr;
-	fstr = Defines + fstr;
-
-	HRESULT hr;
-	{
-		VS_blob = nullptr; // VS_blob would contain the binary compiled vertex shader program
-		ComPtr<ID3DBlob> errorBlob = nullptr; // In case of error, this blob would contain the compilation errors
-											  // We compile the source, the entry point is VS in our vertex shader, and we are using shader model 5 (d3d11)
-		hr = D3DCompile((char*)vstr.c_str(), (UINT)strlen((char*)vstr.c_str()), 0, 0, 0, "VS", "vs_5_0", 0, 0, &VS_blob, &errorBlob);
-		if (hr != S_OK) { // some error
-
-			if (errorBlob) { // print the error if the blob is valid
-				printf("errorBlob shader[%s]", (char*)errorBlob->GetBufferPointer());
-				return;
-			}
-			// No binary data, return.
-			if (VS_blob) {
-				return;
-			}
-		}
-		// With the binary blob now we create the Vertex Shader Object
-		hr = D3D11Device->CreateVertexShader(VS_blob->GetBufferPointer(), VS_blob->GetBufferSize(), 0, &pVS);
-		if (hr != S_OK) {
-			printf("Error Creating Vertex Shader\n");
-			return;
-		}
-	}
-	// Same for the Pixel Shader, just change the entry point, blob, etc, same exact method
-	{
-		FS_blob = nullptr;
-		ComPtr<ID3DBlob> errorBlob = nullptr;
-		hr = D3DCompile((char*)fstr.c_str(), (UINT)strlen((char*)fstr.c_str()), 0, 0, 0, "FS", "ps_5_0", 0, 0, &FS_blob, &errorBlob);
-		if (hr != S_OK) {
-			if (errorBlob) {
-				printf("errorBlob shader1[%s]", (char*)errorBlob->GetBufferPointer());
-				return;
-			}
-
-			if (FS_blob) {
-				return;
-			}
-		}
-
-		hr = D3D11Device->CreatePixelShader(FS_blob->GetBufferPointer(), FS_blob->GetBufferSize(), 0, &pFS);
-		if (hr != S_OK) {
-			printf("Error Creating Pixel Shader\n");
-			return;
-		}
-	}
-
-	D3D11DeviceContext->VSSetShader(pVS.Get(), 0, 0);
-	D3D11DeviceContext->PSSetShader(pFS.Get(), 0, 0);
-
-	D3D11_INPUT_ELEMENT_DESC vertexDeclaration[] = {
-		{ "POSITION" , 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0,  D3D11_INPUT_PER_VERTEX_DATA, 0 },
-		{ "TEXCOORD"   , 0, DXGI_FORMAT_R32G32_FLOAT, 0, 16, D3D11_INPUT_PER_VERTEX_DATA, 0 }
-	};
-	hr = D3D11Device->CreateInputLayout(vertexDeclaration, ARRAYSIZE(vertexDeclaration), VS_blob->GetBufferPointer(), VS_blob->GetBufferSize(), &Layout);
-	if (hr != S_OK) {
-		printf("Error Creating Input Layout\n");
-		return;
-	}
+	Dest = SigBase | Signature::GBUFF_PASS;
+	g_pBaseDriver->CreateShader(vstr, fstr, Dest);
 
 	// We Bound the input layout
-	D3D11DeviceContext->IASetInputLayout(Layout.Get());
 
+	CShaderD3DX* s = dynamic_cast<CShaderD3DX*>(g_pBaseDriver->GetShaderIdx(shaderID));
 
 	D3D11_BUFFER_DESC bdesc = { 0 };
 	bdesc.Usage = D3D11_USAGE_DEFAULT;
 	bdesc.ByteWidth = sizeof(CQuad::CQuadBuffer);
 	bdesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
 
-	hr = D3D11Device->CreateBuffer(&bdesc, 0, pd3dConstantBuffer.GetAddressOf());
+	HRESULT hr = D3D11Device->CreateBuffer(&bdesc, 0, pd3dConstantBuffer.GetAddressOf());
 	if (hr != S_OK) {
 		printf("Error Creating Buffer Layout\n");
 		return;
 	}
-	// Set the constant buffer to the shader programs: Note that we use the Device Context to manage the resources
-	D3D11DeviceContext->VSSetConstantBuffers(0, 1, pd3dConstantBuffer.GetAddressOf());
-	D3D11DeviceContext->PSSetConstantBuffers(0, 1, pd3dConstantBuffer.GetAddressOf());
 
 	bdesc = { 0 };
 	bdesc.ByteWidth = sizeof(CVertex) * 4;
@@ -161,6 +104,14 @@ void CQuad::Create(char * path)
 		return;
 	}
 
+	D3D11_SAMPLER_DESC sdesc;
+	sdesc.Filter = D3D11_FILTER_MIN_MAG_MIP_POINT;
+	sdesc.AddressU = D3D11_TEXTURE_ADDRESS_CLAMP;
+	sdesc.AddressV = D3D11_TEXTURE_ADDRESS_CLAMP;
+	sdesc.AddressW = D3D11_TEXTURE_ADDRESS_CLAMP;
+	sdesc.MinLOD = 0;
+	sdesc.MaxLOD = 0;
+	D3D11Device->CreateSamplerState(&sdesc, pSampler.GetAddressOf());
 #endif
 	transform = Identity();
 }
@@ -202,14 +153,15 @@ void CQuad::Draw(float * t, float * vp)
 #elif defined(USING_D3D11)
 
 	CnstBuffer.matTransform = transform;
-
+	unsigned int sig = SigBase;
+	sig |= gSig;
+	CShaderD3DX * s = dynamic_cast<CShaderD3DX*>(g_pBaseDriver->GetShaderSig(sig));
 	UINT stride = sizeof(quadVertex);
 	UINT offset = 0;
-	// We bound to use the vertex and pixel shader of this primitive
-	D3D11DeviceContext->VSSetShader(pVS.Get(), 0, 0);
-	D3D11DeviceContext->PSSetShader(pFS.Get(), 0, 0);
-	// Set the input layout to let the shader program know what kind of vertex data we have
-	D3D11DeviceContext->IASetInputLayout(Layout.Get());
+	
+	D3D11DeviceContext->VSSetShader(s->pVS.Get(), 0, 0);
+	D3D11DeviceContext->PSSetShader(s->pFS.Get(), 0, 0);
+	D3D11DeviceContext->IASetInputLayout(s->Layout.Get());
 	// We update the constant buffer with the current matrices
 	D3D11DeviceContext->UpdateSubresource(pd3dConstantBuffer.Get(), 0, 0, &CnstBuffer, 0, 0);
 	// Once updated the constant buffer we send them to the shader programs
@@ -221,9 +173,26 @@ void CQuad::Draw(float * t, float * vp)
 	//D3D11DeviceContext->PSSetShaderResources(0, 1, texd3d->pSRVTex.GetAddressOf());
 	//D3D11DeviceContext->PSSetSamplers(0, 1, texd3d->pSampler.GetAddressOf());
 	D3D11DeviceContext->IASetIndexBuffer(IB.Get(), DXGI_FORMAT_R16_UINT, 0);
-	// Instruct to use triangle list
+	for (int i = 0; i < 8; i++) {
+		d3dxTextures[i] = dynamic_cast<TextureD3D*>(Textures[i]);
+	}
+
+	if (SigBase&Signature::DEFERRED_PASS) {
+		D3D11DeviceContext->PSSetShaderResources(0, 1, d3dxTextures[0]->pSRVTex.GetAddressOf());
+		D3D11DeviceContext->PSSetShaderResources(1, 1, d3dxTextures[1]->pSRVTex.GetAddressOf());
+		D3D11DeviceContext->PSSetShaderResources(2, 1, d3dxTextures[2]->pSRVTex.GetAddressOf());
+		D3D11DeviceContext->PSSetShaderResources(3, 1, d3dxTextures[3]->pSRVTex.GetAddressOf());
+		D3D11DeviceContext->PSSetShaderResources(4, 1, d3dxTextures[4]->pSRVTex.GetAddressOf());
+	}
+	else {
+		D3D11DeviceContext->PSSetShaderResources(0, 1, d3dxTextures[0]->pSRVTex.GetAddressOf());
+	}
+
+
+	D3D11DeviceContext->PSSetSamplers(0, 1, pSampler.GetAddressOf());
 	D3D11DeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	D3D11DeviceContext->DrawIndexed(6, 0, 0);
+
 
 #endif
 }

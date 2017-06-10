@@ -3,7 +3,7 @@
 
 #include "Config.h"
 
-#include "Texture.h"
+#include "BaseDriver.h"
 
 
 #include <d3d11.h>
@@ -16,14 +16,13 @@ class TextureD3D : public Texture {
 public:
 	TextureD3D() {}
 
-	void	SetTextureParams(unsigned int &target);
+	void	SetTextureParams();
 	void	GetFormatBpp(unsigned int &props, unsigned int &Format, unsigned int &bpp);
 
 	void	LoadAPITexture(unsigned char* buffer);
 	void	LoadAPITextureCompressed(unsigned char* buffer);
+	void	DestroyAPITexture();
 
-
-	void	SetTextureParams(unsigned int &params, unsigned int &target) {};
 
 	ComPtr<ID3D11Texture2D>				Tex;
 	ComPtr<ID3D11ShaderResourceView>    pSRVTex;

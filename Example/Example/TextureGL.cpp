@@ -3,9 +3,9 @@
 #include <GLES2/gl2.h>
 #include <GLES2/gl2ext.h>
 
-void	TextureGL::SetTextureParams(unsigned int &target) {
+void	TextureGL::SetTextureParams() {
 
-	glBindTexture(GL_TEXTURE_2D, target);
+	glBindTexture(GL_TEXTURE_2D, id);
 
 	unsigned int glFiltering = 0;
 	unsigned int glWrap = 0;
@@ -64,7 +64,7 @@ void TextureGL::LoadAPITexture(unsigned char* buffer) {
 
 	glGenerateMipmap(glTarget);
 
-	SetTextureParams(glTarget);
+	SetTextureParams();
 
 	this->id = static_cast<unsigned short>(id);
 

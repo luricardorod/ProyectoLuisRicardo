@@ -8,7 +8,7 @@
 int		Texture::LoadTexture(char *fn) {
 	std::string path = "Textures/";
 	path += std::string(fn);
-	int channels = 0;
+	int x = 0, y = 0, channels = 0;
 	unsigned char *buffer = stbi_load(path.c_str(), &x, &y, &channels, 0);
 
 	if (!buffer)
@@ -39,4 +39,8 @@ int		Texture::LoadTexture(char *fn) {
 	LoadAPITexture(buffer);
 	stbi_image_free(buffer);
 	return id;
+}
+
+void Texture::DestroyTex() {
+	DestroyAPITexture();
 }

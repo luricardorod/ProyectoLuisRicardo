@@ -35,6 +35,8 @@ void Win32Framework::OnCreateApplication(){
 	pVideoDriver = new D3DXDriver;
 	pVideoDriver->SetDimensions(width, height);
 #endif
+	g_pBaseDriver = pVideoDriver;
+
 	pVideoDriver->SetWindow(0);
 	pVideoDriver->InitDriver();
 

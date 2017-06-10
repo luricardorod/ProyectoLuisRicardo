@@ -1,17 +1,7 @@
-/*********************************************************
-* Copyright (C) 2017 Daniel Enriquez (camus_mm@hotmail.com)
-* All Rights Reserved
-*
-* You may use, distribute and modify this code under the
-* following terms:
-* ** Do not claim that you wrote this software
-* ** A mention would be appreciated but not needed
-* ** I do not and will not provide support, this software is "as is"
-* ** Enjoy, learn and share.
-*********************************************************/
 
 #include "D3DXDriver.h"
 #include "D3DXRT.h"
+#include "CShaderD3DX.h"
 #include <iostream>
 #include <string>
 
@@ -85,7 +75,7 @@ void D3DXDriver::InitDriver() {
 	ZeroMemory(&dsvd, sizeof(dsvd));
 
 	dsvd.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
-	dsvd.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2DMS;
+	dsvd.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
 
 	// Using the View we can operate with the depth buffer, note this view is created from the depth texture
 	hr = D3D11Device->CreateDepthStencilView(D3D11DepthTex.Get(), &dsvd, &D3D11DepthStencilTargetView);
@@ -128,7 +118,7 @@ void D3DXDriver::DestroyDriver() {
 }
 
 void D3DXDriver::SetWindow(void *window) {
-	hwnd = GetActiveWindow(); // Get the HWND of the window 
+	hwnd = GetActiveWindow(); // Get the HWND of the window
 }
 
 void D3DXDriver::SetDimensions(int w, int h) {
@@ -138,9 +128,9 @@ void D3DXDriver::SetDimensions(int w, int h) {
 
 void D3DXDriver::Clear() {
 	float rgba[4];
-	rgba[0] = 0.0f;
-	rgba[1] = 0.0f;
-	rgba[2] = 0.0f;
+	rgba[0] = 0.5f;
+	rgba[1] = 0.5f;
+	rgba[2] = 0.5f;
 	rgba[3] = 1.0f;
 
 	// Clearing the Main Render Target View
@@ -152,6 +142,51 @@ void D3DXDriver::Clear() {
 void D3DXDriver::SwapBuffers() {
 	// Swap between back and front buffer
 	DXGISwapchain->Present(0, 0);
+}
+
+int  D3DXDriver::CreateTexture(std::string path) {
+	TextureD3D *pTex = new TextureD3D;
+	if (pTex->LoadTexture((char*)path.c_str())) {
+		Textures.push_back(pTex);
+		return (Textures.size() - 1);
+	}
+	else {
+		delete pTex;
+	}
+	return -1;
+}
+
+Texture*  D3DXDriver::GetTexture(int id) {
+	if (id < 0 || id >= (int)Textures.size()) {
+		printf("Warning null ptr Textures Idx\n");
+		return 0;
+	}
+
+	return Textures[id];
+}
+
+void  D3DXDriver::DestroyTexture() {
+	for (unsigned int i = 0; i < Textures.size(); i++) {
+		TextureD3D *pTex = dynamic_cast<TextureD3D*>(Textures[i]);
+		delete pTex;
+	}
+}
+
+int  D3DXDriver::CreateRT(int nrt, int cf, int df, int w, int h) {
+	D3DXRT	*pRT = new D3DXRT;
+	if (w == 0)
+		w = Width;
+	if (h == 0)
+		h = Height;
+	pRT->number_RT = nrt;
+	if (pRT->LoadRT(nrt, cf, df, w, h)) {
+		RTs.push_back(pRT);
+		return (RTs.size() - 1);
+	}
+	else {
+		delete pRT;
+	}
+	return -1;
 }
 
 void D3DXDriver::PushRT(int id) {
@@ -195,19 +230,48 @@ void D3DXDriver::DestroyRTs() {
 		delete pRT;
 	}
 }
-int  D3DXDriver::CreateRT(int nrt, int cf, int df, int w, int h) {
-	D3DXRT	*pRT = new D3DXRT;
-	if (w == 0)
-		w = Width;
-	if (h == 0)
-		h = Height;
-	pRT->number_RT = nrt;
-	if (pRT->LoadRT(nrt, cf, df, w, h)) {
-		RTs.push_back(pRT);
-		return (RTs.size() - 1);
+
+int	D3DXDriver::CreateShader(std::string src_vs, std::string src_fs, unsigned int sig) {
+	for (unsigned int i = 0; i < Shaders.size(); i++) {
+		if (Shaders[i]->Sig == sig) {
+			return i;
+		}
+	}
+
+	CShaderD3DX* shader = new CShaderD3DX();
+	if (shader->CreateShader(src_vs, src_fs, sig)) {
+		Shaders.push_back(shader);
+		return (Shaders.size() - 1);
 	}
 	else {
-		delete pRT;
+		delete shader;
 	}
 	return -1;
+
+}
+
+ShaderBase*	D3DXDriver::GetShaderSig(unsigned int sig) {
+	for (unsigned int i = 0; i < Shaders.size(); i++) {
+		if (Shaders[i]->Sig == sig) {
+			return Shaders[i];
+		}
+	}
+	printf("Warning null ptr ShaderBase Sig\n");
+	return 0;
+}
+
+ShaderBase*	D3DXDriver::GetShaderIdx(int id) {
+	if (id < 0 || id >= (int)Shaders.size()) {
+		printf("Warning null ptr ShaderBase Idx\n");
+		return 0;
+	}
+
+	return Shaders[id];
+}
+
+void D3DXDriver::DestroyShaders() {
+	for (unsigned int i = 0; i < Shaders.size(); i++) {
+		CShaderD3DX *pShader = dynamic_cast<CShaderD3DX*>(Shaders[i]);
+		delete pShader;
+	}
 }

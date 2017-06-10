@@ -118,11 +118,7 @@ public:
 	};
 	bool flagShader = true;
 	CObject3D() {}
-	ComPtr<ID3D11VertexShader>  pVS;
-	ComPtr<ID3D11PixelShader>   pFS;
-	ComPtr<ID3DBlob>            VS_blob;
-	ComPtr<ID3DBlob>            FS_blob;
-	ComPtr<ID3D11InputLayout>   Layout;
+
 	ComPtr<ID3D11Buffer>        pd3dConstantBuffer;
 
 	ComPtr<ID3D11VertexShader>  pVSRes;
@@ -135,7 +131,7 @@ public:
 	CObject3D::CBufferRes			CnstBufferRes;
 	CObject3D::CBuffer				CnstBuffer;
 	Texture *Textures[20];
-
+	int signature;
 #endif
 	std::vector<mesh> meshes;
 

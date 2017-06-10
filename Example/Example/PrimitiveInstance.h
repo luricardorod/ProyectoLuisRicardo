@@ -30,6 +30,9 @@ class PrimitiveInst {
 		void	RotateZRelative(float ang);
 		void	ScaleRelative(float sc);
 
+		void	SetSignature(unsigned int f);
+		void	SetTexture(Texture* tex, int index);
+
 		void	Update();
 		void	Draw();
 

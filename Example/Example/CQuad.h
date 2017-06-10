@@ -53,15 +53,14 @@ public:
 	};
 	ComPtr<ID3D11Buffer>		VB;
 	ComPtr<ID3D11Buffer>		IB;
-	ComPtr<ID3D11VertexShader>  pVS;
-	ComPtr<ID3D11PixelShader>   pFS;
-	ComPtr<ID3DBlob>            VS_blob;
-	ComPtr<ID3DBlob>            FS_blob;
-	ComPtr<ID3D11InputLayout>   Layout;
+	ComPtr<ID3D11SamplerState>  pSampler;
+
 	ComPtr<ID3D11Buffer>        pd3dConstantBuffer;
 
 	CQuad::CQuadBuffer	CnstBuffer;
-	Texture* texture;
+	TextureD3D*	d3dxTextures[8];
+
+	unsigned int	SigBase;
 
 	CQuad() {};
 #endif

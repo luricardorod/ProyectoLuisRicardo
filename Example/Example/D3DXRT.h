@@ -3,7 +3,7 @@
 #include "Config.h"
 
 #include "BaseDriver.h"
-
+#include "TextureD3D.h"
 #include <d3d11.h>
 #include <dxgi.h>
 #include <vector>

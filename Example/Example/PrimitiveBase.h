@@ -10,9 +10,15 @@ struct Lights
 	CVector4D colorPoint;
 	CVector4D *posCamera;
 	bool flagWireFrame;
+	bool flagShadowMap;
 };
 class PrimitiveBase {
 public:
+	PrimitiveBase() : gSig(0){
+		for (int i = 0; i<8; i++) {
+			Textures[i] = 0;
+		}
+	}
 	virtual void Create(char *path) = 0;
 	virtual void Transform(float *t) = 0;
 	virtual void Draw(float *t,float *vp) = 0;
@@ -22,6 +28,9 @@ public:
 	void SetTexture(Texture* tex, int index) {
 		Textures[index] = tex;
 	}
+	void SetGlobalSignature(unsigned int f) { gSig = f; }
+	unsigned int gSig;
+
 };
 
 struct CVertex {

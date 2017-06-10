@@ -27,6 +27,15 @@ public:
 	void	Clear();
 	void	SwapBuffers();
 
+	int			CreateShader(std::string src_vs, std::string src_fs, unsigned int sig);
+	ShaderBase*	GetShaderSig(unsigned int sig);
+	ShaderBase*	GetShaderIdx(int Id);
+	void		DestroyShaders();
+
+	int 	 CreateTexture(std::string);
+	Texture* GetTexture(int id);
+	void	 DestroyTexture();
+
 	int		Width;
 	int		Height;
 	HWND	hwnd;

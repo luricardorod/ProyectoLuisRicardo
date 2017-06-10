@@ -89,6 +89,9 @@
     <ClInclude Include="D3DXRT.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="CShaderD3DX.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Core.cpp">
@@ -158,6 +161,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="D3DXRT.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="BaseDriver.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CShaderD3DX.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
