@@ -1042,9 +1042,12 @@ void CObject3D::Create(char * path) {
 	}
 	else
 	{
+		Sig |= Signature::LIGTHSHADOWMAP;
+		g_pBaseDriver->CreateShader(vstr, fstr, Sig);
+		Sig = signature;
 		Sig |= Signature::GBUFF_PASS;
 		g_pBaseDriver->CreateShader(vstr, fstr, Sig);
-		Sig |= Signature::SHADOW_MAP_PASS;
+		Sig |= Signature::LIGTHSHADOWMAP;
 		g_pBaseDriver->CreateShader(vstr, fstr, Sig);
 	}
 
@@ -1372,6 +1375,10 @@ void CObject3D::Draw(float *t, float *vp) {
 		CShaderD3DX *s = 0;
 		unsigned int sig = signature;
 		sig |= gSig;
+		if (lights->flagShadowMap)
+		{
+			sig |= Signature::LIGTHSHADOWMAP;
+		}
 		s = dynamic_cast<CShaderD3DX*>(g_pBaseDriver->GetShaderSig(sig));
 		
 		D3D11DeviceContext->VSSetShader(s->pVS.Get(), 0, 0);

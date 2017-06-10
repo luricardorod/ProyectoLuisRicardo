@@ -38,6 +38,7 @@ public:
 	CVector4D		PositionLight;
 
 	CVector4D		Orientation;
+
 	CVector4D		Scaling;
 	CVector4D		PositionCamera;
 	float			rotationCam = 0;
@@ -56,6 +57,7 @@ public:
 
 	int				GBufferPass;
 	int				DeferredPass;
+	int DeferredPass2;
 	int				QuadIndex;
 	int				RTIndex;
 

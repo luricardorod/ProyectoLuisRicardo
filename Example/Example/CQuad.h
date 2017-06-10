@@ -50,6 +50,7 @@ public:
 	struct CQuadBuffer
 	{
 		CMatrix4D matTransform;
+		CMatrix4D matTexture;
 	};
 	ComPtr<ID3D11Buffer>		VB;
 	ComPtr<ID3D11Buffer>		IB;

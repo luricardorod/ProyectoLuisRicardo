@@ -45,8 +45,8 @@ VS_OUTPUT VS(VS_INPUT input) {
 #else
 	OUT.hnormal = normalize(input.normal.xyz);
 #endif
-	OUT.Pos = mul( World , input.position );
 
+	OUT.Pos = mul( World , input.position);
 	OUT.texture0 = input.texture0;
 	return OUT;
 }

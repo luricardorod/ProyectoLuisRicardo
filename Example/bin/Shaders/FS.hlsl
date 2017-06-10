@@ -74,8 +74,7 @@ FS_OUT FS(VS_OUTPUT input) {
 	fout.color3 = float4(1.0, 0.0, 1.0, 1.0);
 	fout.color3 = float4(0.0, 0.0, 0.0, 1.0);
 	fout.color3 = float4(0.0, 0.0, 1.0, 1.0);
-
-	fout.depth = input.Pos.z / PosCamera.y;
+  fout.depth = input.Pos.z / PosCamera.y;
   fout.color0 = TextureRGB.Sample(SS, input.texture0);
   #if defined(NORMAL_MAP)
     fout.color1 = NormalRGB.Sample(SS, input.texture0);
@@ -87,8 +86,11 @@ FS_OUT FS(VS_OUTPUT input) {
 	return fout;
 }
 #else
-
-float4 FS( VS_OUTPUT input ) : SV_TARGET  {
+struct FS_OUT {
+	float4 color0 : SV_TARGET0;
+	float  depth : SV_Depth;
+};
+FS_OUT FS( VS_OUTPUT input ) : SV_TARGET  {
 	float lightIntensity;
 	float3 globalIntensity = {0,0,0};
 	float3 pointIntensity = { 0,0,0 };
@@ -137,6 +139,14 @@ float4 FS( VS_OUTPUT input ) : SV_TARGET  {
 	color = color * float4(globalIntensity, 0) + color * float4(pointIntensity, 0) + color *float4(specularIntensity, 0) + color *0.5;
 	//color = color * float4(globalIntensity, 0);
   //color = float4(newNormal, 0);
-	return  color;
+  FS_OUT fout;
+  #if defined(LIGHT_SHADOW_MAP)
+    fout.depth = input.hposition.z  / PositionPointLight.y;
+  #else
+    fout.depth = input.hposition.z  / PosCamera.y;
+  #endif
+
+  fout.color0 = color;
+	return  fout;
 }
 #endif

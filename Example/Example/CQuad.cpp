@@ -67,6 +67,10 @@ void CQuad::Create(char * path)
 	Dest = SigBase | Signature::GBUFF_PASS;
 	g_pBaseDriver->CreateShader(vstr, fstr, Dest);
 
+
+	Dest = SigBase | Signature::LIGTHSHADOWMAP;
+	g_pBaseDriver->CreateShader(vstr, fstr, Dest);
+
 	// We Bound the input layout
 
 	CShaderD3DX* s = dynamic_cast<CShaderD3DX*>(g_pBaseDriver->GetShaderIdx(shaderID));
@@ -152,9 +156,22 @@ void CQuad::Draw(float * t, float * vp)
 
 #elif defined(USING_D3D11)
 
+	CMatrix4D VP = CMatrix4D(vp);
 	CnstBuffer.matTransform = transform;
 	unsigned int sig = SigBase;
 	sig |= gSig;
+	if (sig&Signature::LIGTHSHADOWMAP) {
+		float fTexOffsx = 0.5 + (0.5 / 1280);
+		float fTexOffsy = 0.5 + (0.5 / 720);
+
+		CMatrix4D matTexAdj(0.5f, 0.0f, 0.0f, 0.0f,
+			0.0f, -0.5f, 0.0f, 0.0f,
+			0.0f, 0.0f, 1.0f, 0.0f,
+			fTexOffsx, fTexOffsy, 0.0f, 1.0f);
+
+		CnstBuffer.matTexture = VP * matTexAdj;
+	}
+	
 	CShaderD3DX * s = dynamic_cast<CShaderD3DX*>(g_pBaseDriver->GetShaderSig(sig));
 	UINT stride = sizeof(quadVertex);
 	UINT offset = 0;
@@ -177,12 +194,16 @@ void CQuad::Draw(float * t, float * vp)
 		d3dxTextures[i] = dynamic_cast<TextureD3D*>(Textures[i]);
 	}
 
-	if (SigBase&Signature::DEFERRED_PASS) {
+	if (sig&Signature::DEFERRED_PASS) {
 		D3D11DeviceContext->PSSetShaderResources(0, 1, d3dxTextures[0]->pSRVTex.GetAddressOf());
 		D3D11DeviceContext->PSSetShaderResources(1, 1, d3dxTextures[1]->pSRVTex.GetAddressOf());
 		D3D11DeviceContext->PSSetShaderResources(2, 1, d3dxTextures[2]->pSRVTex.GetAddressOf());
 		D3D11DeviceContext->PSSetShaderResources(3, 1, d3dxTextures[3]->pSRVTex.GetAddressOf());
 		D3D11DeviceContext->PSSetShaderResources(4, 1, d3dxTextures[4]->pSRVTex.GetAddressOf());
+	}
+	else if (sig&Signature::LIGTHSHADOWMAP) {
+		D3D11DeviceContext->PSSetShaderResources(0, 1, d3dxTextures[0]->pSRVTex.GetAddressOf());
+		D3D11DeviceContext->PSSetShaderResources(1, 1, d3dxTextures[1]->pSRVTex.GetAddressOf());
 	}
 	else {
 		D3D11DeviceContext->PSSetShaderResources(0, 1, d3dxTextures[0]->pSRVTex.GetAddressOf());

@@ -1,2 +1,4 @@
-﻿  BaseDriver.cpp
+﻿  CQuad.cpp
+e:\uad\6to\graficas\proyectoluisricardo\example\example\cquad.cpp(164): warning C4305: 'initializing': truncation from 'double' to 'float'
+e:\uad\6to\graficas\proyectoluisricardo\example\example\cquad.cpp(165): warning C4305: 'initializing': truncation from 'double' to 'float'
   Example.vcxproj -> E:\UAD\6to\graficas\ProyectoLuisRicardo\Example\Debug\Framework.lib
