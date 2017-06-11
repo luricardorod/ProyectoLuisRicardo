@@ -57,7 +57,7 @@ public:
 
 	int				GBufferPass;
 	int				DeferredPass;
-	int DeferredPass2;
+	int				ShadowMapPass;
 	int				QuadIndex;
 	int				RTIndex;
 

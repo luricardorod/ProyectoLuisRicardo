@@ -2,7 +2,7 @@
 #include <iostream>
 #include <string>
 #include <fstream>
-
+#include "Config.h"
 BaseDriver*	g_pBaseDriver = 0;
 
 
@@ -35,6 +35,9 @@ bool ShaderBase::CreateShader(std::string src_vs, std::string src_fs, unsigned i
 #if VDEBUG_SIMPLE_COLOR
 	Defines += "#define SIMPLE_COLOR\n\n";
 #endif
+#ifdef USE_GLOBALLIGHT
+	Defines += "#define USE_GLOBALLIGHT\n\n";
+#endif // USE_GLOBALLIGHT
 
 	if (sig&Signature::HAS_NORMALS)
 		Defines += "#define USE_NORMALS\n\n";

@@ -12,12 +12,8 @@ struct VS_OUTPUT {
 SamplerState SS;
 #ifdef LIGHT_SHADOW_MAP
 Texture2D tex0 : register(t0);
-Texture2D tex1 : register(t1);
 float4 FS(VS_OUTPUT input) : SV_TARGET{
-	float4 depth = tex1.Sample(SS, input.vTexCoord);
-	//return tex0.Sample(SS, input.texture0);
-	return depth;
-
+	return tex0.Sample(SS, input.texture0);
 }
 #else
 #ifdef DEFERRED_PASS

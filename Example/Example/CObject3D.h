@@ -94,6 +94,7 @@ public:
 	{
 		CMatrix4D WVP;
 		CMatrix4D World;
+		CMatrix4D LigthView;
 		CVector4D DirectionGlobalLight;
 		CVector4D ColorGlobalLight;
 		CVector4D PositionPointLight;
@@ -130,8 +131,10 @@ public:
 
 	CObject3D::CBufferRes			CnstBufferRes;
 	CObject3D::CBuffer				CnstBuffer;
-	Texture *Textures[20];
+	Texture *TexturesObj[20];
 	int signature;
+	TextureD3D*	d3dxTextures[8];
+
 #endif
 	std::vector<mesh> meshes;
 

@@ -1089,7 +1089,7 @@ void CObject3D::Create(char * path) {
 						}
 						else
 						{
-							Textures[counterText] = tex;
+							TexturesObj[counterText] = tex;
 							list[tempString] = counterText;
 							counterText++;
 							(*textures).idDiffuse = list[tempString];
@@ -1097,7 +1097,7 @@ void CObject3D::Create(char * path) {
 					}
 					else
 					{
-						Textures[counterText] = tex;
+						TexturesObj[counterText] = tex;
 						list[tempString] = counterText;
 						counterText++;
 						(*textures).idDiffuse = list[tempString];
@@ -1121,7 +1121,7 @@ void CObject3D::Create(char * path) {
 						}
 						else
 						{
-							Textures[counterText] = tex;
+							TexturesObj[counterText] = tex;
 							list[tempString] = counterText;
 							counterText++;
 							(*textures).idSpecular = list[tempString];
@@ -1146,7 +1146,7 @@ void CObject3D::Create(char * path) {
 						}
 						else
 						{
-							Textures[counterText] = tex;
+							TexturesObj[counterText] = tex;
 							list[tempString] = counterText;
 							counterText++;
 							(*textures).idGloss = list[tempString];
@@ -1171,7 +1171,7 @@ void CObject3D::Create(char * path) {
 						}
 						else
 						{
-							Textures[counterText] = tex;
+							TexturesObj[counterText] = tex;
 							list[tempString] = counterText;
 							counterText++;
 							(*textures).idNormal = list[tempString];
@@ -1326,7 +1326,7 @@ void CObject3D::Draw(float *t, float *vp) {
 	CnstBufferRes.WVP = WVP;
 	CnstBuffer.WVP = WVP;
 	CnstBuffer.World = transform;
-
+	CnstBuffer.LigthView = transform * lights->LigthView;
 #ifdef	USE_DIFFUSE
 	CnstBuffer.PosCamera = (*lights->posCamera);
 #endif
@@ -1375,10 +1375,7 @@ void CObject3D::Draw(float *t, float *vp) {
 		CShaderD3DX *s = 0;
 		unsigned int sig = signature;
 		sig |= gSig;
-		if (lights->flagShadowMap)
-		{
-			sig |= Signature::LIGTHSHADOWMAP;
-		}
+	
 		s = dynamic_cast<CShaderD3DX*>(g_pBaseDriver->GetShaderSig(sig));
 		
 		D3D11DeviceContext->VSSetShader(s->pVS.Get(), 0, 0);
@@ -1389,6 +1386,9 @@ void CObject3D::Draw(float *t, float *vp) {
 		// Once updated the constant buffer we send them to the shader programs
 		D3D11DeviceContext->VSSetConstantBuffers(0, 1, pd3dConstantBuffer.GetAddressOf());
 		D3D11DeviceContext->PSSetConstantBuffers(0, 1, pd3dConstantBuffer.GetAddressOf());
+		for (int i = 0; i < 8; i++) {
+			d3dxTextures[i] = dynamic_cast<TextureD3D*>(Textures[i]);
+		}
 		for (auto i = meshes.begin(); i != meshes.end(); i++)
 		{
 
@@ -1399,27 +1399,31 @@ void CObject3D::Draw(float *t, float *vp) {
 
 				for (int index = 0; index < (*i).bufferIndexForTextures.size(); index++)
 				{
-					TextureD3D *texd3d = dynamic_cast<TextureD3D*>(Textures[(*i).infoTexture.textures[index].idDiffuse]);
+					TextureD3D *texd3d = dynamic_cast<TextureD3D*>(TexturesObj[(*i).infoTexture.textures[index].idDiffuse]);
 					D3D11DeviceContext->PSSetShaderResources(0, 1, texd3d->pSRVTex.GetAddressOf());
 					D3D11DeviceContext->PSSetSamplers(0, 1, texd3d->pSampler.GetAddressOf());
 
 					if (i->infoTexture.textures[index].normal)
 					{
-						TextureD3D *texd3d2 = dynamic_cast<TextureD3D*>(Textures[(*i).infoTexture.textures[index].idNormal]);
+						TextureD3D *texd3d2 = dynamic_cast<TextureD3D*>(TexturesObj[(*i).infoTexture.textures[index].idNormal]);
 						D3D11DeviceContext->PSSetShaderResources(1, 1, texd3d2->pSRVTex.GetAddressOf());
 						D3D11DeviceContext->PSSetSamplers(1, 1, texd3d2->pSampler.GetAddressOf());
 					}
 					if (i->infoTexture.textures[index].gloss)
 					{
-						TextureD3D *texd3d3 = dynamic_cast<TextureD3D*>(Textures[(*i).infoTexture.textures[index].idGloss]);
+						TextureD3D *texd3d3 = dynamic_cast<TextureD3D*>(TexturesObj[(*i).infoTexture.textures[index].idGloss]);
 						D3D11DeviceContext->PSSetShaderResources(2, 1, texd3d3->pSRVTex.GetAddressOf());
 						D3D11DeviceContext->PSSetSamplers(2, 1, texd3d3->pSampler.GetAddressOf());
 					}
 					if (i->infoTexture.textures[index].specular)
 					{
-						TextureD3D *texd3d4 = dynamic_cast<TextureD3D*>(Textures[(*i).infoTexture.textures[index].idSpecular]);
+						TextureD3D *texd3d4 = dynamic_cast<TextureD3D*>(TexturesObj[(*i).infoTexture.textures[index].idSpecular]);
 						D3D11DeviceContext->PSSetShaderResources(3, 1, texd3d4->pSRVTex.GetAddressOf());
 						D3D11DeviceContext->PSSetSamplers(3, 1, texd3d4->pSampler.GetAddressOf());
+					}
+					if (lights->flagShadowMap)
+					{
+						D3D11DeviceContext->PSSetShaderResources(4, 1, d3dxTextures[0]->pSRVTex.GetAddressOf());
 					}
 					D3D11DeviceContext->IASetIndexBuffer((*i).IB[index].Get(), DXGI_FORMAT_R16_UINT, 0);
 					// Instruct to use triangle list

@@ -1,6 +1,7 @@
 #ifndef UAD_PRIMITIVEBASE_H
 #define UAD_PRIMITIVEBASE_H
 #include "CVector4D.h"
+#include "CMatrix4D.h"
 #include "Texture.h"
 struct Lights
 {
@@ -9,6 +10,7 @@ struct Lights
 	CVector4D posPoint;
 	CVector4D colorPoint;
 	CVector4D *posCamera;
+	CMatrix4D LigthView;
 	bool flagWireFrame;
 	bool flagShadowMap;
 };

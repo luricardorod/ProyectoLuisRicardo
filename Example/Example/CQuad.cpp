@@ -203,7 +203,6 @@ void CQuad::Draw(float * t, float * vp)
 	}
 	else if (sig&Signature::LIGTHSHADOWMAP) {
 		D3D11DeviceContext->PSSetShaderResources(0, 1, d3dxTextures[0]->pSRVTex.GetAddressOf());
-		D3D11DeviceContext->PSSetShaderResources(1, 1, d3dxTextures[1]->pSRVTex.GetAddressOf());
 	}
 	else {
 		D3D11DeviceContext->PSSetShaderResources(0, 1, d3dxTextures[0]->pSRVTex.GetAddressOf());

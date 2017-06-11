@@ -1,7 +1,7 @@
 cbuffer ConstantBuffer {
 	float4x4 WVP;
 	float4x4 World;
-	float4x4 WorldView;
+	float4x4 LigthView;
 	float4 DirectionGlobalLight;
 	float4 ColorGlobalLight;
 	float4 PositionPointLight;
@@ -24,7 +24,7 @@ struct VS_OUTPUT {
 	float3 hbinormal   : BINORMAL;
 	float3 htangente   : TANGENTE;
 	float4 vert      : VERTICE;
-	float4 Pos		: TEXCOORD1;
+	float4 lu      : VERTICE2;
 };
 
 VS_OUTPUT VS(VS_INPUT input) {
@@ -36,6 +36,7 @@ VS_OUTPUT VS(VS_INPUT input) {
 #endif
 
 	VS_OUTPUT OUT;
+	OUT.lu = input.position;
 	OUT.vert = mul(World, input.position);
 	OUT.hposition = mul(WVP, input.position);
 #ifdef USE_NORMAL_TEXTURE
@@ -46,7 +47,6 @@ VS_OUTPUT VS(VS_INPUT input) {
 	OUT.hnormal = normalize(input.normal.xyz);
 #endif
 
-	OUT.Pos = mul( World , input.position);
 	OUT.texture0 = input.texture0;
 	return OUT;
 }

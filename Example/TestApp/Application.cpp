@@ -30,7 +30,7 @@ void TestApp::InitVars() {
 	worldLights.posCamera = &PositionCamera;
 	worldLights.flagWireFrame = false;
 	worldLights.flagShadowMap = false;
-
+	worldLights.LigthView = Identity();
 	RTIndex = -1;
 
 }
@@ -39,7 +39,7 @@ void TestApp::CreateAssets() {
 
 	GBufferPass = pFramework->pVideoDriver->CreateRT(4, BaseRT::RGBA8, BaseRT::F32, 0, 0);
 	DeferredPass = pFramework->pVideoDriver->CreateRT(1, BaseRT::RGBA8, BaseRT::F32, 0, 0);
-	DeferredPass2 = pFramework->pVideoDriver->CreateRT(1, BaseRT::RGBA8, BaseRT::F32, 0, 0);
+	ShadowMapPass = pFramework->pVideoDriver->CreateRT(1, BaseRT::RGBA8, BaseRT::F32, 0, 0);
 
 
 	PrimitiveMgr.SetVP(&VP);
@@ -61,6 +61,7 @@ void TestApp::CreateAssets() {
 	primitiveFigs[3].CreateInstance(PrimitiveMgr.GetPrimitive(index), &VP);
 	index = PrimitiveMgr.CreateObject3D("Models/Scene.X");
 	//index = PrimitiveMgr.CreateObject3D("Models/NuBatman.X");
+	//index = PrimitiveMgr.CreateObject3D("Models/cube2.X");
 
 	primitiveFigs[4].CreateInstance(PrimitiveMgr.GetPrimitive(index), &VP);
 	
@@ -133,6 +134,12 @@ void TestApp::CreateAssets() {
 	//primitiveFigs[2].Update();
 	primitiveFigs[3].TranslateAbsolute(100.0f, 0, -20);
 	primitiveFigs[3].Update();
+	//primitiveFigs[4].TranslateAbsolute(0, -1000, -500);
+	//primitiveFigs[4].ScaleAbsolute(1000);
+
+	primitiveFigs[4].Update();
+	primitiveFigs[7].TranslateAbsolute(-2, 10, 5);
+	primitiveFigs[7].Update();
 	primitiveFigs[8].TranslateAbsolute(100.0f, 0, -20);
 	primitiveFigs[8].Update();
 
@@ -462,90 +469,52 @@ void TestApp::OnUpdate() {
 }
 
 void TestApp::OnDraw() {
-
-	CMatrix4D View;
 	CVector4D shadowLight = CVector4D(-PositionLight.x, -PositionLight.y + 1, -PositionLight.z, 0);
 	CVector4D Up = CVector4D(0.0f, 1.0f, 0.0f, 0);
 	CVector4D OrientationLigth = CVector4D(-10.0f, 10.0f, 10.0f, 0);
 	CVector4D LookAt = shadowLight - Normalize(OrientationLigth) * 10;
 
 	View = LookAtRH(shadowLight, LookAt, Up);
-	CMatrix4D proj = PerspectiveFovRH(45 * 3.1416 / 180, 1280.0f / 720.0f, 0.1f, 10000.0f);
+	CMatrix4D proj = PerspectiveFovRH(45 * 3.1416 / 180, 1280.0f / 720.0f,1, 10000.0f);
 	CMatrix4D camerVP = VP;
 	VP = View * proj;
+
+	pFramework->pVideoDriver->PushRT(ShadowMapPass);
 	pFramework->pVideoDriver->Clear();
-	pFramework->pVideoDriver->PushRT(DeferredPass);
-	
+
+
+	for (int i = 3; i < TOTAL_INSTANCES; i++) {
+		primitiveFigs[i].SetSignature(Signature::LIGTHSHADOWMAP);
+		primitiveFigs[i].Draw();
+		primitiveFigs[i].SetSignature(Signature::FORWARD_PASS);
+	}
+
+	pFramework->pVideoDriver->PopRT();
+
+
+	worldLights.LigthView = VP;
+	VP = camerVP;
+	pFramework->pVideoDriver->Clear();
+	for (int i = 0; i < PrimitiveMgr.primitives.size(); i++)
+	{
+		PrimitiveMgr.GetPrimitive(i)->SetTexture(pFramework->pVideoDriver->RTs[ShadowMapPass]->pDepthTexture, 0);
+	}
+
+	PrimitiveMgr.GetPrimitive(QuadIndex)->SetTexture(pFramework->pVideoDriver->RTs[ShadowMapPass]->pDepthTexture, 0);
+	rendertargets[1].SetSignature(Signature::LIGTHSHADOWMAP);
+	rendertargets[1].Draw();
+
+	PrimitiveMgr.GetPrimitive(QuadIndex)->SetTexture(pFramework->pVideoDriver->RTs[ShadowMapPass]->vColorTextures[0], 0);
+	rendertargets[2].SetSignature(Signature::LIGTHSHADOWMAP);
+	rendertargets[2].Draw();
+
 	worldLights.flagShadowMap = true;
 	for (int i = 0; i < TOTAL_INSTANCES; i++) {
 		primitiveFigs[i].SetSignature(Signature::FORWARD_PASS);
 		primitiveFigs[i].Draw();
-		//primitiveFigs[i].SetSignature(Signature::GBUFF_PASS);
 	}
 	worldLights.flagShadowMap = false;
 
-	//for (int i = 0; i < 31; i++)
-	//{
-	//	figsFisics[i].SetSignature(Signature::GBUFF_PASS);
-	//	figsFisics[i].Draw();
-	//	figsFisics[i].SetSignature(Signature::FORWARD_PASS);
-	//}
-
-	/*pFramework->pVideoDriver->PopRT();
-
-	pFramework->pVideoDriver->PushRT(DeferredPass);
-	PrimitiveMgr.GetPrimitive(QuadIndex)->SetTexture(pFramework->pVideoDriver->RTs[0]->vColorTextures[0], 0);
-	PrimitiveMgr.GetPrimitive(QuadIndex)->SetTexture(pFramework->pVideoDriver->RTs[0]->vColorTextures[1], 1);
-	PrimitiveMgr.GetPrimitive(QuadIndex)->SetTexture(pFramework->pVideoDriver->RTs[0]->vColorTextures[2], 2);
-	PrimitiveMgr.GetPrimitive(QuadIndex)->SetTexture(pFramework->pVideoDriver->RTs[0]->vColorTextures[3], 3);
-	PrimitiveMgr.GetPrimitive(QuadIndex)->SetTexture(pFramework->pVideoDriver->RTs[0]->pDepthTexture, 4);
-	rendertargets[0].SetSignature(Signature::GBUFF_PASS);
-	rendertargets[0].Draw();*/
-	pFramework->pVideoDriver->PopRT();
-
-	VP = camerVP;
-	pFramework->pVideoDriver->PushRT(DeferredPass2);
-	pFramework->pVideoDriver->Clear();
-
-	for (int i = 0; i < TOTAL_INSTANCES; i++) {
-		primitiveFigs[i].SetSignature(Signature::FORWARD_PASS);
-		primitiveFigs[i].Draw();
-	}
-	pFramework->pVideoDriver->PopRT();
-	pFramework->pVideoDriver->Clear();
-
-	
-
-	PrimitiveMgr.GetPrimitive(QuadIndex)->SetTexture(pFramework->pVideoDriver->RTs[DeferredPass]->pDepthTexture, 0);
-	rendertargets[1].SetSignature(Signature::GBUFF_PASS);
-	rendertargets[1].Draw();
-
-	PrimitiveMgr.GetPrimitive(QuadIndex)->SetTexture(pFramework->pVideoDriver->RTs[1]->vColorTextures[0], 0);
-	rendertargets[2].SetSignature(Signature::GBUFF_PASS);
-	rendertargets[2].Draw();
-
-	PrimitiveMgr.GetPrimitive(QuadIndex)->SetTexture(pFramework->pVideoDriver->RTs[1]->pDepthTexture, 0);
-	rendertargets[3].SetSignature(Signature::GBUFF_PASS);
-	rendertargets[3].Draw();
-
-	PrimitiveMgr.GetPrimitive(QuadIndex)->SetTexture(pFramework->pVideoDriver->RTs[DeferredPass2]->vColorTextures[0], 0);
-	PrimitiveMgr.GetPrimitive(QuadIndex)->SetTexture(pFramework->pVideoDriver->RTs[1]->pDepthTexture, 1);
-	rendertargets[4].SetSignature(Signature::LIGTHSHADOWMAP);
-	rendertargets[4].Draw();
-
-	PrimitiveMgr.GetPrimitive(QuadIndex)->SetTexture(pFramework->pVideoDriver->RTs[DeferredPass2]->vColorTextures[0], 0);
-	rendertargets[5].SetSignature(Signature::GBUFF_PASS);
-	rendertargets[5].Draw();
-
-	PrimitiveMgr.GetPrimitive(QuadIndex)->SetTexture(pFramework->pVideoDriver->RTs[0]->pDepthTexture, 0);
-	rendertargets[6].SetSignature(Signature::GBUFF_PASS);
-	rendertargets[6].Draw();
-
-	PrimitiveMgr.GetPrimitive(QuadIndex)->SetTexture(pFramework->pVideoDriver->RTs[1]->pDepthTexture, 1);
-	PrimitiveMgr.GetPrimitive(QuadIndex)->SetTexture(pFramework->pVideoDriver->RTs[1]->vColorTextures[0], 0);
-
-	//rendertargets[0].SetSignature(Signature::LIGTHSHADOWMAP);
-	//rendertargets[0].Draw();
 	pFramework->pVideoDriver->SwapBuffers();
 }
 
