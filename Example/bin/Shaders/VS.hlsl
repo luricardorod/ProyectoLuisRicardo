@@ -37,7 +37,7 @@ VS_OUTPUT VS(VS_INPUT input) {
 
 	VS_OUTPUT OUT;
 	OUT.lu = input.position;
-	OUT.vert = mul(World, input.position);
+	OUT.vert = mul(LigthView, input.position);
 	OUT.hposition = mul(WVP, input.position);
 #ifdef USE_NORMAL_TEXTURE
 	OUT.hnormal = normalize(mul(rotationTransform, input.normal.xyz));

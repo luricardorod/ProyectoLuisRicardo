@@ -1,29 +1,68 @@
-﻿  CObject3D.cpp
-e:\uad\6to\graficas\proyectoluisricardo\example\example\cobject3d.cpp(55): warning C4244: 'argument': conversion from 'double' to 'unsigned int', possible loss of data
-e:\uad\6to\graficas\proyectoluisricardo\example\example\cobject3d.cpp(56): warning C4018: '<': signed/unsigned mismatch
-e:\uad\6to\graficas\proyectoluisricardo\example\example\cobject3d.cpp(67): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-e:\uad\6to\graficas\proyectoluisricardo\example\example\cobject3d.cpp(78): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-e:\uad\6to\graficas\proyectoluisricardo\example\example\cobject3d.cpp(90): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-e:\uad\6to\graficas\proyectoluisricardo\example\example\cobject3d.cpp(111): warning C4244: '-=': conversion from 'double' to 'int', possible loss of data
-e:\uad\6to\graficas\proyectoluisricardo\example\example\cobject3d.cpp(112): warning C4244: 'argument': conversion from 'double' to 'unsigned int', possible loss of data
-e:\uad\6to\graficas\proyectoluisricardo\example\example\cobject3d.cpp(113): warning C4244: 'argument': conversion from 'double' to 'unsigned int', possible loss of data
-e:\uad\6to\graficas\proyectoluisricardo\example\example\cobject3d.cpp(115): warning C4018: '<': signed/unsigned mismatch
-e:\uad\6to\graficas\proyectoluisricardo\example\example\cobject3d.cpp(133): warning C4244: '=': conversion from 'double' to 'unsigned short', possible loss of data
-e:\uad\6to\graficas\proyectoluisricardo\example\example\cobject3d.cpp(144): warning C4244: '=': conversion from 'double' to 'unsigned short', possible loss of data
-e:\uad\6to\graficas\proyectoluisricardo\example\example\cobject3d.cpp(157): warning C4244: '=': conversion from 'double' to 'unsigned short', possible loss of data
-e:\uad\6to\graficas\proyectoluisricardo\example\example\cobject3d.cpp(185): warning C4018: '<': signed/unsigned mismatch
-e:\uad\6to\graficas\proyectoluisricardo\example\example\cobject3d.cpp(196): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-e:\uad\6to\graficas\proyectoluisricardo\example\example\cobject3d.cpp(207): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-e:\uad\6to\graficas\proyectoluisricardo\example\example\cobject3d.cpp(220): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-e:\uad\6to\graficas\proyectoluisricardo\example\example\cobject3d.cpp(237): warning C4018: '<': signed/unsigned mismatch
-e:\uad\6to\graficas\proyectoluisricardo\example\example\cobject3d.cpp(248): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-e:\uad\6to\graficas\proyectoluisricardo\example\example\cobject3d.cpp(259): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-e:\uad\6to\graficas\proyectoluisricardo\example\example\cobject3d.cpp(300): warning C4018: '<': signed/unsigned mismatch
-e:\uad\6to\graficas\proyectoluisricardo\example\example\cobject3d.cpp(423): warning C4018: '<': signed/unsigned mismatch
-e:\uad\6to\graficas\proyectoluisricardo\example\example\cobject3d.cpp(434): warning C4244: '=': conversion from 'double' to 'unsigned short', possible loss of data
-e:\uad\6to\graficas\proyectoluisricardo\example\example\cobject3d.cpp(992): warning C4018: '<': signed/unsigned mismatch
-e:\uad\6to\graficas\proyectoluisricardo\example\example\cobject3d.cpp(1085): warning C4477: 'printf' : format string '%s' requires an argument of type 'char *', but variadic argument 1 has type 'std::string'
-e:\uad\6to\graficas\proyectoluisricardo\example\example\cobject3d.cpp(1144): warning C4477: 'printf' : format string '%s' requires an argument of type 'char *', but variadic argument 1 has type 'std::string'
-e:\uad\6to\graficas\proyectoluisricardo\example\example\cobject3d.cpp(1169): warning C4477: 'printf' : format string '%s' requires an argument of type 'char *', but variadic argument 1 has type 'std::string'
-e:\uad\6to\graficas\proyectoluisricardo\example\example\cobject3d.cpp(1400): warning C4018: '<': signed/unsigned mismatch
-  Example.vcxproj -> E:\UAD\6to\graficas\ProyectoLuisRicardo\Example\Debug\Framework.lib
+﻿  Win32Framework.cpp
+  UtilsGL.cpp
+e:\dev\class\alumnos\shadow\proyectoluisricardo\example\example\utilsgl.cpp(86): warning C4101: 'len': unreferenced local variable
+e:\dev\class\alumnos\shadow\proyectoluisricardo\example\example\utilsgl.cpp(86): warning C4101: 'r': unreferenced local variable
+  TriangleGL.cpp
+  Timer.cpp
+  TextureGL.cpp
+  TextureD3D.cpp
+  Texture.cpp
+  Sprite.cpp
+e:\dev\class\alumnos\shadow\proyectoluisricardo\example\example\sprite.cpp(286): warning C4244: '=': conversion from 'float' to 'unsigned short', possible loss of data
+  PrimitiveManager.cpp
+  PrimitiveInstance.cpp
+e:\dev\class\alumnos\shadow\proyectoluisricardo\example\example\primitiveinstance.cpp(8): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+e:\dev\class\alumnos\shadow\proyectoluisricardo\example\example\primitiveinstance.cpp(12): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+e:\dev\class\alumnos\shadow\proyectoluisricardo\example\example\primitiveinstance.cpp(16): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+e:\dev\class\alumnos\shadow\proyectoluisricardo\example\example\primitiveinstance.cpp(31): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+e:\dev\class\alumnos\shadow\proyectoluisricardo\example\example\primitiveinstance.cpp(37): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+e:\dev\class\alumnos\shadow\proyectoluisricardo\example\example\primitiveinstance.cpp(43): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+  CMatrix4D.cpp
+  InputManager.cpp
+  GLRT.cpp
+  GLDriver.cpp
+  D3DXRT.cpp
+  D3DXDriver.cpp
+  CVector4D.cpp
+  CubeGL.cpp
+  CShaderD3DX.cpp
+  CQuad.cpp
+e:\dev\class\alumnos\shadow\proyectoluisricardo\example\example\cquad.cpp(164): warning C4305: 'initializing': truncation from 'double' to 'float'
+e:\dev\class\alumnos\shadow\proyectoluisricardo\example\example\cquad.cpp(165): warning C4305: 'initializing': truncation from 'double' to 'float'
+  Generating Code...
+  Compiling...
+  Core.cpp
+  CObject3D.cpp
+e:\dev\class\alumnos\shadow\proyectoluisricardo\example\example\cobject3d.cpp(55): warning C4244: 'argument': conversion from 'double' to 'unsigned int', possible loss of data
+e:\dev\class\alumnos\shadow\proyectoluisricardo\example\example\cobject3d.cpp(56): warning C4018: '<': signed/unsigned mismatch
+e:\dev\class\alumnos\shadow\proyectoluisricardo\example\example\cobject3d.cpp(67): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+e:\dev\class\alumnos\shadow\proyectoluisricardo\example\example\cobject3d.cpp(78): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+e:\dev\class\alumnos\shadow\proyectoluisricardo\example\example\cobject3d.cpp(90): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+e:\dev\class\alumnos\shadow\proyectoluisricardo\example\example\cobject3d.cpp(111): warning C4244: '-=': conversion from 'double' to 'int', possible loss of data
+e:\dev\class\alumnos\shadow\proyectoluisricardo\example\example\cobject3d.cpp(112): warning C4244: 'argument': conversion from 'double' to 'unsigned int', possible loss of data
+e:\dev\class\alumnos\shadow\proyectoluisricardo\example\example\cobject3d.cpp(113): warning C4244: 'argument': conversion from 'double' to 'unsigned int', possible loss of data
+e:\dev\class\alumnos\shadow\proyectoluisricardo\example\example\cobject3d.cpp(115): warning C4018: '<': signed/unsigned mismatch
+e:\dev\class\alumnos\shadow\proyectoluisricardo\example\example\cobject3d.cpp(133): warning C4244: '=': conversion from 'double' to 'unsigned short', possible loss of data
+e:\dev\class\alumnos\shadow\proyectoluisricardo\example\example\cobject3d.cpp(144): warning C4244: '=': conversion from 'double' to 'unsigned short', possible loss of data
+e:\dev\class\alumnos\shadow\proyectoluisricardo\example\example\cobject3d.cpp(157): warning C4244: '=': conversion from 'double' to 'unsigned short', possible loss of data
+e:\dev\class\alumnos\shadow\proyectoluisricardo\example\example\cobject3d.cpp(185): warning C4018: '<': signed/unsigned mismatch
+e:\dev\class\alumnos\shadow\proyectoluisricardo\example\example\cobject3d.cpp(196): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+e:\dev\class\alumnos\shadow\proyectoluisricardo\example\example\cobject3d.cpp(207): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+e:\dev\class\alumnos\shadow\proyectoluisricardo\example\example\cobject3d.cpp(220): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+e:\dev\class\alumnos\shadow\proyectoluisricardo\example\example\cobject3d.cpp(237): warning C4018: '<': signed/unsigned mismatch
+e:\dev\class\alumnos\shadow\proyectoluisricardo\example\example\cobject3d.cpp(248): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+e:\dev\class\alumnos\shadow\proyectoluisricardo\example\example\cobject3d.cpp(259): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+e:\dev\class\alumnos\shadow\proyectoluisricardo\example\example\cobject3d.cpp(300): warning C4018: '<': signed/unsigned mismatch
+e:\dev\class\alumnos\shadow\proyectoluisricardo\example\example\cobject3d.cpp(423): warning C4018: '<': signed/unsigned mismatch
+e:\dev\class\alumnos\shadow\proyectoluisricardo\example\example\cobject3d.cpp(434): warning C4244: '=': conversion from 'double' to 'unsigned short', possible loss of data
+e:\dev\class\alumnos\shadow\proyectoluisricardo\example\example\cobject3d.cpp(992): warning C4018: '<': signed/unsigned mismatch
+e:\dev\class\alumnos\shadow\proyectoluisricardo\example\example\cobject3d.cpp(1085): warning C4477: 'printf' : format string '%s' requires an argument of type 'char *', but variadic argument 1 has type 'std::string'
+e:\dev\class\alumnos\shadow\proyectoluisricardo\example\example\cobject3d.cpp(1144): warning C4477: 'printf' : format string '%s' requires an argument of type 'char *', but variadic argument 1 has type 'std::string'
+e:\dev\class\alumnos\shadow\proyectoluisricardo\example\example\cobject3d.cpp(1169): warning C4477: 'printf' : format string '%s' requires an argument of type 'char *', but variadic argument 1 has type 'std::string'
+e:\dev\class\alumnos\shadow\proyectoluisricardo\example\example\cobject3d.cpp(1400): warning C4018: '<': signed/unsigned mismatch
+  CerdoGL.cpp
+  CBMPCharge.cpp
+  BaseDriver.cpp
+  Generating Code...
+e:\dev\class\alumnos\shadow\proyectoluisricardo\example\example\cerdogl.cpp(31): warning C4700: uninitialized local variable 'sizeVertex' used
+  Example.vcxproj -> E:\Dev\CLASS\Alumnos\Shadow\ProyectoLuisRicardo\Example\Debug\Framework.lib

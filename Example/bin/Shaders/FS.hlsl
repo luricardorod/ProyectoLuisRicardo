@@ -35,11 +35,11 @@ struct VS_OUTPUT {
   #ifdef LIGHT_SHADOW_MAP
     struct FS_OUT {
       float4 color0 : SV_TARGET0;
-      float  depth : SV_Depth;
+    //  float  depth : SV_Depth;
     };
     FS_OUT FS(VS_OUTPUT input) {
       FS_OUT fout;
-      fout.depth = input.hposition.z / PositionPointLight.y;
+     // fout.depth = input.hposition.z / input.hposition.w;
       fout.color0 = TextureRGB.Sample(SS, input.texture0);
       return fout;
     }
@@ -88,22 +88,26 @@ struct VS_OUTPUT {
 
       float4 color = TextureRGB.Sample(SS, input.texture0);
 
-      float4 posLigth = mul(LigthView, input.vert);
-      posLigth = float4(posLigth.x/posLigth.w, -posLigth.y/posLigth.w, posLigth.z/posLigth.w, posLigth.w)* .5 +.5;
-      float4 shadow = float4(0,0,0, 0);
-      float depthligth = ShadowMap.Sample(SS, posLigth);
-      if (posLigth.x < 1 && posLigth.x  > 0&& posLigth.y < 1 && posLigth.y  > 0) {
-        if(input.hposition.z * .5 +.5 < depthligth){
-          shadow = float4(0,0,0, 0);
-        } else  {
-          shadow = depthligth;
-        }
+      float4 posLigth = input.vert;
+	  posLigth.xyz /= posLigth.w;
+      posLigth.xy = posLigth.xy*0.5+0.5;
+	  posLigth.y = 1.0 - posLigth.y;
+      float4 shadow = float4(1.0,1.0,1.0,1.0);
+      float depthligth = ShadowMap.Sample(SS, posLigth).r;
+      if (posLigth.x < 1 && posLigth.x  > 0&& posLigth.y < 1 && posLigth.y  > 0 && posLigth.w > 0.0) {
+        if(posLigth.z > depthligth + 0.0001){
+          shadow = float4(0.2,0.2,0.2, 1.0);
+		}
+		  
       }
       float4 original = ColorGlobalLight;
       original *= float4(globalIntensity, 0);
       original *= color;
       float4 final = original + color;
-      color = shadow + color * float4(globalIntensity, 0) + color * float4(pointIntensity, 0) + color *float4(specularIntensity, 0) + color *0.4;
+      color = color * float4(globalIntensity, 0) + color * float4(pointIntensity, 0) + color *float4(specularIntensity, 0) + color *0.4;
+	  color*=shadow;
+	  float rd = ShadowMap.Sample(SS, input.texture0).r;
+	//  color = float4(depthligth,depthligth,depthligth,1.0);
       return color;
     }
   #endif
