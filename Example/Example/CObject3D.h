@@ -16,6 +16,14 @@
 #include "UtilsGL.h"
 #include <vector>
 
+struct Bones {
+	char* name;
+	int   position;
+	int	  parent;
+	std::vector<int> brothers;
+	std::vector<int> childs;
+	CMatrix4D tranformMatrix;
+};
 struct textureByMesh
 {
 	bool specular;
@@ -41,7 +49,7 @@ public:
 class CObject3D : public PrimitiveBase {
 	
 public:
-
+	std::vector<Bones> bones;
 	CMatrix4D	transform;
 
 	void Create(char * path);
@@ -101,7 +109,11 @@ public:
 		CVector4D ColorPointLight;
 		CVector4D PosCamera;
 	};
-
+	struct BonsInlfluenceForVertex
+	{
+		std::vector<int> bones;
+		std::vector<float> influence;
+	};
 	struct CBufferRes
 	{
 		CMatrix4D WVP;
@@ -116,6 +128,9 @@ public:
 		std::vector<unsigned short> bufferIndex;
 		infotex infoTexture;
 		std::vector<std::vector<unsigned short>*> bufferIndexForTextures;
+
+		std::vector<BonsInlfluenceForVertex> bonsInlfluenceForVertex;
+
 	};
 	bool flagShader = true;
 	CObject3D() {}
@@ -136,6 +151,8 @@ public:
 	TextureD3D*	d3dxTextures[8];
 
 #endif
+	int AddBone(char* archivo, int counter, int father);
+	void AddChildsAndBrothers();
 	std::vector<mesh> meshes;
 
 };

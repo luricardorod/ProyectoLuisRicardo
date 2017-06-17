@@ -56,8 +56,8 @@ void TestApp::CreateAssets() {
 	index = PrimitiveMgr.CreateSprite("radar.png", 294, 298, 0, 720, 0, 294, 298);
 
 	primitiveFigs[2].CreateInstance(PrimitiveMgr.GetPrimitive(index), &VP);
-	index = PrimitiveMgr.CreateObject3D("Models/CerdoNuevo.X");
 
+	index = PrimitiveMgr.CreateObject3D("Models/NuBatman.X");
 	primitiveFigs[3].CreateInstance(PrimitiveMgr.GetPrimitive(index), &VP);
 	index = PrimitiveMgr.CreateObject3D("Models/Scene.X");
 	//index = PrimitiveMgr.CreateObject3D("Models/NuBatman.X");
@@ -65,7 +65,7 @@ void TestApp::CreateAssets() {
 
 	primitiveFigs[4].CreateInstance(PrimitiveMgr.GetPrimitive(index), &VP);
 	
-	index = PrimitiveMgr.CreateObject3D("Models/NuBatman.X");
+	index = PrimitiveMgr.CreateObject3D("Models/NuVenomJok.X");
 	primitiveFigs[5].CreateInstance(PrimitiveMgr.GetPrimitive(index), &VP);
 	index = PrimitiveMgr.CreateObject3D("Models/CerdoNuevo.X");
 	primitiveFigs[6].CreateInstance(PrimitiveMgr.GetPrimitive(index), &VP);
@@ -130,9 +130,9 @@ void TestApp::CreateAssets() {
 	primitiveFigs[1].Update();
 	primitiveFigs[5].ScaleAbsolute(.5);
 	primitiveFigs[5].Update();
-	//primitiveFigs[2].TranslateAbsolute(0, -0.5, 0);
-	//primitiveFigs[2].Update();
-	primitiveFigs[3].TranslateAbsolute(100.0f, 0, -20);
+	primitiveFigs[2].TranslateAbsolute(25, -20, 0);
+	primitiveFigs[2].Update();
+	primitiveFigs[3].TranslateAbsolute(10.0f, 0, -20);
 	primitiveFigs[3].Update();
 	//primitiveFigs[4].TranslateAbsolute(0, -1000, -500);
 	//primitiveFigs[4].ScaleAbsolute(1000);
@@ -469,6 +469,9 @@ void TestApp::OnUpdate() {
 }
 
 void TestApp::OnDraw() {
+	pFramework->pVideoDriver->Clear();
+
+	
 	CVector4D shadowLight = CVector4D(-PositionLight.x, -PositionLight.y + 1, -PositionLight.z, 0);
 	CVector4D Up = CVector4D(0.0f, 1.0f, 0.0f, 0);
 	CVector4D OrientationLigth = CVector4D(-10.0f, 10.0f, 10.0f, 0);
@@ -515,6 +518,7 @@ void TestApp::OnDraw() {
 	}
 	worldLights.flagShadowMap = false;
 
+	
 	pFramework->pVideoDriver->SwapBuffers();
 }
 

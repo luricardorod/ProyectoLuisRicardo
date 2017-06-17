@@ -9,6 +9,100 @@ extern ComPtr<ID3D11Device>            D3D11Device;
 extern ComPtr<ID3D11DeviceContext>     D3D11DeviceContext;
 #endif
 
+void CObject3D::AddChildsAndBrothers() {
+	std::vector<int> childs;
+
+	for (int bone = 0; bone < bones.size(); bone++)
+	{
+		childs.clear();
+		for (int i = 0; i < bones.size(); i++)
+		{
+			if (bones[i].parent == bones[bone].position)
+			{
+				childs.push_back(i);
+			}
+		}
+		for (int i = 0; i < childs.size(); i++)
+		{
+			bones[childs[i]].brothers = childs;
+		}
+		bones[bone].childs = childs;
+	}
+}
+
+int CObject3D::AddBone(char* archivo, int counter, int father) {
+	int positionBuffer;
+
+	char* buffer1 = new char[50];
+	char* bufferName = new char[50];
+
+	positionBuffer = 0;
+	Bones newBone;
+	while (archivo[counter] != ' ')
+	{
+		bufferName[positionBuffer] = archivo[counter];
+		positionBuffer++;
+		counter++;
+	}
+	bufferName[positionBuffer] = '\0';
+	newBone.name = bufferName;
+	newBone.parent = father;
+	newBone.position = bones.size();
+	counter += 2;
+	while (archivo[counter] != '{')
+	{
+		counter++;
+	}
+	counter++;
+	for (int i = 0; i < 16; i++)
+	{
+		positionBuffer = 0;
+		while (!(archivo[counter] == ',' || archivo[counter] == ';'))
+		{
+			buffer1[positionBuffer] = archivo[counter];
+			counter++;
+			positionBuffer++;
+		}
+		buffer1[positionBuffer] = '\0';
+		newBone.tranformMatrix.v[i] = std::atof(buffer1);
+		counter++;
+	}
+
+	while (archivo[counter] != '}')
+	{
+		counter++;
+	}
+	counter++;
+
+	while (archivo[counter] != '}')
+	{
+		counter++;
+	}
+	counter++;
+
+	bones.push_back(newBone);
+	
+	while (archivo[counter] != '}')
+	{
+		while (archivo[counter] != '}' && archivo[counter] != 'F' && archivo[counter] != 'M')
+		{
+			counter++;
+		}
+		if (archivo[counter] == 'F')
+		{
+			counter += 6;
+			counter = AddBone(archivo, counter, newBone.position);
+			counter++;
+		} else if (archivo[counter] == 'M')
+		{
+			bones.pop_back();
+			return counter;
+		}
+	}
+	return counter;
+}
+
+
 void CObject3D::Create(char * path) {
 
 	long sizeFile;
@@ -28,6 +122,23 @@ void CObject3D::Create(char * path) {
 	while (counter < sizeFile)
 	{
 		if (
+			archivo[counter] == 'F' &&
+			archivo[counter + 1] == 'r' &&
+			archivo[counter + 2] == 'a' &&
+			archivo[counter + 3] == 'm' &&
+			archivo[counter + 4] == 'e' &&
+			archivo[counter + 5] == ' ' &&
+			archivo[counter + 6] != '{'
+			) 
+		{
+			counter += 6;
+			counter = AddBone(archivo, counter, -1);
+			if (archivo[counter] == 'M')
+			{
+				AddChildsAndBrothers();
+			}
+		}
+		if (
 			archivo[counter] == 'M' &&
 			archivo[counter + 1] == 'e' &&
 			archivo[counter + 2] == 's' &&
@@ -38,6 +149,7 @@ void CObject3D::Create(char * path) {
 		{
 			
 			counter += 9;
+			bones;
 			flag = true;
 			while (flag)
 			{
@@ -53,6 +165,8 @@ void CObject3D::Create(char * path) {
 					}
 					buffer1[positionBuffer] = '\0';
 					tempMesh.bufferVertex.resize(std::atof(buffer1));
+					tempMesh.bonsInlfluenceForVertex.resize(std::atof(buffer1));
+
 					for (int i = 0; i < tempMesh.bufferVertex.size(); i++)
 					{
 						counter++;
@@ -111,6 +225,7 @@ void CObject3D::Create(char * path) {
 					dif -= std::atof(buffer1);
 					tempMesh.bufferIndex.resize(std::atof(buffer1) * 3);
 					tempMesh.meshbufferIndex.resize(std::atof(buffer1) * 3 * 2);
+
 					counterBufferIndex = 0;
 					for (int i = 0; i < tempMesh.bufferIndex.size(); i +=3)
 					{
@@ -381,6 +496,127 @@ void CObject3D::Create(char * path) {
 						tempMesh.bufferVertex[i].tanw = 1;
 
 					}
+
+					//
+					while (archivo[counter] != '}')
+					{
+						counter++;
+					}
+					counter++;
+					int counterOpenBrackets = 1;
+					while (!(counterOpenBrackets == 0))
+					{
+						if (archivo[counter + 4] == 'M' &&
+							archivo[counter + 5] == 'e' &&
+							archivo[counter + 6] == 's' &&
+							archivo[counter + 7] == 'h' &&
+							archivo[counter + 8] == 'M' &&
+							archivo[counter + 9] == 'a' &&
+							archivo[counter + 10] == 't')
+						{
+							counterOpenBrackets--;
+						}
+						if (archivo[counter] == '{')
+						{
+							counterOpenBrackets++;
+						}
+						if (archivo[counter] == '}')
+						{
+							counterOpenBrackets--;
+						}
+						if (archivo[counter] == 'S' &&
+							archivo[counter + 1] == 'k' &&
+							archivo[counter + 2] == 'i' &&
+							archivo[counter + 3] == 'n' &&
+							archivo[counter + 4] == 'W' &&
+							archivo[counter + 5] == 'e' &&
+							archivo[counter + 6] == 'i' &&
+							archivo[counter + 7] == 'g' &&
+							archivo[counter + 8] == 'h' &&
+							archivo[counter + 9] == 't' &&
+							archivo[counter + 10] == 's')
+						{
+							counterOpenBrackets++;
+							while (archivo[counter] != '"')
+							{
+								counter++;
+							}
+							counter++;
+							positionBuffer = 0;
+							while (archivo[counter] != '"')
+							{
+								buffer1[positionBuffer] = archivo[counter];
+								positionBuffer++;
+								counter++;
+							}
+							counter += 3;
+							buffer1[positionBuffer] = '\0';
+
+							int selectedBone;
+							for (int i = 0; i < bones.size(); i++)
+							{
+								if (strcmp(buffer1, bones[i].name) == 0)
+								{
+									selectedBone = i;
+									break;
+								}
+							}
+
+							int numberOfVertexAfectedForBone;
+							positionBuffer = 0;
+							std::vector<int> vertexAfected;
+							std::vector<float> influencVertexAfected;
+
+							while (archivo[counter] != ';')
+							{
+								buffer1[positionBuffer] = archivo[counter];
+								positionBuffer++;
+								counter++;
+							}
+							buffer1[positionBuffer] = '\0';
+							numberOfVertexAfectedForBone = std::atoi(buffer1);
+							counter++;
+							for (int i = 0; i < numberOfVertexAfectedForBone; i++)
+							{
+								positionBuffer = 0;
+								while (archivo[counter] != ';' && archivo[counter] != ',')
+								{
+									buffer1[positionBuffer] = archivo[counter];
+									positionBuffer++;
+									counter++;
+								}
+								counter++;
+								buffer1[positionBuffer] = '\0';
+								vertexAfected.push_back(std::atoi(buffer1));
+							}
+							tempMesh.bonsInlfluenceForVertex[std::atoi(buffer1)];
+							counter++;
+							for (int i = 0; i < numberOfVertexAfectedForBone; i++)
+							{
+								positionBuffer = 0;
+								while (archivo[counter] != ';' && archivo[counter] != ',')
+								{
+									buffer1[positionBuffer] = archivo[counter];
+									positionBuffer++;
+									counter++;
+								}
+								counter++;
+								buffer1[positionBuffer] = '\0';
+								influencVertexAfected.push_back(std::atoi(buffer1));
+ 							}
+							counter++;
+
+							for (int i = 0; i < vertexAfected.size(); i++)
+							{
+								tempMesh.bonsInlfluenceForVertex[vertexAfected[i]].bones.push_back(selectedBone);
+								tempMesh.bonsInlfluenceForVertex[vertexAfected[i]].influence.push_back(influencVertexAfected[i]);
+							}
+							
+
+						}
+						counter++;
+					}
+					counter++;
 					flag = false;
 				}
 				counter++;

@@ -98,7 +98,7 @@ struct VS_OUTPUT {
         if(posLigth.z > depthligth + 0.0001){
           shadow = float4(0.2,0.2,0.2, 1.0);
 		}
-		  
+
       }
       float4 original = ColorGlobalLight;
       original *= float4(globalIntensity, 0);
