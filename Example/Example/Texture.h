@@ -34,6 +34,7 @@ public:
 	}
 
 	int				LoadTexture(char *fn);
+	int				LoadTextureCubeMap(char *fn);
 	void			DestroyTex();
 
 	virtual void	LoadAPITexture(unsigned char* buffer) = 0;
