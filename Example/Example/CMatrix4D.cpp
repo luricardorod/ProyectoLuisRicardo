@@ -213,3 +213,46 @@ CMatrix4D RotationZ(float theta)
 	return R;
 }
 #endif
+CMatrix4D CMatrix4D::Inverse()
+{
+	CMatrix4D tmp64 = *this;
+	float det =
+		tmp64.m00*tmp64.m11*tmp64.m22*tmp64.m33 + tmp64.m00*tmp64.m12*tmp64.m23*tmp64.m31 + tmp64.m00*tmp64.m13*tmp64.m21*tmp64.m32
+		+ tmp64.m01*tmp64.m10*tmp64.m23*tmp64.m32 + tmp64.m01*tmp64.m12*tmp64.m20*tmp64.m33 + tmp64.m01*tmp64.m13*tmp64.m22*tmp64.m30
+		+ tmp64.m02*tmp64.m10*tmp64.m21*tmp64.m33 + tmp64.m02*tmp64.m11*tmp64.m23*tmp64.m30 + tmp64.m02*tmp64.m13*tmp64.m20*tmp64.m31
+		+ tmp64.m03*tmp64.m10*tmp64.m22*tmp64.m31 + tmp64.m03*tmp64.m11*tmp64.m20*tmp64.m32 + tmp64.m03*tmp64.m12*tmp64.m21*tmp64.m30
+		- tmp64.m00*tmp64.m11*tmp64.m23*tmp64.m32 - tmp64.m00*tmp64.m12*tmp64.m21*tmp64.m33 - tmp64.m00*tmp64.m13*tmp64.m22*tmp64.m31
+		- tmp64.m01*tmp64.m10*tmp64.m22*tmp64.m33 - tmp64.m01*tmp64.m12*tmp64.m23*tmp64.m30 - tmp64.m01*tmp64.m13*tmp64.m20*tmp64.m32
+		- tmp64.m02*tmp64.m10*tmp64.m23*tmp64.m31 - tmp64.m02*tmp64.m11*tmp64.m20*tmp64.m33 - tmp64.m02*tmp64.m13*tmp64.m21*tmp64.m30
+		- tmp64.m03*tmp64.m10*tmp64.m21*tmp64.m32 - tmp64.m03*tmp64.m11*tmp64.m22*tmp64.m30 - tmp64.m03*tmp64.m12*tmp64.m20*tmp64.m31;
+
+	if (det == 0.0f)
+		exit(666);
+
+	det = 1.0f / det;
+	CMatrix4D out;
+
+	out.m00 = tmp64.m11*tmp64.m22*tmp64.m33 + tmp64.m12*tmp64.m23*tmp64.m31 + tmp64.m13*tmp64.m21*tmp64.m32 - tmp64.m11*tmp64.m23*tmp64.m32 - tmp64.m12*tmp64.m21*tmp64.m33 - tmp64.m13*tmp64.m22*tmp64.m31;
+	out.m01 = tmp64.m01*tmp64.m23*tmp64.m32 + tmp64.m02*tmp64.m21*tmp64.m33 + tmp64.m03*tmp64.m22*tmp64.m31 - tmp64.m01*tmp64.m22*tmp64.m33 - tmp64.m02*tmp64.m23*tmp64.m31 - tmp64.m03*tmp64.m21*tmp64.m32;
+	out.m02 = tmp64.m01*tmp64.m12*tmp64.m33 + tmp64.m02*tmp64.m13*tmp64.m31 + tmp64.m03*tmp64.m11*tmp64.m32 - tmp64.m01*tmp64.m13*tmp64.m32 - tmp64.m02*tmp64.m11*tmp64.m33 - tmp64.m03*tmp64.m12*tmp64.m31;
+	out.m03 = tmp64.m01*tmp64.m13*tmp64.m22 + tmp64.m02*tmp64.m11*tmp64.m23 + tmp64.m03*tmp64.m12*tmp64.m21 - tmp64.m01*tmp64.m12*tmp64.m23 - tmp64.m02*tmp64.m13*tmp64.m21 - tmp64.m03*tmp64.m11*tmp64.m22;
+	out.m10 = tmp64.m10*tmp64.m23*tmp64.m32 + tmp64.m12*tmp64.m20*tmp64.m33 + tmp64.m13*tmp64.m22*tmp64.m30 - tmp64.m10*tmp64.m22*tmp64.m33 - tmp64.m12*tmp64.m23*tmp64.m30 - tmp64.m13*tmp64.m20*tmp64.m32;
+	out.m11 = tmp64.m00*tmp64.m22*tmp64.m33 + tmp64.m02*tmp64.m23*tmp64.m30 + tmp64.m03*tmp64.m20*tmp64.m32 - tmp64.m00*tmp64.m23*tmp64.m32 - tmp64.m02*tmp64.m20*tmp64.m33 - tmp64.m03*tmp64.m22*tmp64.m30;
+	out.m12 = tmp64.m00*tmp64.m13*tmp64.m32 + tmp64.m02*tmp64.m10*tmp64.m33 + tmp64.m03*tmp64.m12*tmp64.m30 - tmp64.m00*tmp64.m12*tmp64.m33 - tmp64.m02*tmp64.m13*tmp64.m30 - tmp64.m03*tmp64.m10*tmp64.m32;
+	out.m13 = tmp64.m00*tmp64.m12*tmp64.m23 + tmp64.m02*tmp64.m13*tmp64.m20 + tmp64.m03*tmp64.m10*tmp64.m22 - tmp64.m00*tmp64.m13*tmp64.m22 - tmp64.m02*tmp64.m10*tmp64.m23 - tmp64.m03*tmp64.m12*tmp64.m20;
+	out.m20 = tmp64.m10*tmp64.m21*tmp64.m33 + tmp64.m11*tmp64.m23*tmp64.m30 + tmp64.m13*tmp64.m20*tmp64.m31 - tmp64.m10*tmp64.m23*tmp64.m31 - tmp64.m11*tmp64.m20*tmp64.m33 - tmp64.m13*tmp64.m21*tmp64.m30;
+	out.m21 = tmp64.m00*tmp64.m23*tmp64.m31 + tmp64.m01*tmp64.m20*tmp64.m33 + tmp64.m03*tmp64.m21*tmp64.m30 - tmp64.m00*tmp64.m21*tmp64.m33 - tmp64.m01*tmp64.m23*tmp64.m30 - tmp64.m03*tmp64.m20*tmp64.m31;
+	out.m22 = tmp64.m00*tmp64.m11*tmp64.m33 + tmp64.m01*tmp64.m13*tmp64.m30 + tmp64.m03*tmp64.m10*tmp64.m31 - tmp64.m00*tmp64.m13*tmp64.m31 - tmp64.m01*tmp64.m10*tmp64.m33 - tmp64.m03*tmp64.m11*tmp64.m30;
+	out.m23 = tmp64.m00*tmp64.m13*tmp64.m21 + tmp64.m01*tmp64.m10*tmp64.m23 + tmp64.m03*tmp64.m11*tmp64.m20 - tmp64.m00*tmp64.m11*tmp64.m23 - tmp64.m01*tmp64.m13*tmp64.m20 - tmp64.m03*tmp64.m10*tmp64.m21;
+	out.m30 = tmp64.m10*tmp64.m22*tmp64.m31 + tmp64.m11*tmp64.m20*tmp64.m32 + tmp64.m12*tmp64.m21*tmp64.m30 - tmp64.m10*tmp64.m21*tmp64.m32 - tmp64.m11*tmp64.m22*tmp64.m30 - tmp64.m12*tmp64.m20*tmp64.m31;
+	out.m31 = tmp64.m00*tmp64.m21*tmp64.m32 + tmp64.m01*tmp64.m22*tmp64.m30 + tmp64.m02*tmp64.m20*tmp64.m31 - tmp64.m00*tmp64.m22*tmp64.m31 - tmp64.m01*tmp64.m20*tmp64.m32 - tmp64.m02*tmp64.m21*tmp64.m30;
+	out.m32 = tmp64.m00*tmp64.m12*tmp64.m31 + tmp64.m01*tmp64.m10*tmp64.m32 + tmp64.m02*tmp64.m11*tmp64.m30 - tmp64.m00*tmp64.m11*tmp64.m32 - tmp64.m01*tmp64.m12*tmp64.m30 - tmp64.m02*tmp64.m10*tmp64.m31;
+	out.m33 = tmp64.m00*tmp64.m11*tmp64.m22 + tmp64.m01*tmp64.m12*tmp64.m20 + tmp64.m02*tmp64.m10*tmp64.m21 - tmp64.m00*tmp64.m12*tmp64.m21 - tmp64.m01*tmp64.m10*tmp64.m22 - tmp64.m02*tmp64.m11*tmp64.m20;
+
+	CMatrix4D tmpO;
+
+	for (int i = 0; i < 16; i++)
+		tmpO.v[i] = det*out.v[i];
+
+	return tmpO;
+}

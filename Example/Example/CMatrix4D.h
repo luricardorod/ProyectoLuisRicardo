@@ -18,6 +18,7 @@ public:
 		float v[16];
 	};
 public:
+	CMatrix4D Inverse();
 	CMatrix4D();
 	CMatrix4D(
 		float a00, float a01, float a02, float a03,
@@ -47,5 +48,6 @@ CMatrix4D RotationZ(float theta);
 CMatrix4D Scaling(float sx, float sy, float sz);
 CMatrix4D LookAtRH(CVector4D &EyePos, CVector4D &Target, CVector4D &Up);
 CMatrix4D PerspectiveFovRH(float fovy, float Aspect, float zn, float zf);
+
 #endif
 

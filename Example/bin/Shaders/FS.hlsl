@@ -25,12 +25,50 @@ struct VS_OUTPUT {
   float3 hbinormal   : BINORMAL;
   float3 htangente   : TANGENTE;
   float4 vert      : VERTICE;
-  float4 lu      : VERTICE2;
+  float4 posi : SPOSITION;
 };
 #ifdef G_BUFFER_PASS
-  float4 FS( VS_OUTPUT input )  : SV_TARGET {
-    return float4(1,0,0,1);
-  }
+struct FS_OUT {
+	float4 color0 : SV_TARGET0;
+	float4 color1 : SV_TARGET1;
+	float4 color2 : SV_TARGET2;
+	float4 color3 : SV_TARGET3;
+};
+FS_OUT FS(VS_OUTPUT input) {
+	FS_OUT fout;
+	// fout.depth = input.hposition.z / input.hposition.w;
+	fout.color0 = TextureRGB.Sample(SS, input.texture0);
+
+	float specIntesivity = 0.8;
+	float shinness = 2.0;
+
+	#ifdef USE_NORMAL_TEXTURE
+		float3x3 ejes;
+		ejes[0] = normalize(input.htangente);
+		ejes[1] = normalize(input.hbinormal);
+		ejes[2] = normalize(input.hnormal);
+		float4 norRGB = NormalRGB.Sample(SS, input.texture0);
+		float3 newNormal = norRGB.rgb  *2.0 - 1.0;
+		newNormal.g = -newNormal.g;
+		newNormal = normalize(mul(ejes, newNormal));
+	#else
+		float3 newNormal = input.hnormal;
+	#endif
+	#ifdef GLOSS_MAP
+			shinness = TextureGloss.Sample(SS, input.texture0).r + shinness;
+	#endif
+	fout.color0.a = specIntesivity;
+	newNormal = newNormal*0.5 + 0.5;
+	fout.color1.rgb = newNormal;
+	fout.color1.a = shinness;
+
+	fout.color2 = SpecularRGB.Sample(SS, input.texture0);
+	fout.color2.a = shinness;
+
+	fout.color3 = input.posi;
+
+	return fout;
+}
 #else
   #ifdef LIGHT_SHADOW_MAP
     struct FS_OUT {

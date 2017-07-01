@@ -492,24 +492,52 @@ void TestApp::OnDraw() {
 		primitiveFigs[i].SetSignature(Signature::FORWARD_PASS);
 	}
 
-	pFramework->pVideoDriver->PopRT();
-
-
 	worldLights.LigthView = VP;
 	VP = camerVP;
+
+	pFramework->pVideoDriver->PopRT();
+
+	pFramework->pVideoDriver->PushRT(GBufferPass);
+	pFramework->pVideoDriver->Clear();
+
+
+	for (int i = 3; i < TOTAL_INSTANCES; i++) {
+		primitiveFigs[i].SetSignature(Signature::GBUFF_PASS);
+		primitiveFigs[i].Draw();
+		primitiveFigs[i].SetSignature(Signature::FORWARD_PASS);
+	}
+
+	pFramework->pVideoDriver->PopRT();
+
 	pFramework->pVideoDriver->Clear();
 	for (int i = 0; i < PrimitiveMgr.primitives.size(); i++)
 	{
 		PrimitiveMgr.GetPrimitive(i)->SetTexture(pFramework->pVideoDriver->RTs[ShadowMapPass]->pDepthTexture, 0);
 	}
 
-	PrimitiveMgr.GetPrimitive(QuadIndex)->SetTexture(pFramework->pVideoDriver->RTs[ShadowMapPass]->pDepthTexture, 0);
+	PrimitiveMgr.GetPrimitive(QuadIndex)->SetTexture(pFramework->pVideoDriver->RTs[ShadowMapPass]->vColorTextures[0], 0);
 	rendertargets[1].SetSignature(Signature::LIGTHSHADOWMAP);
 	rendertargets[1].Draw();
 
-	PrimitiveMgr.GetPrimitive(QuadIndex)->SetTexture(pFramework->pVideoDriver->RTs[ShadowMapPass]->vColorTextures[0], 0);
+	PrimitiveMgr.GetPrimitive(QuadIndex)->SetTexture(pFramework->pVideoDriver->RTs[GBufferPass]->pDepthTexture, 0);
 	rendertargets[2].SetSignature(Signature::LIGTHSHADOWMAP);
 	rendertargets[2].Draw();
+
+	PrimitiveMgr.GetPrimitive(QuadIndex)->SetTexture(pFramework->pVideoDriver->RTs[GBufferPass]->vColorTextures[0], 0);
+	rendertargets[3].SetSignature(Signature::LIGTHSHADOWMAP);
+	rendertargets[3].Draw();
+
+	PrimitiveMgr.GetPrimitive(QuadIndex)->SetTexture(pFramework->pVideoDriver->RTs[GBufferPass]->vColorTextures[1], 0);
+	rendertargets[4].SetSignature(Signature::LIGTHSHADOWMAP);
+	rendertargets[4].Draw();
+
+	PrimitiveMgr.GetPrimitive(QuadIndex)->SetTexture(pFramework->pVideoDriver->RTs[GBufferPass]->vColorTextures[2], 0);
+	rendertargets[5].SetSignature(Signature::LIGTHSHADOWMAP);
+	rendertargets[5].Draw();
+
+	PrimitiveMgr.GetPrimitive(QuadIndex)->SetTexture(pFramework->pVideoDriver->RTs[GBufferPass]->vColorTextures[3], 0);
+	rendertargets[6].SetSignature(Signature::LIGTHSHADOWMAP);
+	rendertargets[6].Draw();
 
 	worldLights.flagShadowMap = true;
 	for (int i = 0; i < TOTAL_INSTANCES; i++) {
