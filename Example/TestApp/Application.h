@@ -30,7 +30,7 @@ public:
 	PrimitiveManager PrimitiveMgr;
 	PrimitiveInst	primitiveFigs[15];
 	PrimitiveInst	figsFisics[31];
-	PrimitiveInst	rendertargets[7];
+	PrimitiveInst	rendertargets[10];
 
 	bool runBullet = false;
 

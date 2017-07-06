@@ -1,36 +1,5 @@
-﻿  Application.cpp
-e:\uad\6to\graficas\proyectoluisricardo\example\librerias\bullet\include\linearmath\btidebugdraw.h(169): warning C4305: 'argument': truncation from 'double' to 'const btScalar'
-e:\uad\6to\graficas\proyectoluisricardo\example\librerias\bullet\include\linearmath\btidebugdraw.h(170): warning C4305: 'argument': truncation from 'double' to 'const btScalar'
-e:\uad\6to\graficas\proyectoluisricardo\example\librerias\bullet\include\linearmath\btidebugdraw.h(171): warning C4305: 'argument': truncation from 'double' to 'const btScalar'
-e:\uad\6to\graficas\proyectoluisricardo\example\testapp\application.cpp(25): warning C4305: '=': truncation from 'double' to 'float'
-e:\uad\6to\graficas\proyectoluisricardo\example\testapp\application.cpp(27): warning C4305: 'argument': truncation from 'double' to 'const float'
-e:\uad\6to\graficas\proyectoluisricardo\example\testapp\application.cpp(28): warning C4305: 'argument': truncation from 'double' to 'const float'
-e:\uad\6to\graficas\proyectoluisricardo\example\testapp\application.cpp(90): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-e:\uad\6to\graficas\proyectoluisricardo\example\testapp\application.cpp(124): warning C4305: 'argument': truncation from 'double' to 'float'
-e:\uad\6to\graficas\proyectoluisricardo\example\testapp\application.cpp(169): warning C4305: 'argument': truncation from 'double' to 'float'
-e:\uad\6to\graficas\proyectoluisricardo\example\testapp\application.cpp(170): warning C4305: 'argument': truncation from 'double' to 'float'
-e:\uad\6to\graficas\proyectoluisricardo\example\testapp\application.cpp(173): warning C4305: 'argument': truncation from 'double' to 'float'
-e:\uad\6to\graficas\proyectoluisricardo\example\testapp\application.cpp(174): warning C4305: 'argument': truncation from 'double' to 'float'
-e:\uad\6to\graficas\proyectoluisricardo\example\testapp\application.cpp(177): warning C4305: 'argument': truncation from 'double' to 'float'
-e:\uad\6to\graficas\proyectoluisricardo\example\testapp\application.cpp(178): warning C4305: 'argument': truncation from 'double' to 'float'
-e:\uad\6to\graficas\proyectoluisricardo\example\testapp\application.cpp(181): warning C4305: 'argument': truncation from 'double' to 'float'
-e:\uad\6to\graficas\proyectoluisricardo\example\testapp\application.cpp(182): warning C4305: 'argument': truncation from 'double' to 'float'
-e:\uad\6to\graficas\proyectoluisricardo\example\testapp\application.cpp(185): warning C4305: 'argument': truncation from 'double' to 'float'
-e:\uad\6to\graficas\proyectoluisricardo\example\testapp\application.cpp(186): warning C4305: 'argument': truncation from 'double' to 'float'
-e:\uad\6to\graficas\proyectoluisricardo\example\testapp\application.cpp(189): warning C4305: 'argument': truncation from 'double' to 'float'
-e:\uad\6to\graficas\proyectoluisricardo\example\testapp\application.cpp(190): warning C4305: 'argument': truncation from 'double' to 'float'
-e:\uad\6to\graficas\proyectoluisricardo\example\testapp\application.cpp(241): warning C4305: 'argument': truncation from 'double' to 'const btScalar'
-e:\uad\6to\graficas\proyectoluisricardo\example\testapp\application.cpp(286): warning C4244: 'argument': conversion from 'int' to 'const btScalar', possible loss of data
-e:\uad\6to\graficas\proyectoluisricardo\example\testapp\application.cpp(205): warning C4101: 'i': unreferenced local variable
-e:\uad\6to\graficas\proyectoluisricardo\example\testapp\application.cpp(451): warning C4305: 'argument': truncation from 'double' to 'float'
-e:\uad\6to\graficas\proyectoluisricardo\example\testapp\application.cpp(481): warning C4305: 'argument': truncation from 'double' to 'float'
-e:\uad\6to\graficas\proyectoluisricardo\example\testapp\application.cpp(513): warning C4018: '<': signed/unsigned mismatch
-  Generating Code...
-  Compiling...
-  TestApp.cpp
-e:\uad\6to\graficas\proyectoluisricardo\example\librerias\bullet\include\linearmath\btidebugdraw.h(169): warning C4305: 'argument': truncation from 'double' to 'const btScalar'
-e:\uad\6to\graficas\proyectoluisricardo\example\librerias\bullet\include\linearmath\btidebugdraw.h(170): warning C4305: 'argument': truncation from 'double' to 'const btScalar'
-e:\uad\6to\graficas\proyectoluisricardo\example\librerias\bullet\include\linearmath\btidebugdraw.h(171): warning C4305: 'argument': truncation from 'double' to 'const btScalar'
-  Generating Code...
+﻿Framework.lib(CVector4D.obj) : warning LNK4099: PDB 'Framework.pdb' was not found with 'Framework.lib(CVector4D.obj)' or at 'E:\UAD\6to\graficas\ProyectoLuisRicardo\Example\bin\Framework.pdb'; linking object as if no debug info
+Framework.lib(InputManager.obj) : warning LNK4099: PDB 'Framework.pdb' was not found with 'Framework.lib(InputManager.obj)' or at 'E:\UAD\6to\graficas\ProyectoLuisRicardo\Example\bin\Framework.pdb'; linking object as if no debug info
+Framework.lib(Timer.obj) : warning LNK4099: PDB 'Framework.pdb' was not found with 'Framework.lib(Timer.obj)' or at 'E:\UAD\6to\graficas\ProyectoLuisRicardo\Example\bin\Framework.pdb'; linking object as if no debug info
   TestApp.vcxproj -> E:\UAD\6to\graficas\ProyectoLuisRicardo\Example\bin\TestApp.exe
   TestApp.vcxproj -> E:\UAD\6to\graficas\ProyectoLuisRicardo\Example\bin\TestApp.pdb (Full PDB)
