@@ -158,6 +158,10 @@ void CQuad::Draw(float * t, float * vp)
 
 	CMatrix4D VP = CMatrix4D(vp);
 	CnstBuffer.matTransform = transform;
+	CVector4D poscam = (*lights->posCamera);
+
+	CnstBuffer.cameraPosition = poscam;
+	CnstBuffer.WVPInverse = VP.Inverse();
 	unsigned int sig = SigBase;
 	sig |= gSig;
 	if (sig&Signature::LIGTHSHADOWMAP) {

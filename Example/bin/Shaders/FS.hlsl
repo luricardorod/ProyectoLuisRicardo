@@ -33,10 +33,10 @@ struct FS_OUT {
 	float4 color1 : SV_TARGET1;
 	float4 color2 : SV_TARGET2;
 	float4 color3 : SV_TARGET3;
+	float  depth : SV_Depth;
 };
 FS_OUT FS(VS_OUTPUT input) {
 	FS_OUT fout;
-	// fout.depth = input.hposition.z / input.hposition.w;
 	fout.color0 = TextureRGB.Sample(SS, input.texture0);
 
 	float specIntesivity = 0.8;
@@ -66,6 +66,7 @@ FS_OUT FS(VS_OUTPUT input) {
 	fout.color2.a = shinness;
 
 	fout.color3 = input.posi;
+	fout.depth = input.posi.z / 10000;
 
 	return fout;
 }

@@ -210,7 +210,7 @@ void TestApp::CreateAssets() {
 	rendertargets[9].TranslateAbsolute(.8, -.8, 0);
 	rendertargets[9].Update();
 
-	for (int i = 0; i < 7; i++) {
+	for (int i = 0; i < 10; i++) {
 		rendertargets[i].lights = &worldLights;
 	}
 }
@@ -555,15 +555,16 @@ void TestApp::OnDraw() {
 	rendertargets[4].SetSignature(Signature::LIGTHSHADOWMAP);
 	rendertargets[4].Draw();
 
-	PrimitiveMgr.GetPrimitive(QuadIndex)->SetTexture(pFramework->pVideoDriver->RTs[GBufferPass]->vColorTextures[0], 0);
-	PrimitiveMgr.GetPrimitive(QuadIndex)->SetTexture(pFramework->pVideoDriver->RTs[GBufferPass]->vColorTextures[1], 0);
-	PrimitiveMgr.GetPrimitive(QuadIndex)->SetTexture(pFramework->pVideoDriver->RTs[GBufferPass]->vColorTextures[2], 0);
-	PrimitiveMgr.GetPrimitive(QuadIndex)->SetTexture(pFramework->pVideoDriver->RTs[GBufferPass]->vColorTextures[3], 0);
+	PrimitiveMgr.GetPrimitive(QuadIndex)->SetTexture(pFramework->pVideoDriver->RTs[GBufferPass]->pDepthTexture, 0);
 	rendertargets[5].SetSignature(Signature::LIGTHSHADOWMAP);
 	rendertargets[5].Draw();
 
-	PrimitiveMgr.GetPrimitive(QuadIndex)->SetTexture(pFramework->pVideoDriver->RTs[GBufferPass]->vColorTextures[3], 0);
-	rendertargets[6].SetSignature(Signature::LIGTHSHADOWMAP);
+	PrimitiveMgr.GetPrimitive(QuadIndex)->SetTexture(pFramework->pVideoDriver->RTs[GBufferPass]->vColorTextures[0], 0);
+	PrimitiveMgr.GetPrimitive(QuadIndex)->SetTexture(pFramework->pVideoDriver->RTs[GBufferPass]->vColorTextures[1], 1);
+	PrimitiveMgr.GetPrimitive(QuadIndex)->SetTexture(pFramework->pVideoDriver->RTs[GBufferPass]->vColorTextures[2], 2);
+	PrimitiveMgr.GetPrimitive(QuadIndex)->SetTexture(pFramework->pVideoDriver->RTs[GBufferPass]->vColorTextures[3], 3);
+	PrimitiveMgr.GetPrimitive(QuadIndex)->SetTexture(pFramework->pVideoDriver->RTs[GBufferPass]->pDepthTexture, 4);
+	rendertargets[6].SetSignature(Signature::DEFERRED_PASS);
 	rendertargets[6].Draw();
 
 	PrimitiveMgr.GetPrimitive(QuadIndex)->SetTexture(pFramework->pVideoDriver->RTs[GBufferPass]->vColorTextures[3], 0);

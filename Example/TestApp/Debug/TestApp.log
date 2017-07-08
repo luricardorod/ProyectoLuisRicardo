@@ -1,5 +1,2 @@
-﻿Framework.lib(CVector4D.obj) : warning LNK4099: PDB 'Framework.pdb' was not found with 'Framework.lib(CVector4D.obj)' or at 'E:\UAD\6to\graficas\ProyectoLuisRicardo\Example\bin\Framework.pdb'; linking object as if no debug info
-Framework.lib(InputManager.obj) : warning LNK4099: PDB 'Framework.pdb' was not found with 'Framework.lib(InputManager.obj)' or at 'E:\UAD\6to\graficas\ProyectoLuisRicardo\Example\bin\Framework.pdb'; linking object as if no debug info
-Framework.lib(Timer.obj) : warning LNK4099: PDB 'Framework.pdb' was not found with 'Framework.lib(Timer.obj)' or at 'E:\UAD\6to\graficas\ProyectoLuisRicardo\Example\bin\Framework.pdb'; linking object as if no debug info
-  TestApp.vcxproj -> E:\UAD\6to\graficas\ProyectoLuisRicardo\Example\bin\TestApp.exe
+﻿  TestApp.vcxproj -> E:\UAD\6to\graficas\ProyectoLuisRicardo\Example\bin\TestApp.exe
   TestApp.vcxproj -> E:\UAD\6to\graficas\ProyectoLuisRicardo\Example\bin\TestApp.pdb (Full PDB)

@@ -51,6 +51,8 @@ public:
 	{
 		CMatrix4D matTransform;
 		CMatrix4D matTexture;
+		CVector4D cameraPosition;
+		CMatrix4D WVPInverse;
 	};
 	ComPtr<ID3D11Buffer>		VB;
 	ComPtr<ID3D11Buffer>		IB;

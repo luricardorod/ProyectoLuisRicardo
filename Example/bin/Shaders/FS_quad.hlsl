@@ -1,12 +1,16 @@
 cbuffer ConstantBuffer {
 	float4x4 matTransform;
 	float4x4 matTexture;
+	float4 CameraPosition;
+	float4x4 WVPInverse;
 };
 
 struct VS_OUTPUT {
 	float4 hposition : SV_POSITION;
 	float2 texture0  : TEXCOORD;
 	float4 vTexCoord   : TEXCOORD20;
+	float4 Pos		: TEXCOORD1;
+	float4 PosCorner : VPOS;
 };
 
 SamplerState SS;
@@ -24,7 +28,9 @@ Texture2D tex3 : register(t3);
 Texture2D tex4 : register(t4);
 float4 FS(VS_OUTPUT input) : SV_TARGET{
 	//return tex0.Sample(SS, input.texture0);
-	return float4(0,1,0,0);
+	float depth = tex4.Sample(SS, input.texture0);
+	float4 position = CameraPosition + input.PosCorner*depth;
+	return position;
 }
 #else
 Texture2D tex0 : register(t0);
