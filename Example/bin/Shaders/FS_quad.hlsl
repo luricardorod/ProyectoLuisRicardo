@@ -8,8 +8,7 @@ cbuffer ConstantBuffer {
 struct VS_OUTPUT {
 	float4 hposition : SV_POSITION;
 	float2 texture0  : TEXCOORD;
-	float4 vTexCoord   : TEXCOORD20;
-	float4 Pos		: TEXCOORD1;
+	float4 Pos		 : TEXCOORD1;
 	float4 PosCorner : VPOS;
 };
 
@@ -30,7 +29,7 @@ float4 FS(VS_OUTPUT input) : SV_TARGET{
 	//return tex0.Sample(SS, input.texture0);
 	float depth = tex4.Sample(SS, input.texture0);
 	float4 position = CameraPosition + input.PosCorner*depth;
-	return position;
+	return float4(depth, depth, depth, 1);
 }
 #else
 Texture2D tex0 : register(t0);

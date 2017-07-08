@@ -24,7 +24,7 @@ struct VS_OUTPUT {
 	float3 hbinormal   : BINORMAL;
 	float3 htangente   : TANGENTE;
 	float4 vert      : VERTICE;
-	float4 posi : SPOSITION;
+	float4 posi : TEXCOORD1;
 };
 
 VS_OUTPUT VS(VS_INPUT input) {
@@ -45,7 +45,7 @@ VS_OUTPUT VS(VS_INPUT input) {
 #else
 	OUT.hnormal = normalize(input.normal.xyz);
 #endif
-	OUT.posi = mul(World, input.position);
+	OUT.posi = mul(WVP, input.position);
 	OUT.texture0 = input.texture0;
 	return OUT;
 }

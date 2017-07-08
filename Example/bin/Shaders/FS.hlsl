@@ -25,7 +25,7 @@ struct VS_OUTPUT {
   float3 hbinormal   : BINORMAL;
   float3 htangente   : TANGENTE;
   float4 vert      : VERTICE;
-  float4 posi : SPOSITION;
+  float4 posi : TEXCOORD1;
 };
 #ifdef G_BUFFER_PASS
 struct FS_OUT {

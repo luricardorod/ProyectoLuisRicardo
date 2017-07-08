@@ -1433,7 +1433,6 @@ void CObject3D::Create(char * path) {
 
 	Texture	*tex = new TextureD3D;
 	tex->LoadTextureCubeMap("earth-cubemap.dds");
-					
 }
 
 void CObject3D::Transform(float *t) {
