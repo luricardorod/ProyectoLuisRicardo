@@ -29,7 +29,7 @@ float4 FS(VS_OUTPUT input) : SV_TARGET{
 	//return tex0.Sample(SS, input.texture0);
 	float depth = tex4.Sample(SS, input.texture0);
 	float4 position = CameraPosition + input.PosCorner*depth;
-	return float4(depth, depth, depth, 1);
+	return position;
 }
 #else
 Texture2D tex0 : register(t0);

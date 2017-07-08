@@ -30,8 +30,8 @@ c:\users\bluemonkey\desktop\class\proyectoluisricardo\example\example\cobject3d.
 c:\users\bluemonkey\desktop\class\proyectoluisricardo\example\example\cobject3d.cpp(659): warning C4018: '<': signed/unsigned mismatch
 c:\users\bluemonkey\desktop\class\proyectoluisricardo\example\example\cobject3d.cpp(670): warning C4244: '=': conversion from 'double' to 'unsigned short', possible loss of data
 c:\users\bluemonkey\desktop\class\proyectoluisricardo\example\example\cobject3d.cpp(1228): warning C4018: '<': signed/unsigned mismatch
-c:\users\bluemonkey\desktop\class\proyectoluisricardo\example\example\cobject3d.cpp(1321): warning C4477: 'printf' : format string '%s' requires an argument of type 'char *', but variadic argument 1 has type 'std::string'
-c:\users\bluemonkey\desktop\class\proyectoluisricardo\example\example\cobject3d.cpp(1380): warning C4477: 'printf' : format string '%s' requires an argument of type 'char *', but variadic argument 1 has type 'std::string'
-c:\users\bluemonkey\desktop\class\proyectoluisricardo\example\example\cobject3d.cpp(1405): warning C4477: 'printf' : format string '%s' requires an argument of type 'char *', but variadic argument 1 has type 'std::string'
-c:\users\bluemonkey\desktop\class\proyectoluisricardo\example\example\cobject3d.cpp(1640): warning C4018: '<': signed/unsigned mismatch
+c:\users\bluemonkey\desktop\class\proyectoluisricardo\example\example\cobject3d.cpp(1324): warning C4477: 'printf' : format string '%s' requires an argument of type 'char *', but variadic argument 1 has type 'std::string'
+c:\users\bluemonkey\desktop\class\proyectoluisricardo\example\example\cobject3d.cpp(1383): warning C4477: 'printf' : format string '%s' requires an argument of type 'char *', but variadic argument 1 has type 'std::string'
+c:\users\bluemonkey\desktop\class\proyectoluisricardo\example\example\cobject3d.cpp(1408): warning C4477: 'printf' : format string '%s' requires an argument of type 'char *', but variadic argument 1 has type 'std::string'
+c:\users\bluemonkey\desktop\class\proyectoluisricardo\example\example\cobject3d.cpp(1643): warning C4018: '<': signed/unsigned mismatch
   Example.vcxproj -> C:\Users\blueMonkey\Desktop\CLASS\ProyectoLuisRicardo\Example\Debug\Framework.lib

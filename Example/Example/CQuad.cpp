@@ -159,6 +159,11 @@ void CQuad::Draw(float * t, float * vp)
 	CMatrix4D VP = CMatrix4D(vp);
 	CnstBuffer.matTransform = transform;
 	CVector4D poscam = (*lights->posCamera);
+	poscam.x =	-poscam.x;
+	poscam.z = -poscam.z;
+	poscam.w = 0;
+	poscam.y = -poscam.y;
+
 
 	CnstBuffer.cameraPosition = poscam;
 	CnstBuffer.WVPInverse = VP.Inverse();

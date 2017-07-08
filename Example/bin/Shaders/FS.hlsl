@@ -65,7 +65,7 @@ FS_OUT FS(VS_OUTPUT input) {
 	fout.color2 = SpecularRGB.Sample(SS, input.texture0);
 	fout.color2.a = shinness;
 
-	fout.color3 = input.posi;
+	//iluminacion normal map o no
 	fout.depth = input.posi.z / 10000;
 
 	return fout;
