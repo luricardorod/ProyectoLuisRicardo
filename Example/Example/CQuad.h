@@ -25,6 +25,10 @@ public:
 	void Transform(float *t);
 	void Draw(float *t, float *vp);
 	void Destroy();
+	int shaderIDNormal;
+	int shaderIDSat;
+	int shaderIDBlur;
+	int shaderIDBloom;
 
 	quadVertex	vertices[4];
 	unsigned short	indices[6];
@@ -53,6 +57,10 @@ public:
 		CMatrix4D matTexture;
 		CVector4D cameraPosition;
 		CMatrix4D WVPInverse;
+		CVector4D DirectionGlobalLight;
+		CVector4D ColorGlobalLight;
+		CVector4D PositionPointLight;
+		CVector4D ColorPointLight;
 	};
 	ComPtr<ID3D11Buffer>		VB;
 	ComPtr<ID3D11Buffer>		IB;

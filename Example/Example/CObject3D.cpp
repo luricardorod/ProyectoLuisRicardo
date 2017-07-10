@@ -1278,15 +1278,13 @@ void CObject3D::Create(char * path) {
 	}
 	else
 	{
-		Sig |= Signature::NO_LIGHT_AT_ALL;
-		g_pBaseDriver->CreateShader(vstr, fstr, Sig);
 		Sig = signature;
 		Sig |= Signature::LIGTHSHADOWMAP;
 		g_pBaseDriver->CreateShader(vstr, fstr, Sig);
 		Sig = signature;
 		Sig |= Signature::GBUFF_PASS;
 		g_pBaseDriver->CreateShader(vstr, fstr, Sig);
-		Sig |= Signature::LIGTHSHADOWMAP;
+		Sig |= Signature::NO_LIGHT_AT_ALL;
 		g_pBaseDriver->CreateShader(vstr, fstr, Sig);
 	}
 

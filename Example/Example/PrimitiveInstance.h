@@ -16,6 +16,7 @@ class PrimitiveInst {
 			rotationY = Identity();
 			rotationZ = Identity();
 			final = Identity();
+			flagLigths = true;
 		}
 
 		void	TranslateAbsolute(float x, float y, float z);
@@ -35,6 +36,7 @@ class PrimitiveInst {
 
 		void	Update();
 		void	Draw();
+		bool flagLigths;
 
 		CMatrix4D		position;
 		CMatrix4D		scale;

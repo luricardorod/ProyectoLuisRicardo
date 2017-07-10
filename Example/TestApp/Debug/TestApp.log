@@ -1,2 +1,37 @@
-﻿  TestApp.vcxproj -> C:\Users\blueMonkey\Desktop\CLASS\ProyectoLuisRicardo\Example\bin\TestApp.exe
-  TestApp.vcxproj -> C:\Users\blueMonkey\Desktop\CLASS\ProyectoLuisRicardo\Example\bin\TestApp.pdb (Full PDB)
+﻿  Application.cpp
+e:\uad\6to\graficas\proyectoluisricardo\example\librerias\bullet\include\linearmath\btidebugdraw.h(169): warning C4305: 'argument': truncation from 'double' to 'const btScalar'
+e:\uad\6to\graficas\proyectoluisricardo\example\librerias\bullet\include\linearmath\btidebugdraw.h(170): warning C4305: 'argument': truncation from 'double' to 'const btScalar'
+e:\uad\6to\graficas\proyectoluisricardo\example\librerias\bullet\include\linearmath\btidebugdraw.h(171): warning C4305: 'argument': truncation from 'double' to 'const btScalar'
+e:\uad\6to\graficas\proyectoluisricardo\example\testapp\application.cpp(25): warning C4305: '=': truncation from 'double' to 'float'
+e:\uad\6to\graficas\proyectoluisricardo\example\testapp\application.cpp(94): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+e:\uad\6to\graficas\proyectoluisricardo\example\testapp\application.cpp(128): warning C4305: 'argument': truncation from 'double' to 'float'
+e:\uad\6to\graficas\proyectoluisricardo\example\testapp\application.cpp(177): warning C4305: 'argument': truncation from 'double' to 'float'
+e:\uad\6to\graficas\proyectoluisricardo\example\testapp\application.cpp(178): warning C4305: 'argument': truncation from 'double' to 'float'
+e:\uad\6to\graficas\proyectoluisricardo\example\testapp\application.cpp(181): warning C4305: 'argument': truncation from 'double' to 'float'
+e:\uad\6to\graficas\proyectoluisricardo\example\testapp\application.cpp(182): warning C4305: 'argument': truncation from 'double' to 'float'
+e:\uad\6to\graficas\proyectoluisricardo\example\testapp\application.cpp(185): warning C4305: 'argument': truncation from 'double' to 'float'
+e:\uad\6to\graficas\proyectoluisricardo\example\testapp\application.cpp(186): warning C4305: 'argument': truncation from 'double' to 'float'
+e:\uad\6to\graficas\proyectoluisricardo\example\testapp\application.cpp(189): warning C4305: 'argument': truncation from 'double' to 'float'
+e:\uad\6to\graficas\proyectoluisricardo\example\testapp\application.cpp(190): warning C4305: 'argument': truncation from 'double' to 'float'
+e:\uad\6to\graficas\proyectoluisricardo\example\testapp\application.cpp(193): warning C4305: 'argument': truncation from 'double' to 'float'
+e:\uad\6to\graficas\proyectoluisricardo\example\testapp\application.cpp(194): warning C4305: 'argument': truncation from 'double' to 'float'
+e:\uad\6to\graficas\proyectoluisricardo\example\testapp\application.cpp(197): warning C4305: 'argument': truncation from 'double' to 'float'
+e:\uad\6to\graficas\proyectoluisricardo\example\testapp\application.cpp(198): warning C4305: 'argument': truncation from 'double' to 'float'
+e:\uad\6to\graficas\proyectoluisricardo\example\testapp\application.cpp(201): warning C4305: 'argument': truncation from 'double' to 'float'
+e:\uad\6to\graficas\proyectoluisricardo\example\testapp\application.cpp(202): warning C4305: 'argument': truncation from 'double' to 'float'
+e:\uad\6to\graficas\proyectoluisricardo\example\testapp\application.cpp(205): warning C4305: 'argument': truncation from 'double' to 'float'
+e:\uad\6to\graficas\proyectoluisricardo\example\testapp\application.cpp(206): warning C4305: 'argument': truncation from 'double' to 'float'
+e:\uad\6to\graficas\proyectoluisricardo\example\testapp\application.cpp(209): warning C4305: 'argument': truncation from 'double' to 'float'
+e:\uad\6to\graficas\proyectoluisricardo\example\testapp\application.cpp(210): warning C4305: 'argument': truncation from 'double' to 'float'
+e:\uad\6to\graficas\proyectoluisricardo\example\testapp\application.cpp(213): warning C4305: 'argument': truncation from 'double' to 'float'
+e:\uad\6to\graficas\proyectoluisricardo\example\testapp\application.cpp(214): warning C4305: 'argument': truncation from 'double' to 'float'
+e:\uad\6to\graficas\proyectoluisricardo\example\testapp\application.cpp(265): warning C4305: 'argument': truncation from 'double' to 'const btScalar'
+e:\uad\6to\graficas\proyectoluisricardo\example\testapp\application.cpp(310): warning C4244: 'argument': conversion from 'int' to 'const btScalar', possible loss of data
+e:\uad\6to\graficas\proyectoluisricardo\example\testapp\application.cpp(229): warning C4101: 'i': unreferenced local variable
+e:\uad\6to\graficas\proyectoluisricardo\example\testapp\application.cpp(475): warning C4305: 'argument': truncation from 'double' to 'float'
+e:\uad\6to\graficas\proyectoluisricardo\example\testapp\application.cpp(505): warning C4305: 'argument': truncation from 'double' to 'float'
+e:\uad\6to\graficas\proyectoluisricardo\example\testapp\application.cpp(594): warning C4305: 'argument': truncation from 'double' to 'float'
+e:\uad\6to\graficas\proyectoluisricardo\example\testapp\application.cpp(595): warning C4305: 'argument': truncation from 'double' to 'float'
+e:\uad\6to\graficas\proyectoluisricardo\example\testapp\application.cpp(601): warning C4018: '<': signed/unsigned mismatch
+  TestApp.vcxproj -> E:\UAD\6to\graficas\ProyectoLuisRicardo\Example\bin\TestApp.exe
+  TestApp.vcxproj -> E:\UAD\6to\graficas\ProyectoLuisRicardo\Example\bin\TestApp.pdb (Full PDB)

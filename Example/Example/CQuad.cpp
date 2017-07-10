@@ -52,13 +52,45 @@ void CQuad::Create(char * path)
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, 6 * sizeof(unsigned short), indices, GL_STATIC_DRAW);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 #elif defined(USING_D3D11)
-	SigBase = Signature::HAS_TEXCOORDS0;
+	char *vsSourceP = NULL;
+	char *fsSourceP = NULL;
 
-	char *vsSourceP = file2string("Shaders/VS_quad.hlsl");
-	char *fsSourceP = file2string("Shaders/FS_quad.hlsl");
+	SigBase = Signature::HAS_TEXCOORDS0;
+	unsigned int sigtemp = SigBase | Signature::SATURATION_PASS;
+	vsSourceP = file2string("Shaders/VS_quadsat.hlsl");
+	fsSourceP = file2string("Shaders/FS_quadsat.hlsl");
 	std::string vstr = std::string(vsSourceP);
 	std::string fstr = std::string(fsSourceP);
-	int shaderID = g_pBaseDriver->CreateShader(vstr, fstr, SigBase);
+	shaderIDSat = g_pBaseDriver->CreateShader(vstr, fstr, sigtemp);
+
+	sigtemp = SigBase | Signature::BLUR_PASS;
+	vsSourceP = file2string("Shaders/VS_quadblur.hlsl");
+	fsSourceP = file2string("Shaders/FS_quadblur.hlsl");
+	vstr = std::string(vsSourceP);
+	fstr = std::string(fsSourceP);
+	shaderIDSat = g_pBaseDriver->CreateShader(vstr, fstr, sigtemp);
+
+	sigtemp = SigBase | Signature::BLUR_PASSV;
+	vsSourceP = file2string("Shaders/VS_quadblurV.hlsl");
+	fsSourceP = file2string("Shaders/FS_quadblurV.hlsl");
+	vstr = std::string(vsSourceP);
+	fstr = std::string(fsSourceP);
+	shaderIDSat = g_pBaseDriver->CreateShader(vstr, fstr, sigtemp);
+	
+	sigtemp = SigBase | Signature::BLOON_PASS;
+	vsSourceP = file2string("Shaders/VS_quadboon.hlsl");
+	fsSourceP = file2string("Shaders/FS_quadboon.hlsl");
+	vstr = std::string(vsSourceP);
+	fstr = std::string(fsSourceP);
+	shaderIDSat = g_pBaseDriver->CreateShader(vstr, fstr, sigtemp);
+
+	vsSourceP = file2string("Shaders/VS_quad.hlsl");
+	fsSourceP = file2string("Shaders/FS_quad.hlsl");
+	vstr = std::string(vsSourceP);
+	fstr = std::string(fsSourceP);
+	shaderIDNormal = g_pBaseDriver->CreateShader(vstr, fstr, SigBase);
+
+	
 	unsigned int Dest;
 
 	Dest = SigBase | Signature::DEFERRED_PASS;
@@ -73,7 +105,7 @@ void CQuad::Create(char * path)
 
 	// We Bound the input layout
 
-	CShaderD3DX* s = dynamic_cast<CShaderD3DX*>(g_pBaseDriver->GetShaderIdx(shaderID));
+	CShaderD3DX* s = dynamic_cast<CShaderD3DX*>(g_pBaseDriver->GetShaderIdx(shaderIDNormal));
 
 	D3D11_BUFFER_DESC bdesc = { 0 };
 	bdesc.Usage = D3D11_USAGE_DEFAULT;
@@ -167,6 +199,13 @@ void CQuad::Draw(float * t, float * vp)
 
 	CnstBuffer.cameraPosition = poscam;
 	CnstBuffer.WVPInverse = VP.Inverse();
+
+	CnstBuffer.DirectionGlobalLight = (lights->dirGlobal);
+	CnstBuffer.ColorGlobalLight = (lights->colorGlobal);
+	CnstBuffer.PositionPointLight = (lights->posPoint);
+	CnstBuffer.ColorPointLight = (lights->colorPoint);
+
+#ifdef USE_GLOBALLIGHT
 	unsigned int sig = SigBase;
 	sig |= gSig;
 	if (sig&Signature::LIGTHSHADOWMAP) {
@@ -209,9 +248,14 @@ void CQuad::Draw(float * t, float * vp)
 		D3D11DeviceContext->PSSetShaderResources(2, 1, d3dxTextures[2]->pSRVTex.GetAddressOf());
 		D3D11DeviceContext->PSSetShaderResources(3, 1, d3dxTextures[3]->pSRVTex.GetAddressOf());
 		D3D11DeviceContext->PSSetShaderResources(4, 1, d3dxTextures[4]->pSRVTex.GetAddressOf());
+		D3D11DeviceContext->PSSetShaderResources(5, 1, d3dxTextures[5]->pSRVTex.GetAddressOf());
 	}
-	else if (sig&Signature::LIGTHSHADOWMAP) {
+	else if (sig&Signature::LIGTHSHADOWMAP || sig&Signature::SATURATION_PASS || sig&Signature::BLUR_PASS || sig&Signature::BLUR_PASSV) {
 		D3D11DeviceContext->PSSetShaderResources(0, 1, d3dxTextures[0]->pSRVTex.GetAddressOf());
+	}
+	else if (sig&Signature::BLOON_PASS) {
+		D3D11DeviceContext->PSSetShaderResources(0, 1, d3dxTextures[0]->pSRVTex.GetAddressOf());
+		D3D11DeviceContext->PSSetShaderResources(1, 1, d3dxTextures[1]->pSRVTex.GetAddressOf());
 	}
 	else {
 		D3D11DeviceContext->PSSetShaderResources(0, 1, d3dxTextures[0]->pSRVTex.GetAddressOf());
@@ -223,6 +267,7 @@ void CQuad::Draw(float * t, float * vp)
 	D3D11DeviceContext->DrawIndexed(6, 0, 0);
 
 
+#endif
 #endif
 }
 

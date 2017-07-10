@@ -42,7 +42,7 @@ FS_OUT FS(VS_OUTPUT input) {
 	float specIntesivity = 0.8;
 	float shinness = 2.0;
 
-	#ifdef USE_NORMAL_TEXTURE
+	#ifdef NORMAL_MAPl
 		float3x3 ejes;
 		ejes[0] = normalize(input.htangente);
 		ejes[1] = normalize(input.hbinormal);
@@ -50,12 +50,21 @@ FS_OUT FS(VS_OUTPUT input) {
 		float4 norRGB = NormalRGB.Sample(SS, input.texture0);
 		float3 newNormal = norRGB.rgb  *2.0 - 1.0;
 		newNormal.g = -newNormal.g;
-		newNormal = normalize(mul(ejes, newNormal));
+		newNormal = normalize(mul(newNormal,ejes));
 	#else
 		float3 newNormal = input.hnormal;
 	#endif
 	#ifdef GLOSS_MAP
 			shinness = TextureGloss.Sample(SS, input.texture0).r + shinness;
+	#endif
+	#ifdef NO_LIGHT
+			fout.color3 = float4(1.0, 0.0, 1.0, 1.0);
+	#else
+		#ifdef NORMAL_MAP	
+			fout.color3 = float4(0.0, 0.0, 0.0, 1.0);
+		#else
+			fout.color3 = float4(0.0, 0.0, 1.0, 1.0);
+		#endif
 	#endif
 	fout.color0.a = specIntesivity;
 	newNormal = newNormal*0.5 + 0.5;
